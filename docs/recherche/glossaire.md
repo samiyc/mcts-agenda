@@ -82,7 +82,7 @@ entre parenthèses aide à les lire.
 | Terme | Ce que c'est | Dans le modèle |
 |---|---|---|
 | **Contrainte dure** (*hard*, *Required* dans XHSTT) | à respecter absolument ; sa violation rend la solution infaisable | `D1` à `D9`, `infeasibility` |
-| **Contrainte souple** (*soft*) | une préférence ; sa violation coûte son poids | `S1` à `S7`, `cost` |
+| **Contrainte souple** (*soft*) | une préférence ; sa violation coûte son poids | `S1` à `S8`, `cost` |
 | **Infaisabilité** (*infeasibility value*) | la somme des violations dures, comparée en premier | `infeasibility` |
 | **Coût** (*objective value*) | la somme pondérée des violations souples | `cost` |
 | **Événement** (*event*, XHSTT) | une heure ou un bloc de cours, avec ses ressources | `Course` |

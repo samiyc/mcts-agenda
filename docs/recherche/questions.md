@@ -15,10 +15,11 @@ modèle fera. Une réponse quitte cette liste et va, avec sa date, dans [`source
 | **Q-S6** | **Le budget de temps** de la recherche. | **60 s** pour construire le collège M, **60 s** pour replanifier la veille, **10 s** le matin ; et le temps d'ITC 2011 (1 000 s) sur XHSTT. | La veille au soir laisse du temps ; à 7 h 45, le CPE veut une réponse tout de suite. Un budget fixe rend les comparaisons honnêtes. |
 | **Q-S7** | **Qui interroger ?** Connais-tu un principal adjoint, un CPE ou un professeur de collège ? | **Un principal adjoint et un CPE**, 30 minutes chacun, avec les questions ci-dessous, en commençant par Q-P1, Q-P12 et Q-P13. Pas avant J2 : on leur montrera la page. | Le principal adjoint fait l'emploi du temps, le CPE vit les absences du matin. Ils diront « ça ne se fait pas comme ça » en regardant une grille. |
 
-**Ce que j'ai décidé sans te le demander**, à défaire si tu n'es pas d'accord (`../modele.md`, § 11) : la répartition
-des services donnée, pas optimisée ; des créneaux d'une heure et deux semaines A et B ; R0 au degré de saturation ; P1
-qui ne touche qu'au jour de l'absence ; `schedule` de la lib pris pour sa forme seulement (il ordonne des jobs, il ne
-place pas des cours).
+**Répondu le 6/11/2026** (Sami) : oui aux quatre décisions prises sans lui (`../modele.md`, § 11) : la répartition des
+services donnée, pas optimisée ; des créneaux d'une heure et deux semaines A et B ; R0 au degré de saturation ; P1 qui
+ne touche qu'au jour de l'absence ; `schedule` de la lib pris pour sa forme seulement. Il ajoute : « le sport est sur
+2 h une fois par semaine, à vérifier ». Vérifié (`sources.md` § 2) : c'est le cas au cycle 4 (un bloc de 2 h et une
+heure, un autre jour) ; en 6e, les 4 h se font en deux blocs de 2 h. Q-S1 à Q-S7 attendent encore.
 
 ## Pour un professionnel
 
@@ -35,7 +36,7 @@ fait l'emploi du temps de personne.
 | **Q-P1** | Qu'est-ce qui est vraiment interdit dans un emploi du temps, et qu'est-ce qui n'est que souhaitable ? Qu'est-ce qui le rend « mauvais » aux yeux des professeurs, des familles ? | PA, P | **Interdits** : D1 à D9 du modèle. **Le pire des souples** : les trous des élèves (poids 10), puis la journée trop longue en cycle 4 (10), puis les vœux (5). | Tout le coût souple. Si on ne pose qu'une question, celle-là. |
 | **Q-P2** | Combien d'heures de trou par semaine sont acceptables pour un professeur ? Pour une division ? | PA, P | **Aucun trou pour une division**, 3 heures par semaine au plus pour un professeur (poids 10 et 3). | S1, S2. |
 | **Q-P3** | Quels vœux les professeurs font-ils (une demi-journée libre, pas de 8 h, pas de dernière heure), et combien en tient-on ? | PA, P | **Une demi-journée libre** demandée par la moitié des professeurs, tenue si possible (poids 5). | S3, la difficulté des instances. |
-| **Q-P4** | L'EPS se fait-elle en blocs de 2 h ? Les installations sont-elles partagées avec la commune ? Les TP de sciences sont-ils en blocs ? | PA, P | **L'EPS en deux blocs de 2 h** (en 6e) ou un bloc et une heure (cycle 4), le gymnase pris une demi-journée par semaine ; les TP en heures simples. | D4, D8 : les blocs sont les cours les plus durs à placer. |
+| **Q-P4** | L'EPS : un bloc de 2 h et une heure au cycle 4, deux blocs de 2 h en 6e, est-ce bien votre usage (ou 2 × 1 h 30, ou un semestre à 4 h) ? Les installations sont-elles partagées avec la commune ? Les TP de sciences sont-ils en blocs ? | PA, P | **Comme le modèle** (§ 2.4, lu dans des documents d'académie), les séances à 24 h d'écart, le gymnase pris une demi-journée par semaine ; les TP en heures simples. | D4, D8, S8 : les blocs sont les cours les plus durs à placer. |
 | **Q-P5** | Les matières « lourdes » le matin, est-ce une règle qu'on tient ? Laquelle ? | PA, P | **Une préférence faible** (poids 1) : pas de français, de maths ni de LV1 après 15 h. | S6. |
 | **Q-P6** | Les horaires : la durée d'une heure de cours (55 min ?), le début et la fin de journée, la pause méridienne en pratique, le nombre de services de cantine, le mercredi après-midi ? | PA, CPE | **Des créneaux d'une heure de 8 h à 17 h**, deux créneaux libres entre 11 h et 14 h pour chaque division, mercredi après-midi libre. | La forme de la semaine (§ 2.1). |
 | **Q-P7** | Une division a-t-elle sa salle au collège ? Les changements de salle comptent-ils ? | PA | **Oui, une salle attitrée**, un changement hors salle spécialisée coûte 1. | S7. |

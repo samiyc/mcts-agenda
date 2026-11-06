@@ -110,8 +110,11 @@ Un **cours** est l'unité qu'on place : une division (ou un groupe), une discipl
 2 créneaux), ses semaines (`AB`, `A`, `B`) et le type de salle qu'il demande. On lui choisit un créneau de départ et
 une salle. Le collège M en a environ 400 (**H**).
 
-- **Les blocs de 2 heures** : l'EPS (deux blocs de 2 h en 6e, un bloc et une heure au cycle 4), peut-être un TP de
-  sciences (**H**, Q-P4). Un bloc ne traverse pas la pause méridienne.
+- **L'EPS en blocs de 2 heures** (Sami, 6/11 : « le sport est sur 2 h une fois par semaine, à vérifier » ; vérifié
+  dans `sources.md` § 2) : **au cycle 4, un bloc de 2 h et une heure seule**, un autre jour ; **en 6e, deux blocs de
+  2 h**, car les 4 h ne tiennent pas en un seul bloc (trois heures d'affilée sont réservées aux activités de pleine
+  nature). Les deux séances d'une division sont espacées d'au moins 24 h (S8). Un TP de sciences reste en heures
+  simples (**H**, Q-P4). Un bloc ne traverse pas la pause méridienne.
 - **Les barrettes**, au jalon J2 : la LV2 (deux divisions, deux groupes, deux professeurs, au même créneau) et l'heure
   de soutien de 6e (toutes les 6e au même créneau, en groupes recomposés chaque trimestre).
 - **Les demi-groupes** (une division coupée en deux pour un TP), au jalon J2.
@@ -132,7 +135,7 @@ Un emploi du temps a deux coûts, comme dans XHSTT : **l'infaisabilité** (la so
 | D5 | la pause méridienne de chaque division (§ 2.1) | le décret de 2016, lu en résumé |
 | D6 | en 6e, 6 heures de cours au plus par jour | le ministère, lu en résumé |
 | D7 | rien le mercredi après-midi | **H** |
-| D8 | un bloc de 2 h est d'un seul tenant, dans une demi-journée | **H** |
+| D8 | un bloc de 2 h est d'un seul tenant, dans une demi-journée | l'usage, l'EPS lue en résumé (`sources.md` § 2) |
 | D9 | les groupes d'une barrette au même créneau (J2) | l'usage, **H** |
 
 ### 3.2 Les souples
@@ -148,6 +151,7 @@ Les poids sont des hypothèses, à faire relire (Q-P1, Q-P2).
 | S5 | en cycle 4, plus de 7 heures dans une journée | 10 | par heure de trop |
 | S6 | une discipline lourde (français, maths, LV1) après 15 h | 1 | par cours |
 | S7 | une division hors de sa salle attitrée, quand le cours ne demande pas de salle spécialisée | 1 | par cours |
+| S8 | deux séances d'EPS d'une division à moins de 24 h l'une de l'autre (le même jour, ou le lendemain plus tôt) | 3 | par paire |
 
 ## 4. Les absences et le replanning
 
@@ -308,13 +312,16 @@ Au jalon J2, `npm run page` sur le port 4805, `web/theme.css` d'abord, en sépia
 
 ## 11. Ce qui est décidé, et ce qui reste à Sami
 
-Décidé sans te le demander, à défaire si tu n'es pas d'accord :
-- un **collège** public fictif, pas un lycée (les choix d'options du lycée en font un autre problème, celui d'ITC
-  2019) ;
+**Validé par Sami le 6/11** (les quatre décisions prises sans lui) :
 - la répartition des services donnée, pas optimisée ;
 - des créneaux d'une heure et deux semaines A et B ;
 - R0 au degré de saturation, et P1 qui ne touche qu'au jour de l'absence ;
 - `schedule` pris pour sa forme seulement.
+
+Il y ajoute l'EPS en un bloc de 2 h par semaine, à vérifier : c'est le cas au cycle 4, pas en 6e (§ 2.4).
+
+Encore proposé, en attendant sa réponse : un **collège** public fictif, pas un lycée (Q-S1 ; les choix d'options du
+lycée en font un autre problème, celui d'ITC 2019).
 
 Les questions, chacune avec sa recommandation : [`recherche/questions.md`](recherche/questions.md).
 

@@ -34,6 +34,11 @@ Ce qui n'a pas de source est une hypothèse (**H**) dans [`../modele.md`](../mod
 | Pause méridienne | au moins 1 h 30 pour chaque collégien, sauf dérogation du recteur | décret de 2016 (BO n° 30 du 25/08/2016) ; page du ministère « L'emploi du temps de votre enfant au collège » | résumé (la page du ministère est refusée) |
 | Journée de 6e | 6 h de cours au plus par jour | idem | résumé |
 | Journée du cycle 4 | 7 h au plus, dans un projet de texte | un document de travail syndical | résumé, projet : traité comme souple (S5) |
+| L'EPS en 6e | 4 h en « 2 créneaux de 2 heures par semaine » ; l'académie de Nice recommande aussi deux séances de 2 h | la présentation de la 6e d'un collège (Castel, académie de Normandie) ; document de la DSDEN 06 (« Répartir ») | résumé |
+| L'EPS au cycle 4 | 3 h ; l'académie de Lyon conseille « 2 fois 1 h 30, ou 2 fois 2 heures pendant un semestre et une fois 2 heures pendant l'autre semestre » ; le modèle prend 2 h + 1 h (Sami, 6/11), la seule forme en créneaux d'une heure | « ipreps », académie de Lyon | résumé |
+| Trois heures d'affilée | « ne peuvent être inscrites à l'emploi du temps que pour permettre la pratique d'activités physiques de pleine nature dans des lieux éloignés », pour une période limitée | idem | résumé |
+| L'écart entre deux séances | « il est souhaitable de respecter l'écart de vingt-quatre heures entre deux cours d'EPS pour un même groupe » (S8) | vademecum EPS 2024-2025, académie de Lyon | résumé |
+| L'EPS placée en premier | un texte de 1982 fonde la « priorité chronologique » de l'EPS dans la confection de l'emploi du temps, à cause des installations | idem | résumé ; R0 le fera sans doute de lui-même, les blocs ayant peu d'options |
 
 ## 3. Les professeurs
 
