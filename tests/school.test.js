@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { GRID, LEVELS, piecesOf } from "../src/grid.js";
+import { GRID, LANGUAGES, LEVELS, piecesOf } from "../src/grid.js";
 import { createSchool } from "../src/school/generate.js";
 import { DAYS, SLOTS, dayOf, fits, halfOf, hasLunch, hourOf, slotName, weeksOf } from "../src/time.js";
 
@@ -49,20 +49,46 @@ describe("a fictitious collège", () => {
     assert.notDeepEqual(createSchool({ size: "M", seed: 8 }).teachers, school.teachers);
   });
 
-  it("has four divisions a level, each with its grid on both weeks", () => {
+  it("has four divisions a level, each half of each with its grid on both weeks", () => {
     assert.equal(school.divisions.length, 16);
     for (const division of school.divisions) {
-      const courses = school.courses.filter((course) => course.divisions.includes(division.id));
-      assert.equal(halfHoursOf(courses), 52, division.name);
+      for (const half of [1, 2]) {
+        const courses = school.courses.filter((course) => course.divisions.includes(division.id) && course.halves & half);
+        assert.equal(halfHoursOf(courses), 52, `${division.name}, half ${half}`);
+      }
       assert.ok(division.size >= 24 && division.size <= 30);
     }
   });
 
-  it("gives each course a teacher of its discipline, the soutien to the mathematics teacher", () => {
+  it("gives each course a teacher of its subject: an LV2 group its language, the soutien français or maths", () => {
+    const subjects = { lv2: LANGUAGES, sout: ["fr", "ma"] };
     for (const course of school.courses) {
-      const teacher = school.teachers[course.teacher];
-      assert.equal(teacher.discipline, course.discipline === "sout" ? "ma" : course.discipline);
+      const { discipline } = school.teachers[course.teacher];
+      assert.ok((subjects[course.discipline] ?? [course.discipline]).includes(discipline), `${course.discipline}: ${discipline}`);
     }
+  });
+
+  it("puts the LV2 and the soutien in barrettes of two groups over a pair of divisions, the odd one alone", () => {
+    const small = createSchool({ size: "S", seed: 2 });
+    for (const discipline of ["lv2", "sout"]) {
+      const links = small.links.filter((ids) => small.courses[ids[0]].discipline === discipline);
+      for (const ids of links) {
+        const [a, b] = ids.map((id) => small.courses[id]);
+        assert.deepEqual([ids.length, a.halves, b.halves, a.length, a.weeks], [2, 1, 2, b.length, b.weeks]);
+        assert.deepEqual(a.divisions, b.divisions);
+        assert.notEqual(a.teacher, b.teacher);
+      }
+      const sizes = links.map((ids) => small.courses[ids[0]].divisions.length);
+      assert.ok(sizes.includes(1) && sizes.includes(2), `${discipline}: three divisions a level make a pair and one alone`);
+    }
+  });
+
+  it("swaps the half-groups of SVT and physique-chimie between weeks A and B", () => {
+    for (const ids of school.links.filter((link) => link.length === 4)) {
+      const shape = ids.map((id) => school.courses[id]).map((c) => `${c.discipline} ${c.halves} ${c.weeks}`);
+      assert.deepEqual(shape, ["svt 1 A", "svt 2 B", "pc 2 A", "pc 1 B"]);
+    }
+    assert.equal(school.links.filter((link) => link.length === 4).length, school.divisions.length);
   });
 
   it("keeps each teacher's load within one hour of the service, and sends the partial ones away a day", () => {

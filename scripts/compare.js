@@ -56,6 +56,7 @@ function report(size, rows) {
     `## ${size} : ${rows.length} collèges`,
     `- R0-naïf : ${fmt(mean(of("naive", "infeasibility")))} cases non placées, ${fmt(mean(of("naive", "unplaced")))} cours, coût ${fmt(mean(of("naive", "cost")))}, ${fmt(mean(of("naive", "ms")))} ms`,
     `- R0 : ${fmt(mean(of("r0", "infeasibility")))} cases non placées, ${fmt(mean(of("r0", "unplaced")))} cours, coût ${fmt(mean(of("r0", "cost")))}, ${fmt(mean(of("r0", "ms")))} ms`,
+    `- collèges où R0 laisse un cours : ${rows.filter((row) => row.r0.unplaced > 0).length}, le témoin : ${rows.filter((row) => row.witness.unplaced > 0).length}`,
     `- R0 − R0-naïf, infaisabilité : ${gap(paired(of("r0", "infeasibility"), of("naive", "infeasibility")))}`,
     `- A/A, R0 − R0 (autre graine), infaisabilité : ${gap(paired(of("r0", "infeasibility"), of("witness", "infeasibility")))} ; coût : ${gap(paired(of("r0", "cost"), of("witness", "cost")))}`,
     `- le coût de R0 par contrainte (moyenne, avant poids) : ${bySoft.join(", ")}`,

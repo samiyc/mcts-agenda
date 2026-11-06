@@ -8,7 +8,9 @@ Client de [`mcts-commun`](../mcts-commun/README.md). La recherche sera choisie p
 **État** (6/11/2026) : le cadrage est écrit, et le jalon J1 est là : le collège tiré par graine (`src/school/`), l'évaluateur
 (`src/evaluate.js`, les contraintes dures et souples de `src/rules/`), les deux règles simples R0-naïf et R0
 (`src/build/greedy.js`). Pas encore de recherche. La première mesure, [`docs/mesures-j1.md`](docs/mesures-j1.md) : R0
-place presque tout (un cours laissé sur 2 à 5 collèges sur 30), R0-naïf en laisse 12 à 22.
+place presque tout (un cours laissé sur 2 à 5 collèges sur 30), R0-naïf en laisse 12 à 22. J2 a ajouté les barrettes
+(la LV2 et le soutien de 6e par paires de divisions) et les demi-groupes de sciences, alternés sur les semaines A et B
+(`src/school/courses.js`) ; R0 y laisse un cours sur 1 à 3 collèges sur 30 ([`docs/mesures-j2.md`](docs/mesures-j2.md)).
 - [`docs/modele.md`](docs/modele.md) : un collège fictif tiré par graine, ses contraintes dures et souples, les
   absences et le replanning, les règles à battre (le glouton R0, le remplacement P1), les mesures par paires, les bancs
   publics (XHSTT-2014 d'ITC 2011, puis ITC 2019), ce qu'on prend de la lib, les jalons J1 à J6 ;

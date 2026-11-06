@@ -1,11 +1,12 @@
 import { streamOf } from "mcts-commun/random.js";
-import { DISCIPLINES, GRID, LEVELS, piecesOf } from "../grid.js";
+import { LEVELS } from "../grid.js";
 import { SLOTS, weeksOf } from "../time.js";
-import { staff, teacherFor } from "./staff.js";
+import { coursesOf } from "./courses.js";
+import { needsOf, staff } from "./staff.js";
 
 /**
- * A fictitious collège drawn from its seed (docs/modele.md § 2): its divisions, its teachers and the TRS, its rooms,
- * and the courses to place. The same size and seed give the same school.
+ * A fictitious collège drawn from its seed (docs/modele.md § 2): its divisions, the courses and barrettes to place
+ * (courses.js), its teachers and the TRS (staff.js), its rooms. The same size and seed give the same school.
  */
 export const SIZES = Object.freeze({ S: 3, M: 4, L: 6 });
 const LETTERS = "ABCDEFGH";
@@ -24,23 +25,6 @@ function drawDivisions(perLevel, rng) {
       homeRoom: id,
     }),
   );
-}
-
-/** Every course of every division, in the order of the grid; a single-week hour alternates A and B. */
-function coursesOf(divisions, teacherOf) {
-  const courses = [];
-  divisions.forEach((division, d) => {
-    Object.entries(GRID[division.level]).forEach(([discipline, halfHours], k) => {
-      for (const piece of piecesOf(discipline, halfHours, (d + k) % 2)) {
-        const teacher = teacherFor(teacherOf, division.id, discipline);
-        const kind = DISCIPLINES[discipline].kind;
-        const home = kind === "ordinary" ? division.homeRoom : -1;
-        const id = courses.length;
-        courses.push({ id, divisions: [division.id], halves: 3, discipline, teacher, ...piece, kind, link: id, home });
-      }
-    });
-  });
-  return courses;
 }
 
 /** One ordinary room per division and one to spare; each specialised kind sized by its busier week. */
@@ -66,8 +50,9 @@ function roomsFor(divisions, courses) {
 export function createSchool({ size = "M", seed = 1 } = {}) {
   const divisions = drawDivisions(SIZES[size], streamOf(seed, 0));
   const rngs = { services: streamOf(seed, 1), away: streamOf(seed, 2), wishes: streamOf(seed, 3) };
-  const { teachers, teacherOf } = staff(divisions, rngs);
-  const courses = coursesOf(divisions, teacherOf);
-  const links = courses.map((course) => [course.id]);
+  const { courses: drafts, links } = coursesOf(divisions);
+  const { teachers, teacherOf } = staff(needsOf(drafts), rngs);
+  /** @type {import("../types.js").Course[]} */
+  const courses = drafts.map(({ need, ...course }) => ({ ...course, teacher: teacherOf.get(need) }));
   return { size, seed, divisions, teachers, rooms: roomsFor(divisions, courses), courses, links };
 }

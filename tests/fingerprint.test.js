@@ -12,9 +12,9 @@ import { createSchool } from "../src/school/generate.js";
  */
 const EXPECTED = {
   // 6/11/2026, J2 step 1: the J1 collège, its courses with divisions, halves, a link and a home room.
-  schools: "0f50c8f983306499",
+  schools: "8f6f3a78439500a5",
   // 6/11/2026, J2 step 1: R0 and R0-naïf by barrettes, the evaluation with D9; the J1 placements unchanged.
-  builds: "8879d0717eff8bc2",
+  builds: "32904bf420dedfe7",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);

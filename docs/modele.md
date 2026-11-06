@@ -3,7 +3,8 @@
 Les emplois du temps d'un collège : placer chaque heure de cours de chaque classe dans la semaine, avec son professeur
 et une salle, sous des contraintes dures et souples. Puis, quand un professeur manque, la veille ou le matin même,
 refaire le moins possible pour perdre le moins d'heures. Ce document fixe ce qu'on va construire et comment on saura
-que ça marche. **Il n'y a encore ni modèle ni recherche dans `src/`.**
+que ça marche. Le modèle est dans `src/` depuis J1, les barrettes et les demi-groupes depuis J2 ; pas encore de
+recherche.
 
 Les chiffres viennent de [`recherche/sources.md`](recherche/sources.md) (les sources, et jusqu'où chacune a été lue).
 Une valeur marquée **H** est une hypothèse, avec sa question dans [`recherche/questions.md`](recherche/questions.md) :
@@ -41,11 +42,11 @@ Une valeur marquée **H** est une hypothèse, avec sa question dans [`recherche/
 
 **L'établissement** est un collège public fictif, tiré par graine. Au départ (**H**, Q-S1) :
 
-| Taille | Divisions | Élèves (environ) | Professeurs (graine 1) | Cours | Salles ordinaires | Salles spécialisées (graine 1) |
+| Taille | Divisions | Élèves (environ) | Professeurs (graine 1) | Cours (barrettes) | Salles ordinaires | Salles spécialisées (graine 1) |
 |---|---|---|---|---|---|---|
-| S | 12 (3 par niveau) | 330 | 23 | 330 | 13 | 8 |
-| M | 16 (4 par niveau) | 440 | 29 | 440 | 17 | 11 |
-| L | 24 (6 par niveau) | 660 | 42 | 660 | 25 | 16 |
+| S | 12 (3 par niveau) | 330 | 25 | 364 (308) | 13 | 9 |
+| M | 16 (4 par niveau) | 440 | 29 | 472 (404) | 17 | 10 |
+| L | 24 (6 par niveau) | 660 | 44 | 708 (606) | 25 | 16 |
 
 Les effectifs sont tirés de 24 à 30 élèves par division (**H**). Le nombre de professeurs suit des heures à couvrir
 (§ 2.3). Les salles spécialisées sont les laboratoires de SVT et de physique-chimie, la technologie, les arts
@@ -105,24 +106,40 @@ Q-P9).
 - **Les vœux** : un professeur peut demander une demi-journée libre, ou pas de cours à 8 h (**H**, Q-P3). Un vœu est
   une contrainte souple.
 
-Les heures à couvrir dans le collège M : 16 divisions × 26 h, soit 416 heures-classe par semaine. La LV2 se fait en
-barrette sur deux divisions, en deux langues, ce qui garde le même nombre de groupes que de divisions. 416 h sur des
-services de 15 à 18 h font environ 24 professeurs pleins, 28 avec les services partiels (**H**).
+Les heures à couvrir dans le collège M : 16 divisions × 26 h, soit 416 heures-classe par semaine. La LV2 et le soutien
+se font en barrette sur deux divisions, en deux groupes, ce qui garde le même nombre de groupes que de divisions ; les
+demi-groupes de sciences ajoutent une heure de professeur par division (§ 2.4). 432 h sur des services de 15 à 18 h
+font environ 25 professeurs pleins ; la graine 1 en a 29, avec les services partiels (**H**).
 
 ### 2.4 Les cours
 
-Un **cours** est l'unité qu'on place : une division (ou un groupe), une discipline, un professeur, une durée (1 ou
-2 créneaux), ses semaines (`AB`, `A`, `B`) et le type de salle qu'il demande. On lui choisit un créneau de départ et
-une salle. Le collège M en a 440 (§ 2).
+Un **cours** est l'unité qu'on place : des élèves (une division entière, la moitié d'une division, ou un groupe pris
+sur deux divisions), une discipline, un professeur, une durée (1 ou 2 créneaux), ses semaines (`AB`, `A`, `B`) et
+le type de salle qu'il demande. On lui choisit un créneau de départ et une salle. Une **barrette** lie des cours qui
+partent au même créneau (D9) ; un cours seul est une barrette d'un cours. Le collège M a 472 cours en 404 barrettes
+(§ 2). Le code : `src/school/courses.js`.
 
-- **L'EPS en blocs de 2 heures** (Sami, 6/11 : « le sport est sur 2 h une fois par semaine, à vérifier » ; vérifié
-  dans `sources.md` § 2) : **au cycle 4, un bloc de 2 h et une heure seule**, un autre jour ; **en 6e, deux blocs de
-  2 h**, car les 4 h ne tiennent pas en un seul bloc (trois heures d'affilée sont réservées aux activités de pleine
-  nature). Les deux séances d'une division sont espacées d'au moins 24 h (S8). Un TP de sciences reste en heures
-  simples (**H**, Q-P4). Un bloc ne traverse pas la pause méridienne.
-- **Les barrettes**, au jalon J2 : la LV2 (deux divisions, deux groupes, deux professeurs, au même créneau) et l'heure
-  de soutien de 6e (toutes les 6e au même créneau, en groupes recomposés chaque trimestre).
-- **Les demi-groupes** (une division coupée en deux pour un TP), au jalon J2.
+- **L'EPS en blocs de 2 heures** (Sami, 6/11 : « plutôt deux fois 2 h, à ajuster plus tard si besoin ») : **deux blocs
+  de 2 h** à tous les niveaux. En 6e (4 h), les deux chaque semaine ; au cycle 4 (3 h), l'un chaque semaine, l'autre
+  une semaine sur deux, A ou B. Les textes d'académie lus donnent plutôt 2 h et 1 h au cycle 4 (`sources.md` § 2) ;
+  c'est le choix de Sami qui compte. Les deux séances d'une division sont espacées d'au moins 24 h (S8). Un bloc ne
+  traverse pas la pause méridienne.
+- **Les barrettes de LV2 et de soutien, par paires de divisions** (**H**, Q-P9). Les divisions d'un niveau vont deux
+  par deux, dans l'ordre ; la dernière reste seule quand leur nombre est impair (le collège S en a 3 par niveau). Une
+  paire a deux groupes au même créneau, chacun fait d'une moitié de chaque division : en LV2 (cycle 4) un groupe
+  d'espagnol et un d'allemand ; en soutien (6e) un groupe de français, pris par le professeur de français de la
+  première division, et un de maths, pris par le professeur de maths de la seconde. Une division seule a les deux
+  groupes pour elle, et le second prend une autre salle ordinaire.
+  Le cadrage disait le soutien « sur toutes les 6e au même créneau ». Cela demande autant de professeurs libres à la
+  même heure que de groupes. Le collège L en voudrait 6, et ses 6e n'ont que 4 professeurs de français et de maths.
+- **Les demi-groupes, sur les semaines A et B pour de vrai** (**H**, Q-P4) : la demi-heure impaire de SVT et celle de
+  physique-chimie (1,5 h chacune à tous les niveaux) deviennent une heure en demi-groupe. En semaine A, la première
+  moitié de la division fait de la SVT pendant que la seconde fait de la physique-chimie ; en semaine B, c'est
+  l'inverse. Ces quatre cours forment une barrette. Chaque élève garde ses 1,5 h, et chaque professeur donne 2 h par
+  division au lieu de 1,5. La technologie garde son heure d'une semaine sur deux en classe entière.
+- **Le jour d'une division se lit moitié par moitié** : la pause, les 6 h de la 6e, les trous, une discipline deux
+  fois, la journée longue (D5, D6, S1, S4, S5) se comptent pour chaque moitié, et le jour compte la pire. Sans
+  demi-groupe, les deux moitiés sont identiques et rien ne change par rapport à J1.
 
 ## 3. Les contraintes
 
@@ -141,7 +158,7 @@ Un emploi du temps a deux coûts, comme dans XHSTT : **l'infaisabilité** (la so
 | D6 | en 6e, 6 heures de cours au plus par jour | le ministère, lu en résumé |
 | D7 | rien le mercredi après-midi | **H** |
 | D8 | un bloc de 2 h est d'un seul tenant, dans une demi-journée | l'usage, l'EPS lue en résumé (`sources.md` § 2) |
-| D9 | les groupes d'une barrette au même créneau (J2) | l'usage, **H** |
+| D9 | les cours d'une barrette au même créneau (compté : ceux qui ne partent pas avec le premier placé) | l'usage, **H** |
 
 ### 3.2 Les souples
 
@@ -278,7 +295,7 @@ Rien de tout cela n'est écrit avant que R0 et P1 soient mesurés.
 | Jalon | Ce qu'il livre | Mesuré par |
 |---|---|---|
 | **J1** (fait le 6/11) | les types (`src/types.js`), le générateur de collège par graine, l'évaluateur (dures et souples, pur, testé), R0-naïf et R0 ; les empreintes | R0 contre R0-naïf, par paires, sur S, M, L : [`mesures-j1.md`](mesures-j1.md) |
-| **J2** | les semaines A et B en vrai, les barrettes, les demi-groupes ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges |
+| **J2** | les semaines A et B en vrai, les barrettes, les demi-groupes (faits le 6/11) ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges : [`mesures-j2.md`](mesures-j2.md) |
 | **J3** | le tabou et le recuit ; le banc (`npm run bench`) | contre R0, par paires |
 | **J4** | la lecture d'XHSTT, l'évaluateur rejoué contre HSEval sur des solutions publiées | l'écart de coût, nul attendu |
 | **J5** | les absences : P0, P1, puis la recherche locale | contre P1, par paires |
@@ -323,7 +340,7 @@ Au jalon J2, `npm run page` sur le port 4805, `web/theme.css` d'abord, en sépia
 - R0 au degré de saturation, et P1 qui ne touche qu'au jour de l'absence ;
 - `schedule` pris pour sa forme seulement.
 
-Il y ajoute l'EPS en un bloc de 2 h par semaine, à vérifier : c'est le cas au cycle 4, pas en 6e (§ 2.4).
+Il y ajoute l'EPS en deux blocs de 2 h, « à ajuster plus tard si besoin » (§ 2.4).
 
 Encore proposé, en attendant sa réponse : un **collège** public fictif, pas un lycée (Q-S1 ; les choix d'options du
 lycée en font un autre problème, celui d'ITC 2019).

@@ -14,12 +14,12 @@ entre parenthèses aide à les lire.
 |---|---|---|
 | **Division** | une classe au sens administratif : un groupe d'élèves d'un niveau qui suit le tronc commun ensemble (« la 5e B ») | `Division` |
 | **Niveau** | 6e, 5e, 4e, 3e ; la 6e est la fin du cycle 3, les trois autres font le cycle 4 | `level` |
-| **Groupe** | une partie d'une division, ou des élèves de plusieurs divisions, pour un enseignement : la LV2, un demi-groupe de TP, un groupe de besoins | `Group` (J2) |
+| **Groupe** | une partie d'une division, ou des élèves de plusieurs divisions, pour un enseignement : la LV2, un demi-groupe de TP, un groupe de besoins | `Course.divisions` et `Course.halves` : une moitié de division, ou une moitié de chacune des deux divisions d'une paire |
 | **DHG** (dotation horaire globale) | les heures que le rectorat donne au collège pour l'année : celles de la grille, plus la marge | — : en amont du modèle |
-| **La marge** | 3 heures par semaine et par division, en plus de la grille, pour les groupes, la co-intervention et les options | — |
+| **La marge** | 3 heures par semaine et par division, en plus de la grille, pour les groupes, la co-intervention et les options | — ; les demi-groupes de sciences en prennent 1 h par division (`../modele.md` § 2.4) |
 | **TRS** (tableau de répartition des services) | qui enseigne quoi à quelle division, arrêté avant l'emploi du temps | l'entrée du modèle : chaque cours a son professeur |
 | **VS** (ventilation de service) | le service d'un professeur, ligne par ligne, signé à la rentrée | — |
-| **Salle attitrée** | la salle d'une division au collège, où elle a ses cours ordinaires | `homeRoom` (S7) |
+| **Salle attitrée** | la salle d'une division au collège, où elle a ses cours ordinaires | `homeRoom`, et `Course.home` pour un cours (S7) |
 | **Salle spécialisée** | un laboratoire, la salle de technologie, d'arts plastiques, de musique, l'informatique, le gymnase | `Room.kind` |
 | **Vie scolaire** | le service du CPE et des assistants d'éducation : les absences, les études, la surveillance | la capacité d'étude (§ 4) |
 | **CPE** (conseiller principal d'éducation) | le responsable de la vie scolaire ; il voit les absences du matin le premier | — : un interlocuteur |
@@ -45,9 +45,9 @@ entre parenthèses aide à les lire.
 |---|---|---|
 | **Grille horaire** | les heures par discipline et par niveau, fixées par arrêté | `GRID` |
 | **Enseignements complémentaires** | l'accompagnement personnalisé (AP) et les enseignements pratiques interdisciplinaires (EPI), pris dans les 26 h | portés par les disciplines |
-| **Soutien ou approfondissement** | en 6e depuis 2023, 1 h de français ou de maths en groupes recomposés chaque trimestre, entre les classes | une barrette (J2) |
+| **Soutien ou approfondissement** | en 6e depuis 2023, 1 h de français ou de maths en groupes recomposés chaque trimestre, entre les classes | une barrette par paire de 6e : un groupe de français, un de maths |
 | **Groupes de besoins** | en 6e et 5e, le français et les maths en groupes formés selon le niveau des élèves (décret de 2025) | une barrette (J2), Q-P9 |
-| **Barrette**, alignement | plusieurs cours de divisions différentes placés au même créneau, pour que leurs élèves se répartissent en groupes (la LV2 de deux classes en allemand et espagnol) | `Barrette` (J2), D9 |
+| **Barrette**, alignement | plusieurs cours de divisions différentes placés au même créneau, pour que leurs élèves se répartissent en groupes (la LV2 de deux classes en allemand et espagnol) | `School.links`, `Course.link`, D9 |
 | **LV1, LV2** | la première et la deuxième langue vivante | des disciplines |
 | **Vie de classe** | au moins 10 heures dans l'année, avec le professeur principal | — : hors du modèle au départ |
 | **Accompagnement aux devoirs** | en 6e, son volume fixé par le chef d'établissement | — |

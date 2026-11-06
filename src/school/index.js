@@ -30,9 +30,11 @@ function build(school) {
   const roomsOfKind = new Map();
   for (const room of school.rooms) roomsOfKind.set(room.kind, [...(roomsOfKind.get(room.kind) ?? []), room.id]);
   const ordinary = roomsOfKind.get("ordinary") ?? [];
+  /** A group without a home room takes the spare room first, rather than the home room of a division out at the time. */
+  const spareFirst = ordinary.toReversed();
   const roomsFor = school.courses.map((course) => {
     if (course.kind !== "ordinary") return roomsOfKind.get(course.kind) ?? [];
-    return course.home < 0 ? ordinary : [course.home, ...ordinary.filter((id) => id !== course.home)];
+    return course.home < 0 ? spareFirst : [course.home, ...ordinary.filter((id) => id !== course.home)];
   });
   return { parts: school.courses.map(partsOf), eps, roomsFor };
 }

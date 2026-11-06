@@ -3,14 +3,13 @@
  * the cycle 4 of the arrêté of 16/06/2017. Weekly hours are written ×2, in half-hours, so that 4,5 h stays a whole
  * number: 9. Every level makes 52 half-hours, 26 h.
  *
- * Two readings of ours (H, docs/modele.md § 2.2): the 3 h of « SVT, physique-chimie » of the 6e are split 1,5 h each,
- * like the cycle 4; the hour of soutien of the 6e is taught by the division's mathematics teacher until the barrettes
- * of J2.
+ * A reading of ours (H, docs/modele.md § 2.2): the 3 h of « SVT, physique-chimie » of the 6e are split 1,5 h each,
+ * like the cycle 4. How the hours become courses, barrettes and half-groups: src/school/courses.js.
  */
 /** @type {readonly (6 | 5 | 4 | 3)[]} */
 export const LEVELS = Object.freeze([6, 5, 4, 3]);
 
-/** `kind`: the room the discipline needs; `heavy`: kept before 15 h if possible (S6); `taughtBy`: another's teacher. */
+/** `kind`: the room the discipline needs; `heavy`: kept before 15 h if possible (S6). */
 export const DISCIPLINES = Object.freeze({
   fr: Object.freeze({ name: "français", kind: "ordinary", heavy: true }),
   ma: Object.freeze({ name: "mathématiques", kind: "ordinary", heavy: true }),
@@ -23,8 +22,15 @@ export const DISCIPLINES = Object.freeze({
   arts: Object.freeze({ name: "arts plastiques", kind: "arts", heavy: false }),
   mus: Object.freeze({ name: "éducation musicale", kind: "music", heavy: false }),
   eps: Object.freeze({ name: "EPS", kind: "gym", heavy: false }),
-  sout: Object.freeze({ name: "soutien", kind: "ordinary", heavy: false, taughtBy: "ma" }),
+  sout: Object.freeze({ name: "soutien", kind: "ordinary", heavy: false }),
 });
+
+/** The two LV2 of the collège, a group each in the barrette of a pair of divisions (H: Spanish and German). */
+export const LANGUAGES = Object.freeze(["esp", "all"]);
+export const LANGUAGE_NAMES = Object.freeze({ esp: "espagnol", all: "allemand" });
+
+/** What a teacher teaches: a discipline of the grid, an LV2 for the LV2; the soutien goes to français and maths. */
+export const SUBJECTS = Object.freeze(["fr", "ma", "lv1", ...LANGUAGES, "hg", "svt", "pc", "tech", "arts", "mus", "eps"]);
 
 const CYCLE_4 = { fr: 9, ma: 7, lv1: 6, lv2: 5, hg: 6, svt: 3, pc: 3, tech: 3, arts: 2, mus: 2, eps: 6 };
 

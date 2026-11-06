@@ -2,7 +2,8 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { createBoard, place, remove, busy } from "../src/board.js";
 import { breakKept, innerFree, popcount } from "../src/rules/day.js";
-import { reasonOf, tryCourse } from "../src/rules/hard.js";
+import { evaluate } from "../src/evaluate.js";
+import { placeLink, reasonOf, tryCourse, tryLink } from "../src/rules/hard.js";
 import { divisionHoles, longDay, repeats } from "../src/rules/division.js";
 import { deltaOf, epsTooClose, lateHeavy, teacherHoles, wishBroken } from "../src/rules/soft.js";
 import { partOf } from "../src/school/index.js";
@@ -71,8 +72,8 @@ describe("the hard constraints", () => {
 
   it("refuse a slot when no room of the kind is free", () => {
     const only = school.rooms.find((room) => school.rooms.filter((r) => r.kind === room.kind).length === 1);
-    const slot = 10;
-    const course = school.courses.find((c) => c.kind === only.kind && c.weeks === "AB" && !school.teachers[c.teacher].unavailable[slot]);
+    const course = school.courses.find((c) => c.kind === only.kind && c.weeks === "AB");
+    const slot = school.teachers[course.teacher].unavailable.indexOf(0);
     const squatter = school.courses.find((c) => c.divisions[0] !== course.divisions[0] && c.teacher !== course.teacher && c.length === 1);
     const board = createBoard(school);
     place(board, squatter.id, slot, only.id);
@@ -123,5 +124,48 @@ describe("the soft constraints", () => {
     assert.equal(deltaOf(board, french[1].id, 1, sixieme.homeRoom), 4 * 2, "a repeat on both weeks");
     assert.equal(deltaOf(board, french[1].id, 2, spare), (10 + 3 + 4 + 1) * 2, "a hole for the division and the teacher, a repeat, away from home");
     assert.equal(busy(board.division, partOf(sixieme.id, 1), 0, 2), false);
+  });
+});
+
+describe("the barrettes", () => {
+  const small = createSchool({ size: "S", seed: 2 });
+  const link = small.links.findIndex((ids) => {
+    const first = small.courses[ids[0]];
+    return first.discipline === "lv2" && first.divisions.length === 2 && first.weeks === "AB";
+  });
+  const [spanish, german] = small.links[link].map((id) => small.courses[id]);
+  const open = (board) => {
+    let slot = 0;
+    while (tryLink(board, link, slot) !== 0) slot += 1;
+    return slot;
+  };
+
+  it("start together, each group in its home room, the halves of both divisions taken", () => {
+    const board = createBoard(small);
+    const slot = open(board);
+    assert.deepEqual([...board.rooms.slice(0, 2)], [spanish.home, german.home]);
+    placeLink(board, link, slot);
+    for (const division of spanish.divisions) {
+      for (const half of [0, 1]) assert.ok(busy(board.division, partOf(division, half), 0, slot));
+    }
+    assert.deepEqual([board.slot[spanish.id], board.slot[german.id]], [slot, slot]);
+  });
+
+  it("are refused where one group's teacher is taken, and leave the board as it was", () => {
+    const board = createBoard(small);
+    const slot = open(board);
+    const elsewhere = (c) => !c.divisions.some((d) => spanish.divisions.includes(d));
+    const other = small.courses.find((c) => c.teacher === german.teacher && elsewhere(c) && c.length === 1 && c.weeks === "AB");
+    place(board, other.id, slot, other.home);
+    assert.equal(reasonOf(tryLink(board, link, slot)), "teacher");
+    assert.equal(board.slot[spanish.id], -1);
+    assert.equal(busy(board.division, partOf(spanish.divisions[0], 0), 0, slot), false);
+  });
+
+  it("count each course that does not start with the first one (D9)", () => {
+    const timetable = { slot: new Int16Array(small.courses.length).fill(-1), room: new Int16Array(small.courses.length).fill(-1) };
+    [timetable.slot[spanish.id], timetable.room[spanish.id]] = [0, spanish.home];
+    [timetable.slot[german.id], timetable.room[german.id]] = [1, german.home];
+    assert.equal(evaluate(small, timetable).hard.D9, 1);
   });
 });
