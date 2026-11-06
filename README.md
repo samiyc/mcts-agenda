@@ -5,7 +5,12 @@ les remplacements quand un professeur manque, la veille ou le matin même.
 
 Client de [`mcts-commun`](../mcts-commun/README.md). La recherche sera choisie par la mesure, contre un remplissage glouton.
 
-**État** : le dépôt existe, sans modèle. Le cadrage vient d'abord (`docs/modele.md`, `docs/recherche/`).
+**État** (6/11/2026) : le cadrage est écrit, sans code de modèle ni de recherche.
+- [`docs/modele.md`](docs/modele.md) : un collège fictif tiré par graine, ses contraintes dures et souples, les
+  absences et le replanning, les règles à battre (le glouton R0, le remplacement P1), les mesures par paires, les bancs
+  publics (XHSTT-2014 d'ITC 2011, puis ITC 2019), ce qu'on prend de la lib, les jalons J1 à J6 ;
+- [`docs/recherche/`](docs/recherche/README.md) : les sources et leur niveau de lecture, le glossaire, le prompt de
+  recherche métier, les questions pour Sami et pour un principal adjoint ou un CPE.
 
 ## Les commandes
 
