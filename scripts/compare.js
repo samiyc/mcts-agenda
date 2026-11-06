@@ -11,7 +11,7 @@ import { createSchool } from "../src/school/generate.js";
  *
  *   node scripts/compare.js --sizes S,M,L --n 30 --from 1001 [--json tmp/compare.json]
  *
- * Infeasibility counts the cells left unplaced (D1 to D8); the cost, the weighted soft constraints. A gap is A − B:
+ * Infeasibility counts the hard violations (D1 to D9); the cost, the weighted soft constraints. A gap is A − B:
  * below zero, A costs less.
  */
 const { values } = parseArgs({
@@ -40,7 +40,7 @@ function runOne(size, seed) {
   return Object.fromEntries(
     Object.entries(runs).map(([name, run]) => {
       const { infeasibility, cost, soft } = evaluate(school, run.timetable);
-      return [name, { infeasibility, cost, soft, unplaced: run.unplaced.length, ms: run.ms }];
+      return [name, { infeasibility, cost, soft, unplaced: run.unplaced.reduce((sum, left) => sum + left.courses.length, 0), ms: run.ms }];
     }),
   );
 }

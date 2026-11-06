@@ -11,10 +11,10 @@ import { createSchool } from "../src/school/generate.js";
  * with the measures before and after.
  */
 const EXPECTED = {
-  // 6/11/2026, J1: the collège of docs/modele.md § 2, EPS in 2 h blocks.
-  schools: "3d76f370d3888173",
-  // 6/11/2026, J1: R0 and R0-naïf, the evaluation D1 to D8 and S1 to S8.
-  builds: "045f0af55c985146",
+  // 6/11/2026, J2 step 1: the J1 collège, its courses with divisions, halves, a link and a home room.
+  schools: "0f50c8f983306499",
+  // 6/11/2026, J2 step 1: R0 and R0-naïf by barrettes, the evaluation with D9; the J1 placements unchanged.
+  builds: "8879d0717eff8bc2",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);

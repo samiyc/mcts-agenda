@@ -1,17 +1,17 @@
-import { busy } from "../board.js";
+import { busy, place, remove } from "../board.js";
 import { roomsFor } from "../school/index.js";
 import { DAYS, dayOf, fits, hasLunch, weeksOf } from "../time.js";
 import { breakKept, dayMask, popcount } from "./day.js";
+import { SIXIEME_DAY } from "./division.js";
 
 /**
  * Whether a course can start at a slot, given what is already on the board (docs/modele.md § 3.1), and if not, why:
  * the form of `holdOf` in mcts-commun's schedule. The answer is the room it would take, or a negative code read by
- * `reasonOf`. Nothing allocates: the greedy asks this hundreds of thousands of times.
+ * `reasonOf`. A barrette is asked as one (`tryLink`): its courses start together or not at all (D9). Nothing
+ * allocates: the greedy asks this hundreds of thousands of times.
  */
 export const REASONS = Object.freeze(["half-day", "unavailable", "division", "teacher", "pause", "day-limit", "room"]);
 const CODE = Object.freeze(Object.fromEntries(REASONS.map((reason, index) => [reason, -1 - index])));
-/** The most hours of a 6e pupil's day (D6). */
-export const SIXIEME_DAY = 6;
 
 export const reasonOf = (code) => REASONS[-1 - code];
 
@@ -20,11 +20,16 @@ function unavailable(teacher, slot, length) {
   return false;
 }
 
-/** The first of the division and the teacher that is taken at one of the course's cells, or null. */
+function partsBusy(board, id, week, slot) {
+  for (const part of board.parts[id]) if (busy(board.division, part, week, slot)) return true;
+  return false;
+}
+
+/** The first of the division and the teacher that is taken at one of the course's cells, or 0. */
 function peopleHold(board, course, slot) {
   for (const week of weeksOf(course.weeks)) {
     for (let k = 0; k < course.length; k += 1) {
-      if (busy(board.division, course.division, week, slot + k)) return CODE.division;
+      if (partsBusy(board, course.id, week, slot + k)) return CODE.division;
       if (busy(board.teacher, course.teacher, week, slot + k)) return CODE.teacher;
     }
   }
@@ -33,14 +38,23 @@ function peopleHold(board, course, slot) {
 
 const courseBits = (course, slot) => ((1 << course.length) - 1) << (slot - DAYS[dayOf(slot)].first);
 
-/** The division's lunch break and its day length, with the course added (D5, D6). */
-function dayHold(board, course, slot) {
+/** The lunch break and the day length of each part of division the course takes on a week, with it (D5, D6). */
+function weekHold(board, course, week, slot) {
   const day = dayOf(slot);
-  const sixieme = board.school.divisions[course.division].level === 6;
-  for (const week of weeksOf(course.weeks)) {
-    const mask = dayMask(board.division, course.division, week, day) | courseBits(course, slot);
+  const bits = courseBits(course, slot);
+  const sixieme = board.school.divisions[course.divisions[0]].level === 6;
+  for (const part of board.parts[course.id]) {
+    const mask = dayMask(board.division, part, week, day) | bits;
     if (hasLunch(day) && !breakKept(mask)) return CODE.pause;
     if (sixieme && popcount(mask) > SIXIEME_DAY) return CODE["day-limit"];
+  }
+  return 0;
+}
+
+function dayHold(board, course, slot) {
+  for (const week of weeksOf(course.weeks)) {
+    const hold = weekHold(board, course, week, slot);
+    if (hold) return hold;
   }
   return 0;
 }
@@ -69,3 +83,34 @@ export function tryCourse(board, id, slot) {
   return room >= 0 ? room : CODE.room;
 }
 
+/**
+ * Whether every course of link `link` can start at `slot`: 0, their rooms written in `board.rooms` in the order of
+ * the link, or the negative code of the first refusal. Each course is tried with the ones before it on the board,
+ * then the board is left as it was.
+ */
+export function tryLink(board, link, slot) {
+  const ids = board.school.links[link];
+  if (ids.length === 1) {
+    const room = tryCourse(board, ids[0], slot);
+    board.rooms[0] = room;
+    return Math.min(room, 0);
+  }
+  let code = 0;
+  let placed = 0;
+  while (placed < ids.length && code === 0) {
+    const room = tryCourse(board, ids[placed], slot);
+    if (room < 0) code = room;
+    else {
+      board.rooms[placed] = room;
+      place(board, ids[placed], slot, room);
+      placed += 1;
+    }
+  }
+  for (let i = 0; i < placed; i += 1) remove(board, ids[i]);
+  return code;
+}
+
+/** Puts every course of link `link` at `slot`, in the rooms `tryLink` just found. */
+export function placeLink(board, link, slot) {
+  board.school.links[link].forEach((id, i) => place(board, id, slot, board.rooms[i]));
+}

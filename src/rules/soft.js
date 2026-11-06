@@ -1,27 +1,19 @@
-import { courseAt, place, remove } from "../board.js";
+import { place, remove } from "../board.js";
 import { DISCIPLINES } from "../grid.js";
-import { DISCIPLINE_INDEX, indexOf } from "../school/index.js";
-import { DAYS, LATE, MORNING, dayOf, hourOf, indexInDay, weeksOf } from "../time.js";
+import { indexOf } from "../school/index.js";
+import { DAYS, LATE, WEEKS, dayOf, hourOf, indexInDay, weeksOf } from "../time.js";
 import { LUNCH_MASK, MORNING_MASK, afternoonMask, dayMask, innerFree, popcount } from "./day.js";
+import { divisionDay } from "./division.js";
 
 /**
- * The soft constraints S1 to S8 (docs/modele.md § 3.2), each counted where it lives: a division's day, a teacher's
- * day, a course, a division's week of EPS. The weights are hypotheses (Q-P1, Q-P2). `deltaOf` is what the greedy
- * reads: the cost a placement adds, from the days it touches only.
+ * The soft constraints S1 to S8 (docs/modele.md § 3.2), each counted where it lives: a division's day
+ * (`division.js`), a teacher's day, a course, a division's week of EPS. The weights are hypotheses (Q-P1, Q-P2).
+ * `linkDelta` is what the greedy reads: the cost a barrette adds, from the days it touches only.
  */
 export const WEIGHTS = Object.freeze({ S1: 10, S2: 3, S3: 5, S4: 4, S5: 10, S6: 1, S7: 1, S8: 3 });
-/** The most hours of a cycle 4 pupil's day before S5 counts. */
-export const CYCLE_4_DAY = 7;
 /** Free slots of a teacher's lunch that are not holes. */
 const LUNCH_ALLOWANCE = 2;
 const HOURS_APART = 24;
-
-/** S1: a division's free slots inside a half-day, between two courses. */
-export const divisionHoles = (mask, day) =>
-  popcount(innerFree(mask, 0, MORNING)) + popcount(innerFree(mask, MORNING, DAYS[day].count));
-
-/** S5: a cycle 4 day's hours beyond seven. */
-export const longDay = (mask, level) => (level === 6 ? 0 : Math.max(0, popcount(mask) - CYCLE_4_DAY));
 
 /** S2: a teacher's free slots between the first and the last course of the day, two of the lunch window excepted. */
 export function teacherHoles(mask, day) {
@@ -34,26 +26,6 @@ export function wishBroken(teacher, mask, day) {
   if (!teacher.wish || teacher.wish.day !== day) return 0;
   const half = teacher.wish.half === 0 ? MORNING_MASK : afternoonMask(day);
   return mask & half ? 1 : 0;
-}
-
-const seen = new Uint8Array(Object.keys(DISCIPLINES).length);
-
-/** S4: a discipline's courses beyond the first in a division's day; a block counts once. */
-export function repeats(board, division, week, day) {
-  const { first, count } = DAYS[day];
-  seen.fill(0);
-  let extra = 0;
-  let previous = -1;
-  for (let i = 0; i < count; i += 1) {
-    const id = courseAt(board.division, division, week, first + i);
-    if (id >= 0 && id !== previous) {
-      const k = DISCIPLINE_INDEX[board.school.courses[id].discipline];
-      if (seen[k]) extra += 1;
-      seen[k] = 1;
-    }
-    previous = id;
-  }
-  return extra;
 }
 
 const startHour = (slot) => dayOf(slot) * HOURS_APART + hourOf(slot);
@@ -77,14 +49,12 @@ export function lateHeavy(course, slot) {
   return DISCIPLINES[course.discipline].heavy && indexInDay(slot + course.length - 1) >= LATE ? 1 : 0;
 }
 
-/** S7: 1 when an ordinary course is out of its division's home room. */
-export const awayFromHome = (school, course, room) =>
-  course.kind === "ordinary" && room !== school.divisions[course.division].homeRoom ? 1 : 0;
+/** S7: 1 when a course that has a home room is elsewhere. */
+export const awayFromHome = (course, room) => (course.home >= 0 && room !== course.home ? 1 : 0);
 
 function divisionDayCost(board, division, week, day) {
-  const mask = dayMask(board.division, division, week, day);
-  const level = board.school.divisions[division].level;
-  return WEIGHTS.S1 * divisionHoles(mask, day) + WEIGHTS.S4 * repeats(board, division, week, day) + WEIGHTS.S5 * longDay(mask, level);
+  const counts = divisionDay(board, division, week, day);
+  return WEIGHTS.S1 * counts.holes + WEIGHTS.S4 * counts.repeats + WEIGHTS.S5 * counts.long;
 }
 
 function teacherDayCost(board, teacher, week, day) {
@@ -92,24 +62,58 @@ function teacherDayCost(board, teacher, week, day) {
   return WEIGHTS.S2 * teacherHoles(mask, day) + WEIGHTS.S3 * wishBroken(board.school.teachers[teacher], mask, day);
 }
 
-/** The cost of the days a course of `course` on `day` touches. */
-function localCost(board, course, day) {
+/** Marks a resource's week seen in this epoch; true the first time. */
+function firstVisit(stamps, index, epoch) {
+  if (stamps[index] === epoch) return false;
+  stamps[index] = epoch;
+  return true;
+}
+
+/** The cost of a course's days on a week that no course before it in the epoch has counted. */
+function weekCost(board, course, week, day) {
+  const { seen } = board;
   let cost = 0;
-  for (const week of weeksOf(course.weeks)) {
-    cost += divisionDayCost(board, course.division, week, day) + teacherDayCost(board, course.teacher, week, day);
-    if (course.discipline === "eps") cost += WEIGHTS.S8 * epsTooClose(board, course.division, week);
+  for (const division of course.divisions) {
+    if (!firstVisit(seen.division, division * WEEKS + week, seen.epoch)) continue;
+    cost += divisionDayCost(board, division, week, day);
+    if (course.discipline === "eps") cost += WEIGHTS.S8 * epsTooClose(board, division, week);
+  }
+  if (firstVisit(seen.teacher, course.teacher * WEEKS + week, seen.epoch)) cost += teacherDayCost(board, course.teacher, week, day);
+  return cost;
+}
+
+/** The cost of the days the courses of `link` on `day` touch, each division's and teacher's day once. */
+function localCost(board, link, day) {
+  board.seen.epoch += 1;
+  let cost = 0;
+  for (const id of board.school.links[link]) {
+    const course = board.school.courses[id];
+    for (const week of weeksOf(course.weeks)) cost += weekCost(board, course, week, day);
   }
   return cost;
 }
 
-/** The soft cost that placing course `id` at `slot` in `room` adds; the board is left as it was. */
-export function deltaOf(board, id, slot, room) {
-  const course = board.school.courses[id];
+/** What a course costs on its own, wherever the others are: S6 and S7, on each of its weeks. */
+const ownCost = (course, slot, room) =>
+  (WEIGHTS.S6 * lateHeavy(course, slot) + WEIGHTS.S7 * awayFromHome(course, room)) * weeksOf(course.weeks).length;
+
+/** The soft cost that placing link `link` at `slot`, in the rooms of `board.rooms`, adds; the board is left as it was. */
+export function linkDelta(board, link, slot) {
+  const ids = board.school.links[link];
   const day = dayOf(slot);
-  const before = localCost(board, course, day);
-  place(board, id, slot, room);
-  const after = localCost(board, course, day);
-  remove(board, id);
-  const own = WEIGHTS.S6 * lateHeavy(course, slot) + WEIGHTS.S7 * awayFromHome(board.school, course, room);
-  return after - before + own * weeksOf(course.weeks).length;
+  const before = localCost(board, link, day);
+  let own = 0;
+  for (let i = 0; i < ids.length; i += 1) {
+    place(board, ids[i], slot, board.rooms[i]);
+    own += ownCost(board.school.courses[ids[i]], slot, board.rooms[i]);
+  }
+  const after = localCost(board, link, day);
+  for (const id of ids) remove(board, id);
+  return after - before + own;
+}
+
+/** The same for one course alone in its link, at `slot` in `room`. */
+export function deltaOf(board, id, slot, room) {
+  board.rooms[0] = room;
+  return linkDelta(board, board.school.courses[id].link, slot);
 }

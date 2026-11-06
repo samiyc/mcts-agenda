@@ -37,15 +37,18 @@
  */
 
 /**
- * What gets placed: one division, one discipline, its teacher, a length, its weeks.
+ * What gets placed: the pupils of one division or of a group, one discipline, its teacher, a length, its weeks.
  * @typedef {object} Course
  * @property {number} id
- * @property {number} division
+ * @property {number[]} divisions whose pupils it takes: one, or several in a barrette across divisions (LV2)
+ * @property {1 | 2 | 3} halves which halves of those divisions, as bits: 3 the whole division, 1 or 2 a half-group
  * @property {string} discipline
  * @property {number} teacher
  * @property {1 | 2} length in slots
  * @property {"AB" | "A" | "B"} weeks
  * @property {string} kind the room kind it needs
+ * @property {number} link its barrette, an index of School.links: the courses of a link start together (D9)
+ * @property {number} home the ordinary room it should keep (S7), or -1
  */
 
 /**
@@ -56,6 +59,7 @@
  * @property {Teacher[]} teachers
  * @property {Room[]} rooms
  * @property {Course[]} courses
+ * @property {number[][]} links the courses of each barrette, a lone course its own; numbered in the order of the courses
  */
 
 /**
@@ -66,7 +70,7 @@
 
 /**
  * @typedef {object} Evaluation the two costs of a timetable, as XHSTT counts them: infeasibility first
- * @property {number} infeasibility the hard violations, D1 to D8
+ * @property {number} infeasibility the hard violations, D1 to D9
  * @property {number} cost the weighted soft violations, S1 to S8
  * @property {Record<string, number>} hard each hard constraint's count
  * @property {Record<string, number>} soft each soft constraint's count, before its weight

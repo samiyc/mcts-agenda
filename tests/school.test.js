@@ -52,7 +52,7 @@ describe("a fictitious collège", () => {
   it("has four divisions a level, each with its grid on both weeks", () => {
     assert.equal(school.divisions.length, 16);
     for (const division of school.divisions) {
-      const courses = school.courses.filter((course) => course.division === division.id);
+      const courses = school.courses.filter((course) => course.divisions.includes(division.id));
       assert.equal(halfHoursOf(courses), 52, division.name);
       assert.ok(division.size >= 24 && division.size <= 30);
     }

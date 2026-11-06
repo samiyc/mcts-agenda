@@ -23,16 +23,16 @@ describe("the evaluation", () => {
   it("counts clashes, wrong rooms, a teacher away, a block across noon, a lost break and a long 6e day", () => {
     const timetable = empty();
     const sixieme = school.divisions.find((d) => d.level === 6);
-    const own = school.courses.filter((c) => c.division === sixieme.id && c.length === 1 && c.weeks === "AB" && presentMonday(c));
+    const own = school.courses.filter((c) => c.divisions[0] === sixieme.id && c.length === 1 && c.weeks === "AB" && presentMonday(c));
     own.slice(0, 7).forEach((c, i) => {
       timetable.slot[c.id] = i;
       timetable.room[c.id] = sixieme.homeRoom;
     });
-    const block = school.courses.find((c) => c.division === sixieme.id && c.discipline === "eps" && presentMonday(c));
+    const block = school.courses.find((c) => c.divisions[0] === sixieme.id && c.discipline === "eps" && presentMonday(c));
     [timetable.slot[block.id], timetable.room[block.id]] = [3, sixieme.homeRoom];
     const away = school.teachers.find((t) => t.unavailable.some(Boolean));
-    const absent = school.courses.find((c) => c.teacher === away.id && c.division !== sixieme.id && c.length === 1 && c.weeks === "AB" && c.kind === "ordinary");
-    [timetable.slot[absent.id], timetable.room[absent.id]] = [away.unavailable.indexOf(1), school.divisions[absent.division].homeRoom];
+    const absent = school.courses.find((c) => c.teacher === away.id && c.divisions[0] !== sixieme.id && c.length === 1 && c.weeks === "AB" && c.kind === "ordinary");
+    [timetable.slot[absent.id], timetable.room[absent.id]] = [away.unavailable.indexOf(1), absent.home];
     const { hard } = evaluate(school, timetable);
     assert.equal(hard.D2 > 0, true, "the block sits on 11 h and 12 h");
     assert.equal(hard.D3, 4, "a gym course in a classroom, 2 slots on 2 weeks");
@@ -70,12 +70,11 @@ describe("R0-naïf", () => {
 
   it("never breaks a hard constraint but leaves courses unplaced, with why", () => {
     const { hard } = evaluate(school, naive.timetable);
-    const unplacedCells = naive.unplaced.reduce((sum, { course }) => {
-      const c = school.courses[course];
-      return sum + c.length * weeksOf(c.weeks).length;
-    }, 0);
+    const unplacedCells = naive.unplaced
+      .flatMap(({ courses }) => courses)
+      .reduce((sum, id) => sum + school.courses[id].length * weeksOf(school.courses[id].weeks).length, 0);
     assert.ok(naive.unplaced.length > 0);
-    assert.deepEqual(hard, { D1: unplacedCells, D2: 0, D3: 0, D4: 0, D5: 0, D6: 0, D8: 0 });
+    assert.deepEqual(hard, { D1: unplacedCells, D2: 0, D3: 0, D4: 0, D5: 0, D6: 0, D8: 0, D9: 0 });
     for (const { reasons } of naive.unplaced) assert.equal(Object.values(reasons).reduce((a, b) => a + b, 0), SLOTS);
   });
 

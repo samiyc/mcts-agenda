@@ -34,7 +34,9 @@ function coursesOf(divisions, teacherOf) {
       for (const piece of piecesOf(discipline, halfHours, (d + k) % 2)) {
         const teacher = teacherFor(teacherOf, division.id, discipline);
         const kind = DISCIPLINES[discipline].kind;
-        courses.push({ id: courses.length, division: division.id, discipline, teacher, ...piece, kind });
+        const home = kind === "ordinary" ? division.homeRoom : -1;
+        const id = courses.length;
+        courses.push({ id, divisions: [division.id], halves: 3, discipline, teacher, ...piece, kind, link: id, home });
       }
     });
   });
@@ -66,5 +68,6 @@ export function createSchool({ size = "M", seed = 1 } = {}) {
   const rngs = { services: streamOf(seed, 1), away: streamOf(seed, 2), wishes: streamOf(seed, 3) };
   const { teachers, teacherOf } = staff(divisions, rngs);
   const courses = coursesOf(divisions, teacherOf);
-  return { size, seed, divisions, teachers, rooms: roomsFor(divisions, courses), courses };
+  const links = courses.map((course) => [course.id]);
+  return { size, seed, divisions, teachers, rooms: roomsFor(divisions, courses), courses, links };
 }

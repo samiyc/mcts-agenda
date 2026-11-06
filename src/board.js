@@ -1,7 +1,9 @@
+import { PARTS, indexOf } from "./school/index.js";
 import { SLOTS, WEEKS, weeksOf } from "./time.js";
 
 /**
- * Who is where, slot by slot, on both weeks: one layer for the divisions, one for the teachers, one for the rooms.
+ * Who is where, slot by slot, on both weeks: one layer for the parts of divisions (their halves, src/school/index.js),
+ * one for the teachers, one for the rooms.
  * A cell counts what sits there (two is a clash, D2) and keeps the course that came first. The greedy places and
  * removes without clashes; the evaluator only places, and counts the clashes.
  */
@@ -14,13 +16,18 @@ export const cell = (resource, week, slot) => (resource * WEEKS + week) * SLOTS 
 
 /** @param {import("./types.js").School} school */
 export function createBoard(school) {
+  const widest = Math.max(...school.links.map((link) => link.length));
   return {
     school,
-    division: createLayer(school.divisions.length),
+    parts: indexOf(school).parts,
+    division: createLayer(school.divisions.length * PARTS),
     teacher: createLayer(school.teachers.length),
     room: createLayer(school.rooms.length),
     slot: new Int16Array(school.courses.length).fill(-1),
     roomOf: new Int16Array(school.courses.length).fill(-1),
+    /** Scratch for the rules, so that they do not allocate: the rooms of a link, the days a link touches. */
+    rooms: new Int16Array(widest),
+    seen: { division: new Int32Array(school.divisions.length * WEEKS), teacher: new Int32Array(school.teachers.length * WEEKS), epoch: 0 },
   };
 }
 
@@ -35,7 +42,7 @@ function apply(board, id, step) {
   const start = board.slot[id];
   for (const week of weeksOf(course.weeks)) {
     for (let k = 0; k < course.length; k += 1) {
-      mark(board.division, cell(course.division, week, start + k), id, step);
+      for (const part of board.parts[id]) mark(board.division, cell(part, week, start + k), id, step);
       mark(board.teacher, cell(course.teacher, week, start + k), id, step);
       mark(board.room, cell(board.roomOf[id], week, start + k), id, step);
     }

@@ -3,13 +3,15 @@ import assert from "node:assert/strict";
 import { createBoard, place, remove, busy } from "../src/board.js";
 import { breakKept, innerFree, popcount } from "../src/rules/day.js";
 import { reasonOf, tryCourse } from "../src/rules/hard.js";
-import { deltaOf, divisionHoles, epsTooClose, lateHeavy, longDay, repeats, teacherHoles, wishBroken } from "../src/rules/soft.js";
+import { divisionHoles, longDay, repeats } from "../src/rules/division.js";
+import { deltaOf, epsTooClose, lateHeavy, teacherHoles, wishBroken } from "../src/rules/soft.js";
+import { partOf } from "../src/school/index.js";
 import { createSchool } from "../src/school/generate.js";
 
 const school = createSchool({ size: "S", seed: 3 });
 const find = (test) => school.courses.find(test);
 const sixieme = school.divisions.find((d) => d.level === 6);
-const ofDivision = (division, discipline) => school.courses.filter((c) => c.division === division.id && c.discipline === discipline);
+const ofDivision = (division, discipline) => school.courses.filter((c) => c.divisions[0] === division.id && c.discipline === discipline);
 const why = (board, course, slot) => reasonOf(tryCourse(board, course.id, slot));
 const presentMonday = (course) => !school.teachers[course.teacher].unavailable[0];
 
@@ -46,7 +48,7 @@ describe("the hard constraints", () => {
     const french = ofDivision(sixieme, "fr");
     place(board, french[0].id, 0, sixieme.homeRoom);
     assert.equal(why(board, french[1], 0), "division");
-    const colleague = find((c) => c.teacher === french[0].teacher && c.division !== sixieme.id);
+    const colleague = find((c) => c.teacher === french[0].teacher && c.divisions[0] !== sixieme.id);
     assert.equal(why(board, colleague, 0), "teacher");
     remove(board, french[0].id);
     assert.ok(tryCourse(board, french[1].id, 0) >= 0);
@@ -57,7 +59,7 @@ describe("the hard constraints", () => {
     const away = school.teachers.find((t) => t.unavailable.some(Boolean));
     const course = find((c) => c.teacher === away.id);
     assert.equal(why(board, course, away.unavailable.indexOf(1)), "unavailable");
-    const hours = school.courses.filter((c) => c.division === sixieme.id && c.length === 1 && c.weeks === "AB" && presentMonday(c));
+    const hours = school.courses.filter((c) => c.divisions[0] === sixieme.id && c.length === 1 && c.weeks === "AB" && presentMonday(c));
     hours.slice(0, 4).forEach((c, slot) => place(board, c.id, slot, roomOf(board, c, slot)));
     const fifth = hours[4];
     assert.equal(why(board, fifth, 4), "pause", "noon is always lunch: two free slots in a row include it");
@@ -71,7 +73,7 @@ describe("the hard constraints", () => {
     const only = school.rooms.find((room) => school.rooms.filter((r) => r.kind === room.kind).length === 1);
     const slot = 10;
     const course = school.courses.find((c) => c.kind === only.kind && c.weeks === "AB" && !school.teachers[c.teacher].unavailable[slot]);
-    const squatter = school.courses.find((c) => c.division !== course.division && c.teacher !== course.teacher && c.length === 1);
+    const squatter = school.courses.find((c) => c.divisions[0] !== course.divisions[0] && c.teacher !== course.teacher && c.length === 1);
     const board = createBoard(school);
     place(board, squatter.id, slot, only.id);
     assert.equal(why(board, course, slot), "room", `the only ${only.kind} room is taken`);
@@ -90,10 +92,10 @@ describe("the soft constraints", () => {
     const french = ofDivision(sixieme, "fr");
     place(board, french[0].id, 0, sixieme.homeRoom);
     place(board, french[1].id, 2, sixieme.homeRoom);
-    assert.equal(repeats(board, sixieme.id, 0, 0), 1);
+    assert.equal(repeats(board, partOf(sixieme.id, 0), 0, 0), 1);
     const block = ofDivision(sixieme, "eps").find(presentMonday);
     place(board, block.id, 6, roomOf(board, block, 6));
-    assert.equal(repeats(board, sixieme.id, 0, 0), 1);
+    assert.equal(repeats(board, partOf(sixieme.id, 0), 0, 0), 1);
   });
 
   it("count two EPS sessions less than 24 h apart, a wish broken, a heavy course late", () => {
@@ -120,6 +122,6 @@ describe("the soft constraints", () => {
     const spare = school.divisions.length;
     assert.equal(deltaOf(board, french[1].id, 1, sixieme.homeRoom), 4 * 2, "a repeat on both weeks");
     assert.equal(deltaOf(board, french[1].id, 2, spare), (10 + 3 + 4 + 1) * 2, "a hole for the division and the teacher, a repeat, away from home");
-    assert.equal(busy(board.division, sixieme.id, 0, 2), false);
+    assert.equal(busy(board.division, partOf(sixieme.id, 1), 0, 2), false);
   });
 });
