@@ -34,6 +34,11 @@ Its line in the roadmap: `mcts-commun/docs/feuille-de-route.md`, § 2.C. Start t
 - **The fingerprints** (`tests/fingerprint.test.js`, since J1): a hash of the collèges and of R0 and R0-naïf. A
   refactor changes none; a change meant to alter the model updates them (`node scripts/refresh-fingerprints.js`) and
   says so in the commit, with the measures before and after.
+- **The page** (since J2): `npm run page`, on port 4805 (4800 to 4806 are the projects'), `web/`, with
+  `mcts-commun/web/theme.css` first, then the Khaki of Notepad++ that Sami prefers to white. What it shows is decided
+  in `src/view/` and tested; `web/` only draws, and builds in a worker.
+- **The changelog is data** (`docs/changelog.json`, then `npm run changelog` writes `web/changelog.html`; a test
+  checks they agree). A version that changes what Sami sees gets an entry, in plain words.
 - **Types come from JSDoc** (`npm run types`); the shapes the modules hand each other are in `src/types.js`.
 - **Commit straight to `main`; push only when Sami asks.** The GitHub repository is his to create, private.
 
@@ -41,9 +46,6 @@ Its line in the roadmap: `mcts-commun/docs/feuille-de-route.md`, § 2.C. Start t
 
 Each of these exists in the other clients; copy it from them when there is something for it to hold, not before.
 
-- **The page**: `npm run page`, `node node_modules/mcts-commun/bin/serve.js 4805` (4800 to 4806 are the projects'),
-  with `mcts-commun/web/theme.css` first. Sami prefers sepia, the Khaki of Notepad++, to white.
-- **The changelog** as data (`docs/changelog.json`, `npm run changelog`), with the first version shown on the page.
 - **The bench** (`npm run bench`, `scripts/search-bench.js`), with the first search; its hot paths do not allocate.
 
 ## The machine

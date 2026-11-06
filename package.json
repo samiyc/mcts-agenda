@@ -1,6 +1,6 @@
 {
   "name": "mcts-agenda",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Les emplois du temps d'un établissement scolaire : les contraintes, la recherche locale, et le replanning qui dérange le moins possible.",
   "type": "module",
@@ -15,7 +15,9 @@
     "types": "tsc -p .",
     "check": "npm run lint && npm run types && npm test",
     "prepare": "git config core.hooksPath .githooks",
-    "compare": "node scripts/compare.js"
+    "compare": "node scripts/compare.js",
+    "page": "node node_modules/mcts-commun/bin/serve.js 4805",
+    "changelog": "node scripts/changelog.js"
   },
   "author": "Sami",
   "license": "UNLICENSED",

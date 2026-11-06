@@ -295,7 +295,7 @@ Rien de tout cela n'est écrit avant que R0 et P1 soient mesurés.
 | Jalon | Ce qu'il livre | Mesuré par |
 |---|---|---|
 | **J1** (fait le 6/11) | les types (`src/types.js`), le générateur de collège par graine, l'évaluateur (dures et souples, pur, testé), R0-naïf et R0 ; les empreintes | R0 contre R0-naïf, par paires, sur S, M, L : [`mesures-j1.md`](mesures-j1.md) |
-| **J2** | les semaines A et B en vrai, les barrettes, les demi-groupes (faits le 6/11) ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges : [`mesures-j2.md`](mesures-j2.md) |
+| **J2** (fait le 6/11) | les semaines A et B en vrai, les barrettes, les demi-groupes ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges : [`mesures-j2.md`](mesures-j2.md) |
 | **J3** | le tabou et le recuit ; le banc (`npm run bench`) | contre R0, par paires |
 | **J4** | la lecture d'XHSTT, l'évaluateur rejoué contre HSEval sur des solutions publiées | l'écart de coût, nul attendu |
 | **J5** | les absences : P0, P1, puis la recherche locale | contre P1, par paires |
@@ -324,11 +324,12 @@ page et sous Node).
 
 ## 10. La page
 
-Au jalon J2, `npm run page` sur le port 4805, `web/theme.css` d'abord, en sépia.
+Depuis J2, `npm run page` sur le port 4805 (http://127.0.0.1:4805/web/), `web/theme.css` d'abord, en sépia. Ce qu'elle
+montre se décide dans `src/view/`, testé ; R0 construit dans un worker.
 
-- **La grille de la semaine**, pour une division, un professeur ou une salle, A et B côte à côte ; un cours non placé
-  ou une contrainte violée en rouge, avec sa raison.
-- **Les coûts**, par contrainte, de R0 et de la recherche, côte à côte.
+- **La grille de la semaine**, pour une division, un professeur ou une salle, A et B côte à côte ; les cours non
+  placés en rouge, avec leurs raisons (fait). Une contrainte violée marquée dans sa case : avec la recherche.
+- **Les coûts**, par contrainte (faits pour R0 et R0-naïf) ; la recherche à côté, à J3.
 - **Un remplacement** (J5) : la journée avant et après, ce qui a changé en couleur, et le lecteur pour suivre la
   semaine d'absences.
 

@@ -1,0 +1,56 @@
+/*
+ * The page's Khaki, from Notepad++'s own theme (themes/khaki.xml: 5F5F00 on D7D7AF), as Sami prefers; the same block
+ * as raquette's. Light in both modes: it comes after the theme, so that it wins over the theme's dark mode too. The
+ * ink is darker than the theme's 5F5F00, which falls short of 7:1 on this background.
+ */
+:root {
+  color-scheme: light;
+  --bg: #d7d7af;
+  --panel: #e8e8cd;
+  --ink: #2f2f00;
+  --ink-2: #4d4d00;
+  --line: #a9a97e;
+  --accent: #5f5f00;
+  --accent-2: #474700;
+  --accent-ink: #ffffff;
+  --masthead: #5f5f00;
+  --masthead-ink: #ffffff;
+  --page: 1500px;
+}
+
+/* The two weeks side by side when there is room, one above the other otherwise. */
+.weeks { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+@media (max-width: 1250px) { .weeks { grid-template-columns: 1fr; } }
+
+table.week { table-layout: fixed; font-size: 0.8rem; }
+table.week th.hour { width: 3.2em; text-align: right; vertical-align: top; }
+table.week td { vertical-align: top; padding: 3px; height: 3.4em; white-space: normal; border-left: 1px solid var(--line); }
+table.week td.lunch { background: color-mix(in srgb, var(--line) 22%, var(--panel)); }
+table.week td.closed { background: repeating-linear-gradient(135deg, var(--panel) 0 6px, color-mix(in srgb, var(--line) 35%, var(--panel)) 6px 7px); }
+table.week tbody tr:hover td { background: inherit; }
+
+.entry { border-radius: 4px; padding: 2px 5px; margin: 0 0 2px; line-height: 1.25; color: var(--ink); border: 1px solid rgb(0 0 0 / 0.12); }
+.entry strong { display: block; font-weight: 600; }
+.entry small { display: block; color: var(--ink-2); font-size: 0.72rem; }
+.entry.cont { opacity: 0.72; }
+
+/* One soft tint per discipline, light enough for the ink to keep its contrast. */
+.d-fr { background: #f3d9a4; }
+.d-ma { background: #c9dcb0; }
+.d-lv1 { background: #e9c8bb; }
+.d-lv2 { background: #dccbe8; }
+.d-hg { background: #efe3b9; }
+.d-svt { background: #b9dcc3; }
+.d-pc { background: #bfd5e6; }
+.d-tech { background: #d8d2c2; }
+.d-arts { background: #edcbdb; }
+.d-mus { background: #e5d6b6; }
+.d-eps { background: #f2c99d; }
+.d-sout { background: #cfe2da; }
+
+.costs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+@media (max-width: 1000px) { .costs { grid-template-columns: 1fr; } }
+.costs td { white-space: normal; }
+.costs tr.bad td { color: #b71c1c; font-weight: 600; }
+.unplaced { color: #b71c1c; padding-left: 22px; }
+.unplaced li { margin: 4px 0; }

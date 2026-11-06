@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agenda</title>
+    <link rel="stylesheet" href="../node_modules/mcts-commun/web/theme.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="importmap">
+      { "imports": { "mcts-commun/": "../node_modules/mcts-commun/src/" } }
+    </script>
+  </head>
+  <body>
+    <header class="masthead">
+      <p class="links"><a href="changelog.html">Journal des versions</a></p>
+      <h1>Agenda</h1>
+      <p>L'emploi du temps d'un collège fictif, tiré par graine : ses divisions, ses professeurs, ses salles et la grille de chaque niveau. Une règle simple le construit ; la recherche viendra la battre.</p>
+    </header>
+    <main>
+      <section class="controls">
+        <label>Collège
+          <select id="size">
+            <option value="S">S : 12 divisions</option>
+            <option value="M" selected>M : 16 divisions</option>
+            <option value="L">L : 24 divisions</option>
+          </select>
+        </label>
+        <label>Graine<input id="seed" type="number" min="1" step="1" value="1" /></label>
+        <label>Règle
+          <select id="rule">
+            <option value="r0">R0 : le plus contraint d'abord</option>
+            <option value="naive">R0-naïf : dans l'ordre</option>
+          </select>
+        </label>
+        <button type="button" id="build">Construire</button>
+      </section>
+      <p class="summary" id="summary" aria-live="polite"></p>
+      <section class="controls">
+        <label>Voir<select id="kind"></select></label>
+        <label>Laquelle, lequel<select id="which"></select></label>
+      </section>
+      <div class="weeks">
+        <section><h2>Semaine A</h2><div class="scroll" id="week-a"></div></section>
+        <section><h2>Semaine B</h2><div class="scroll" id="week-b"></div></section>
+      </div>
+      <section id="unplaced-section" hidden>
+        <h2>Les cours non placés</h2>
+        <ul id="unplaced" class="unplaced"></ul>
+      </section>
+      <h2>Les coûts</h2>
+      <div class="costs" id="costs"></div>
+      <p class="hint">
+        <strong>Comment lire.</strong> Une heure par ligne, de 8 h à 16 h ; le mercredi s'arrête à midi. La ligne de midi reste libre : c'est la pause méridienne.
+        Les demi-heures de la grille se font une semaine sur deux, d'où les semaines A et B.
+        Deux cours dans une même case : deux groupes au même créneau, une barrette. En LV2 et en soutien de 6e, deux divisions forment deux groupes ; en sciences, une moitié de la division fait de la SVT pendant que l'autre fait de la physique-chimie, puis l'inverse la semaine suivante.
+        « (suite) » : la seconde heure d'un bloc de 2 h. Les professeurs n'ont pas de nom : leur matière et un numéro.
+        Le détail du modèle et de ses hypothèses : <code>docs/modele.md</code>.
+      </p>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

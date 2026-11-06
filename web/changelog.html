@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Journal des versions</title>
+    <link rel="stylesheet" href="../node_modules/mcts-commun/web/theme.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="changelog.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <p class="links"><a href="index.html">← l'emploi du temps</a></p>
+      <h1>Agenda : journal des versions</h1>
+      <p>Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.</p>
+    </header>
+    <main class="changelog">
+      <section>
+        <h2>Les versions</h2>
+
+      <article class="version">
+        <h3><span class="tag">0.2.0</span> Les barrettes, les demi-groupes et la page <span class="date">6/11/2026</span></h3>
+        <ul>
+          <li>La page : l'emploi du temps d'une division, d'un professeur ou d'une salle, les semaines A et B côte à côte, avec les coûts et les cours non placés.</li>
+          <li>La LV2 et le soutien de 6e se font en barrettes : deux divisions au même créneau, en deux groupes (espagnol et allemand, ou français et maths).</li>
+          <li>En sciences, une moitié de la division fait de la SVT pendant que l'autre fait de la physique-chimie, puis l'inverse la semaine suivante.</li>
+          <li>R0 laisse un cours sur 1 à 3 collèges sur 30, contre 2 à 5 auparavant. Il met deux fois plus de temps : 6,6 s pour un grand collège.</li>
+        </ul>
+        <p class="commits"><code>ff60ad5</code> <code>5ba576c</code></p>
+      </article>
+
+      <article class="version">
+        <h3><span class="tag">0.1.0</span> Le collège, ses contraintes et la règle à battre <span class="date">6/11/2026</span></h3>
+        <ul>
+          <li>Un collège fictif tiré par graine, en trois tailles : ses divisions, ses professeurs avec leurs services, ses salles et la grille officielle de chaque niveau.</li>
+          <li>L'évaluation d'un emploi du temps : les contraintes dures d'abord (rien de non placé, pas de conflit, la pause de midi), puis les souples (les trous, les vœux, les matières lourdes le matin).</li>
+          <li>R0, la règle simple que la recherche devra battre : placer d'abord le cours qui a le moins de créneaux possibles. Elle place presque tout, quand la règle naïve laisse 12 à 22 cours.</li>
+        </ul>
+        <p class="commits"><code>2059c19</code> <code>b2017ed</code></p>
+      </article>
+
+      <article class="version">
+        <h3><span class="tag">0.0.1</span> Le cadrage <span class="date">6/11/2026</span></h3>
+        <ul>
+          <li>Le modèle, les règles à battre, les mesures par paires et les bancs publics, avant toute ligne de code.</li>
+          <li>Les sources lues, le glossaire du collège, et les questions pour Sami et pour un principal adjoint.</li>
+        </ul>
+        <p class="commits"><code>c768e1c</code> <code>c051d63</code></p>
+      </article>
+      </section>
+      <p class="hint">Le détail, les chiffres et leurs sources sont dans <code>docs/modele.md</code>, <code>docs/mesures-j1.md</code> et <code>docs/mesures-j2.md</code>.</p>
+    </main>
+  </body>
+</html>

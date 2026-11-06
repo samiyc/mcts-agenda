@@ -11,6 +11,7 @@ Client de [`mcts-commun`](../mcts-commun/README.md). La recherche sera choisie p
 place presque tout (un cours laissé sur 2 à 5 collèges sur 30), R0-naïf en laisse 12 à 22. J2 a ajouté les barrettes
 (la LV2 et le soutien de 6e par paires de divisions) et les demi-groupes de sciences, alternés sur les semaines A et B
 (`src/school/courses.js`) ; R0 y laisse un cours sur 1 à 3 collèges sur 30 ([`docs/mesures-j2.md`](docs/mesures-j2.md)).
+La page (`npm run page`) montre la semaine d'une division, d'un professeur ou d'une salle.
 - [`docs/modele.md`](docs/modele.md) : un collège fictif tiré par graine, ses contraintes dures et souples, les
   absences et le replanning, les règles à battre (le glouton R0, le remplacement P1), les mesures par paires, les bancs
   publics (XHSTT-2014 d'ITC 2011, puis ITC 2019), ce qu'on prend de la lib, les jalons J1 à J6 ;
@@ -27,6 +28,8 @@ place presque tout (un cours laissé sur 2 à 5 collèges sur 30), R0-naïf en l
 | `npm run types` | tsc vérifie le JavaScript d'après ses commentaires JSDoc, sans rien compiler |
 | `npm test` (`test:coverage`) | les tests de `node --test`, dont la longueur des `.md` et les empreintes |
 | `npm run compare -- --sizes S,M,L --n 30 --from 1001` | R0 contre R0-naïf par paires sur les mêmes collèges, et le témoin A/A ; `--json F` garde les lignes |
+| `npm run page` | la page sur http://127.0.0.1:4805/web/ : l'emploi du temps d'une division, d'un professeur ou d'une salle, les coûts |
+| `npm run changelog` | réécrit `web/changelog.html` depuis `docs/changelog.json` |
 | `node scripts/refresh-fingerprints.js` | réécrit les empreintes, pour un changement voulu du modèle (le commit le dit, mesures avant et après) |
 
 Les règles du dépôt sont dans [`CLAUDE.md`](CLAUDE.md).

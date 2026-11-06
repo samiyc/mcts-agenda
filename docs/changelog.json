@@ -1,0 +1,40 @@
+{
+  "name": "Agenda",
+  "back": "l'emploi du temps",
+  "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
+  "versions": [
+    {
+      "version": "0.2.0",
+      "title": "Les barrettes, les demi-groupes et la page",
+      "date": "6/11/2026",
+      "commits": ["ff60ad5", "5ba576c"],
+      "items": [
+        "La page : l'emploi du temps d'une division, d'un professeur ou d'une salle, les semaines A et B côte à côte, avec les coûts et les cours non placés.",
+        "La LV2 et le soutien de 6e se font en barrettes : deux divisions au même créneau, en deux groupes (espagnol et allemand, ou français et maths).",
+        "En sciences, une moitié de la division fait de la SVT pendant que l'autre fait de la physique-chimie, puis l'inverse la semaine suivante.",
+        "R0 laisse un cours sur 1 à 3 collèges sur 30, contre 2 à 5 auparavant. Il met deux fois plus de temps : 6,6 s pour un grand collège."
+      ]
+    },
+    {
+      "version": "0.1.0",
+      "title": "Le collège, ses contraintes et la règle à battre",
+      "date": "6/11/2026",
+      "commits": ["2059c19", "b2017ed"],
+      "items": [
+        "Un collège fictif tiré par graine, en trois tailles : ses divisions, ses professeurs avec leurs services, ses salles et la grille officielle de chaque niveau.",
+        "L'évaluation d'un emploi du temps : les contraintes dures d'abord (rien de non placé, pas de conflit, la pause de midi), puis les souples (les trous, les vœux, les matières lourdes le matin).",
+        "R0, la règle simple que la recherche devra battre : placer d'abord le cours qui a le moins de créneaux possibles. Elle place presque tout, quand la règle naïve laisse 12 à 22 cours."
+      ]
+    },
+    {
+      "version": "0.0.1",
+      "title": "Le cadrage",
+      "date": "6/11/2026",
+      "commits": ["c768e1c", "c051d63"],
+      "items": [
+        "Le modèle, les règles à battre, les mesures par paires et les bancs publics, avant toute ligne de code.",
+        "Les sources lues, le glossaire du collège, et les questions pour Sami et pour un principal adjoint."
+      ]
+    }
+  ]
+}
