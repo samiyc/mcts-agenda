@@ -31,6 +31,9 @@ Its line in the roadmap: `mcts-commun/docs/feuille-de-route.md`, § 2.C. Start t
   `TEST_CONCURRENCY=2` while measures run): lint, types, tests. Never skip the hook.
 - **The lint budget is lopin's** (`eslint.config.js`: 40 lines a function, 220 a file, complexity 8): a module that
   outgrows it is split along its seams, the limit is never raised.
+- **The fingerprints** (`tests/fingerprint.test.js`, since J1): a hash of the collèges and of R0 and R0-naïf. A
+  refactor changes none; a change meant to alter the model updates them (`node scripts/refresh-fingerprints.js`) and
+  says so in the commit, with the measures before and after.
 - **Types come from JSDoc** (`npm run types`); the shapes the modules hand each other are in `src/types.js`.
 - **Commit straight to `main`; push only when Sami asks.** The GitHub repository is his to create, private.
 
@@ -38,9 +41,6 @@ Its line in the roadmap: `mcts-commun/docs/feuille-de-route.md`, § 2.C. Start t
 
 Each of these exists in the other clients; copy it from them when there is something for it to hold, not before.
 
-- **The fingerprints** (`tests/fingerprint.test.js`), with the first model: a hash of what the model does. A refactor
-  changes none; a change meant to alter the model updates its hash and says so in the commit, with the measures before
-  and after.
 - **The page**: `npm run page`, `node node_modules/mcts-commun/bin/serve.js 4805` (4800 to 4806 are the projects'),
   with `mcts-commun/web/theme.css` first. Sami prefers sepia, the Khaki of Notepad++, to white.
 - **The changelog** as data (`docs/changelog.json`, `npm run changelog`), with the first version shown on the page.

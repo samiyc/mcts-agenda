@@ -41,15 +41,18 @@ Une valeur marquée **H** est une hypothèse, avec sa question dans [`recherche/
 
 **L'établissement** est un collège public fictif, tiré par graine. Au départ (**H**, Q-S1) :
 
-| Taille | Divisions | Élèves | Professeurs (environ) | Salles ordinaires | Salles spécialisées |
-|---|---|---|---|---|---|
-| S | 12 (3 par niveau) | 330 | 22 | 13 | 5 |
-| M | 16 (4 par niveau) | 440 | 28 | 17 | 6 |
-| L | 24 (6 par niveau) | 660 | 42 | 25 | 8 |
+| Taille | Divisions | Élèves (environ) | Professeurs (graine 1) | Cours | Salles ordinaires | Salles spécialisées (graine 1) |
+|---|---|---|---|---|---|---|
+| S | 12 (3 par niveau) | 330 | 23 | 330 | 13 | 8 |
+| M | 16 (4 par niveau) | 440 | 29 | 440 | 17 | 11 |
+| L | 24 (6 par niveau) | 660 | 42 | 660 | 25 | 16 |
 
 Les effectifs sont tirés de 24 à 30 élèves par division (**H**). Le nombre de professeurs suit des heures à couvrir
-(§ 2.3) ; les salles spécialisées sont les laboratoires de SVT et de physique-chimie, la technologie, les arts
-plastiques, la musique, une salle informatique et le gymnase.
+(§ 2.3). Les salles spécialisées sont les laboratoires de SVT et de physique-chimie, la technologie, les arts
+plastiques, la musique et le gymnase (un « gymnase » est un espace qui reçoit une division) ; leur nombre suit les
+heures de la semaine la plus chargée, la salle occupée la moitié de la semaine au plus (**H**). Le collège M de la
+graine 1 a 3 gymnases, 2 laboratoires de chaque sorte et une salle de chacune des autres. Pas de salle informatique au
+départ : aucune discipline de la grille ne la demande.
 
 ### 2.1 La semaine
 
@@ -59,7 +62,9 @@ plastiques, la musique, une salle informatique et le gymnase.
 - **Les créneaux** d'une heure, de 8 h à 17 h, soit 9 par jour, le lundi, le mardi, le jeudi et le vendredi, et 4 le
   mercredi matin : 40 créneaux par semaine, 80 sur A et B (**H**, Q-P6). Le mercredi après-midi est libre (**H**).
 - **La pause méridienne** : chaque division a au moins deux créneaux libres consécutifs entre 11 h et 14 h, soit
-  2 h, plus que les 1 h 30 du texte. Avec des créneaux d'une heure, 1 h 30 se lit ainsi (**H**, Q-P6).
+  2 h, plus que les 1 h 30 du texte. Avec des créneaux d'une heure, 1 h 30 se lit ainsi (**H**, Q-P6). Conséquence
+  vue en écrivant J1 : **le créneau de midi est toujours libre** pour toutes les divisions (deux créneaux libres de
+  suite parmi 11 h, 12 h et 13 h le contiennent forcément) ; la journée a donc 8 créneaux utiles, 4 le mercredi.
 - **Ni vie de classe ni accompagnement aux devoirs** au départ : les 10 heures annuelles de vie de classe se placent
   à la main en pratique (**H**).
 
@@ -108,7 +113,7 @@ services de 15 à 18 h font environ 24 professeurs pleins, 28 avec les services 
 
 Un **cours** est l'unité qu'on place : une division (ou un groupe), une discipline, un professeur, une durée (1 ou
 2 créneaux), ses semaines (`AB`, `A`, `B`) et le type de salle qu'il demande. On lui choisit un créneau de départ et
-une salle. Le collège M en a environ 400 (**H**).
+une salle. Le collège M en a 440 (§ 2).
 
 - **L'EPS en blocs de 2 heures** (Sami, 6/11 : « le sport est sur 2 h une fois par semaine, à vérifier » ; vérifié
   dans `sources.md` § 2) : **au cycle 4, un bloc de 2 h et une heure seule**, un autre jour ; **en 6e, deux blocs de
@@ -272,7 +277,7 @@ Rien de tout cela n'est écrit avant que R0 et P1 soient mesurés.
 
 | Jalon | Ce qu'il livre | Mesuré par |
 |---|---|---|
-| **J1** | les types (`src/types.js`), le générateur de collège par graine, l'évaluateur (dures et souples, pur, testé), R0-naïf et R0 ; les empreintes | R0 contre R0-naïf, par paires, sur S, M, L |
+| **J1** (fait le 6/11) | les types (`src/types.js`), le générateur de collège par graine, l'évaluateur (dures et souples, pur, testé), R0-naïf et R0 ; les empreintes | R0 contre R0-naïf, par paires, sur S, M, L : [`mesures-j1.md`](mesures-j1.md) |
 | **J2** | les semaines A et B en vrai, les barrettes, les demi-groupes ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges |
 | **J3** | le tabou et le recuit ; le banc (`npm run bench`) | contre R0, par paires |
 | **J4** | la lecture d'XHSTT, l'évaluateur rejoué contre HSEval sur des solutions publiées | l'écart de coût, nul attendu |
