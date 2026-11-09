@@ -58,6 +58,7 @@ Ce qui n'a pas de source est une hypothèse (**H**) dans [`../modele.md`](../mod
 | Les recommandations de 2025 | réduire les absences institutionnelles (réunions, formations), la bivalence au collège dès la rentrée 2026, mieux mesurer le temps perdu | idem, 2025 | résumé |
 | Le cadre du remplacement court | décret n° 2023-732 du 8/08/2023 : un plan annuel du chef d'établissement, en concertation avec les équipes ; les volontaires d'abord ; des heures d'enseignement de préférence ; un référent académique | Eduscol ; presse | résumé (Légifrance refusé) |
 | Une mission de remplacement du Pacte | la moitié d'une mission, soit 9 heures | le ministère, cité par une recherche | résumé |
+| Le taux du remplacement court depuis le Pacte | 13 % des heures en 2024-2025 (10,5 % et 4,5 % les deux années d'avant) ; 12,7 % au national et 16,7 % dans l'académie de Lille de septembre 2024 à mai 2025, 19,4 % dans ses collèges ; 2,5 millions d'heures en 2024-2025 | le bilan annuel du ministère aux syndicats, relayé par l'AEF (revue de presse de l'académie de Normandie, 9/7/2025) et le SGEN-CFDT (bilans des plans de remplacement, 2024 et 2025) | résumé (recherche du 9/11/2026), de seconde main : à vérifier dans le bilan officiel |
 | L'ordre d'un protocole d'établissement | un professeur de l'équipe pédagogique, puis de l'équipe disciplinaire, pour les absences prévisibles de 15 jours ou moins | protocole d'un collège de La Réunion, 2021-2022 (avant le décret de 2023) | résumé |
 
 ## 5. Les logiciels

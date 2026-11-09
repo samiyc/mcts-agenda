@@ -182,7 +182,12 @@ quand on l'apprend.
 
 - **Les absences** (**H**, Q-P17) : chaque professeur manque en moyenne un jour par mois. Deux absences sur trois sont
   connues d'avance (une formation, une réunion, une sortie scolaire), une sur trois le matin même (une maladie). Elles
-  durent 1 à 3 jours, et leur durée n'est pas toujours connue quand on décide.
+  durent 1 à 3 jours, et leur durée n'est pas toujours connue quand on décide (à J5, elle l'est dès que l'absence
+  l'est ; J6 lève cette facilité). Le code : `src/absence/scenario.js`.
+- **Les volontaires** (**H**, Q-P14) : un professeur sur cinq. Le Pacte paie le remplacement court jusqu'à 18 heures
+  par an, une demi-heure par semaine : chaque semaine, un volontaire sur quatre peut donner 2 heures, les autres
+  rien. P1 remplace alors 10 à 30 % des heures perdues, l'ordre des taux publiés : 13 % en 2024-2025, 13 à 19 % en
+  collège (`recherche/sources.md` § 4). Avec 5 heures par semaine pour chaque volontaire, P1 en remplaçait 85 %.
 - **La veille au soir** (vers 18 h, **H**) : on peut toucher toute la journée du lendemain, et prévenir un collègue.
 - **Le matin même** (vers 7 h 30, **H**) : seuls les cours qui n'ont pas commencé bougent, et seuls les professeurs
   déjà au collège ce jour-là peuvent remplacer, sauf un volontaire qui accepte de venir (**H**, Q-P12).
@@ -193,6 +198,8 @@ quand on l'apprend.
    classe. C'est une heure supplémentaire pour lui. Le décret de 2023 demande d'abord des volontaires (le Pacte).
 2. **Échanger** : avancer dans le trou le cours d'un professeur présent pour la même division, si son professeur et
    une salle sont libres. L'heure perdue glisse vers la fin de journée, ou disparaît si l'absent rattrape plus tard.
+   **Rattraper** : déplacer le cours perdu à un autre créneau de la semaine où son professeur est revenu, ses élèves
+   et une salle libres, la pause et les 6 h de la 6e tenues. C'est le seul échange qui sauve l'heure.
 3. **Une étude** : la classe en permanence, sous la surveillance de la vie scolaire, dans la limite de ses
    surveillants (**H**, deux études à la fois).
 4. **Libérer les élèves**, en fin de journée seulement, avec l'autorisation des familles (**H**).
@@ -230,11 +237,16 @@ libre), montre que R0 n'est pas trivial à battre.
 - **P0, le statu quo** : chaque cours sans professeur devient une étude. C'est ce qui arrive le plus souvent : 80 %
   des heures d'absences courtes n'étaient pas remplacées en 2018-2019.
 - **P1** : les cours sans professeur, dans l'ordre du temps. Pour chacun : un collègue volontaire de la même
-  discipline, libre, qui a fait le moins d'heures de remplacement cette semaine ; sinon un collègue de l'équipe de la
-  classe ; sinon l'échange qui ne crée aucune violation dure et ajoute le moins de coût ; sinon une étude. P1 ne touche
-  qu'au jour de l'absence.
+  discipline, libre, qui a fait le moins d'heures de remplacement cette semaine ; sinon un volontaire de l'équipe de la
+  classe ; sinon une étude. P1 ne touche qu'au jour de l'absence. Le code : `src/absence/rules.js`.
+- **L'échange retiré de P1** (J5) : avancer un autre cours dans le trou ne sauve aucune heure, il déplace le trou et
+  ajoute un changement ; sous notre score, P1 ne le choisirait jamais. Le rattrapage, qui sauve l'heure, touche
+  d'autres jours que celui de l'absence : c'est un mouvement de la recherche.
+- **Le matin**, seuls les volontaires déjà au collège ce jour-là remplacent (**H**, la lecture stricte de Q-P12).
 
-Une recherche de replanning doit battre **P1**, pas seulement P0.
+Une recherche de replanning doit battre **P1**, pas seulement P0. Le coût souple (le 3e critère du score) n'est pas
+encore compté à J5 : les mouvements tiennent les contraintes dures, et le score s'arrête aux heures perdues, aux
+changements et aux remplacements.
 
 ## 6. Les mesures
 

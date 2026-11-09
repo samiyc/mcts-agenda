@@ -20,7 +20,8 @@
     "changelog": "node scripts/changelog.js",
     "bench": "node scripts/search-bench.js",
     "xhstt": "node scripts/xhstt-check.js",
-    "replan": "node scripts/replan-compare.js"
+    "replan": "node scripts/replan-compare.js",
+    "tune": "node scripts/search-tune.js"
   },
   "author": "Sami",
   "license": "UNLICENSED",

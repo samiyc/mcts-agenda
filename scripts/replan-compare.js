@@ -4,7 +4,8 @@ import { paired } from "mcts-commun/measure.js";
 import { buildGreedy } from "../src/build/greedy.js";
 import { p0, p1 } from "../src/absence/rules.js";
 import { runWeek } from "../src/absence/run.js";
-import { drawWeek } from "../src/absence/scenario.js";
+import { drawWeek, volunteersOf } from "../src/absence/scenario.js";
+import { anneal } from "../src/search/anneal.js";
 import { replanSearch } from "../src/absence/search.js";
 import { createSchool } from "../src/school/generate.js";
 
@@ -15,6 +16,10 @@ import { createSchool } from "../src/school/generate.js";
  * search at each budget of `--tries` (moves a moment), and the A/A witness, the first search with another seed.
  *
  *   node scripts/replan-compare.js --sizes M --n 30 --from 1001 --weeks 30 --tries 20000,200000 [--json tmp/replan.json]
+ *
+ * Variants: `--place anneal` puts in place the timetable of the annealing from R0's (2,8 million slots tried, about
+ * 20 s, J3's budget) instead of R0's; `--hours H` gives every volunteer H hours every week instead of the drawn ones
+ * (0: no replacement at all).
  */
 const { values } = parseArgs({
   options: {
@@ -24,8 +29,11 @@ const { values } = parseArgs({
     weeks: { type: "string", default: "30" },
     tries: { type: "string", default: "20000,200000" },
     json: { type: "string" },
+    place: { type: "string", default: "r0" },
+    hours: { type: "string" },
   },
 });
+const PLACE_TRIES = 2800000;
 const KEYS = ["lost", "changes", "replaced", "mostReplaced", "over", "ms"];
 const WITNESS_OFFSET = 500000;
 
@@ -39,13 +47,27 @@ function rulesOf(seed) {
   };
 }
 
+/** The timetable in place: R0's, or the annealing's from it. */
+function inPlace(school, seed) {
+  const built = buildGreedy(school, { seed }).timetable;
+  return values.place === "anneal" ? anneal(school, built, { seed, tries: PLACE_TRIES }).timetable : built;
+}
+
+/** Week `k` of a collège, its volunteers' hours replaced when `--hours` says so. */
+function scenarioOf(school, volunteers, seed) {
+  const scenario = drawWeek(school, seed);
+  if (values.hours !== undefined) scenario.budget = Uint8Array.from(volunteers, (v) => v * Number(values.hours));
+  return scenario;
+}
+
 /** A collège's means over its weeks, rule by rule. */
 function runSchool(size, seed) {
   const school = createSchool({ size, seed });
-  const { timetable } = buildGreedy(school, { seed });
+  const timetable = inPlace(school, seed);
+  const volunteers = volunteersOf(school);
   const sums = {};
   for (let k = 1; k <= Number(values.weeks); k += 1) {
-    const scenario = drawWeek(school, seed * 1000 + k);
+    const scenario = scenarioOf(school, volunteers, seed * 1000 + k);
     for (const [name, make] of Object.entries(rulesOf(seed * 1000 + k))) {
       const start = performance.now();
       const { score } = runWeek(school, timetable, scenario, make());
@@ -63,7 +85,9 @@ const gap = ({ mean: m, low, high }) => `${fmt(m)} (${fmt(low)} à ${fmt(high)})
 function report(size, rows) {
   const of = (name, key) => rows.map((row) => row[name][key]);
   const names = Object.keys(rows[0]);
-  const lines = [`## ${size} : ${rows.length} collèges, ${values.weeks} semaines chacun (moyennes par semaine)`];
+  const hours = values.hours === undefined ? "" : ", " + values.hours + " h par volontaire chaque semaine";
+  const variant = `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${hours}`;
+  const lines = [`## ${size} : ${rows.length} collèges, ${values.weeks} semaines chacun (moyennes par semaine) ; ${variant}`];
   for (const name of names) lines.push(`- ${name} : perdues ${fmt(mean(of(name, "lost")))} h, changées ${fmt(mean(of(name, "changes")))}, remplacées ${fmt(mean(of(name, "replaced")))} h (au plus ${fmt(mean(of(name, "mostReplaced")))}), études en trop ${fmt(mean(of(name, "over")))}, ${fmt(mean(of(name, "ms")))} ms`);
   const searches = names.filter((name) => name.startsWith("R "));
   const pairs = [["P1", "P0"], ...searches.map((name) => [name, "P1"]), [searches[0], "témoin"]];
