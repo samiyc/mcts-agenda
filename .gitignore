@@ -37,3 +37,4 @@ tmp/
 replays/
 # The traces of mcts-commun (MCTS_TRACE=1) and the page server's failed requests.
 logs/
+data/

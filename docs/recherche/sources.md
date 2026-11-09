@@ -82,7 +82,8 @@ critères.
 | Taille des instances | de 25 à 148 créneaux ; Kottenpark 2003 (Pays-Bas) : 38 créneaux, 75 professeurs, 1 203 heures de cours ; les écoles finlandaises : 35 à 40 créneaux, 18 à 46 professeurs | idem | texte (des colonnes de tableau mal alignées à l'extraction : les ordres de grandeur sont sûrs, pas chaque case) |
 | L'archive à prendre | XHSTT-2014 : 25 instances, 12 pays (17/03/2014) ; une archive de 48 instances, mise à jour le 16/11/2022 ; aucune de France | pages « archives » et « datasets » de Twente | texte (par l'outil de lecture) |
 | Le format | des créneaux, des ressources (professeurs, salles, classes, élèves), des événements, et des contraintes ; les contraintes « Required » vont à l'infaisabilité, les autres au coût, chacune avec son poids | tutoriel XHSTT, Twente | texte (par l'outil) |
-| L'évaluateur | HSEval, de Jeff Kingston, en ligne ; les meilleures solutions et leurs bornes publiées | page d'accueil HSTT, Twente | texte (le serveur d'HSEval a refusé la connexion le 6/11) |
+| L'évaluateur | HSEval, de Jeff Kingston, en ligne ; les meilleures solutions et leurs bornes publiées | page d'accueil HSTT, Twente ; la spécification d'HSEval 2.8 (mars 2023), `jeffreykingston.id.au/cgi-bin/hseval.cgi?op=spec` | texte : la spécification lue en entière le 9/11 (les instances, les solutions, les rapports, les seize contraintes) |
+| Les solutions publiées | 49 instances et 160 solutions (`ALL_INSTANCES.zip`), dont 18 avec le rapport d'HSEval ; la page de chaque instance donne l'infaisabilité et l'objectif de chaque solution | archives et pages « datasets » de Twente | les fichiers, lus par notre évaluateur (`mesures-j4.md`) |
 | L'article de référence | Post, Kingston, Ahmadi, Daskalaki et al., « XHSTT: an XML archive for high school timetabling problems in different countries », Annals of OR 218 (2014) 295-301 | IDEAS, Springer | résumé |
 
 ### ITC 2019

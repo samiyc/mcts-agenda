@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A tiny XHSTT archive written for the tests (tests/xhstt.test.js): every type of constraint is violated once, by
+     a deviation worked out by hand from the specification; the expected costs are in the test. -->
+<HighSchoolTimetableArchive Id="Small">
+  <Instances>
+    <Instance Id="Small1">
+      <MetaData><Name>Small &amp; tiny</Name><Contributor>agenda</Contributor><Date>2026-11-09</Date><Country>-</Country><Description><![CDATA[Two days <of four times>]]></Description></MetaData>
+      <Times>
+        <TimeGroups>
+          <Day Id="Monday"><Name>Monday</Name></Day>
+          <Day Id="Tuesday"><Name>Tuesday</Name></Day>
+        </TimeGroups>
+        <Time Id="Mo1"><Name>Mo1</Name><Day Reference="Monday"/></Time>
+        <Time Id="Mo2"><Name>Mo2</Name><Day Reference="Monday"/></Time>
+        <Time Id="Mo3"><Name>Mo3</Name><Day Reference="Monday"/></Time>
+        <Time Id="Mo4"><Name>Mo4</Name><Day Reference="Monday"/></Time>
+        <Time Id="Tu1"><Name>Tu1</Name><Day Reference="Tuesday"/></Time>
+        <Time Id="Tu2"><Name>Tu2</Name><Day Reference="Tuesday"/></Time>
+        <Time Id="Tu3"><Name>Tu3</Name><Day Reference="Tuesday"/></Time>
+        <Time Id="Tu4"><Name>Tu4</Name><Day Reference="Tuesday"/></Time>
+      </Times>
+      <Resources>
+        <ResourceTypes>
+          <ResourceType Id="Teacher"><Name>Teacher</Name></ResourceType>
+          <ResourceType Id="Class"><Name>Class</Name></ResourceType>
+          <ResourceType Id="Room"><Name>Room</Name></ResourceType>
+        </ResourceTypes>
+        <ResourceGroups>
+          <ResourceGroup Id="Teachers"><Name>Teachers</Name><ResourceType Reference="Teacher"/></ResourceGroup>
+        </ResourceGroups>
+        <Resource Id="T1"><Name>T1</Name><ResourceType Reference="Teacher"/><ResourceGroups><ResourceGroup Reference="Teachers"/></ResourceGroups></Resource>
+        <Resource Id="T2"><Name>T2</Name><ResourceType Reference="Teacher"/><ResourceGroups><ResourceGroup Reference="Teachers"/></ResourceGroups></Resource>
+        <Resource Id="C1"><Name>C1</Name><ResourceType Reference="Class"/></Resource>
+        <Resource Id="C2"><Name>C2</Name><ResourceType Reference="Class"/></Resource>
+        <Resource Id="R1"><Name>R1</Name><ResourceType Reference="Room"/></Resource>
+        <Resource Id="R2"><Name>R2</Name><ResourceType Reference="Room"/></Resource>
+      </Resources>
+      <Events>
+        <EventGroups>
+          <Course Id="K1"><Name>K1</Name></Course>
+          <EventGroup Id="All"><Name>All</Name></EventGroup>
+          <EventGroup Id="Linked"><Name>Linked</Name></EventGroup>
+        </EventGroups>
+        <Event Id="E1">
+          <Name>E1</Name><Duration>2</Duration><Course Reference="K1"/>
+          <Resources>
+            <Resource Reference="C1"><Role>Class</Role><ResourceType Reference="Class"/></Resource>
+            <Resource><Role>Teacher</Role><ResourceType Reference="Teacher"/></Resource>
+            <Resource><Role>Room</Role><ResourceType Reference="Room"/></Resource>
+          </Resources>
+          <EventGroups><EventGroup Reference="All"/><EventGroup Reference="K1"/></EventGroups>
+        </Event>
+        <Event Id="E2">
+          <Name>E2</Name><Duration>2</Duration><Course Reference="K1"/>
+          <Resources>
+            <Resource Reference="C1"><Role>Class</Role></Resource>
+            <Resource Reference="T1"><Role>Teacher</Role></Resource>
+          </Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+        <Event Id="E3">
+          <Name>E3</Name><Duration>1</Duration><Time Reference="Tu1"/>
+          <Resources><Resource Reference="C2"/><Resource Reference="T1"/></Resources>
+          <EventGroups><EventGroup Reference="All"/><EventGroup Reference="Linked"/></EventGroups>
+        </Event>
+        <Event Id="E4">
+          <Name>E4</Name><Duration>1</Duration><Workload>3</Workload>
+          <Resources><Resource Reference="C2"/><Resource Reference="T2"/></Resources>
+          <EventGroups><EventGroup Reference="All"/><EventGroup Reference="Linked"/></EventGroups>
+        </Event>
+        <Event Id="E5">
+          <Name>E5</Name><Duration>1</Duration>
+          <Resources><Resource Reference="C2"/><Resource Reference="T1"/></Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+      </Events>
+      <Constraints>
+        <AssignTimeConstraint Id="assignTime">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="All"/></EventGroups><Events><Event Reference="E5"/></Events></AppliesTo>
+        </AssignTimeConstraint>
+        <AssignResourceConstraint Id="assignTeacher">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E1"/><Event Reference="E2"/></Events></AppliesTo>
+          <Role>Teacher</Role>
+        </AssignResourceConstraint>
+        <SplitEventsConstraint Id="split">
+          <Name>a</Name><Required>false</Required><Weight>2</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E1"/></Events></AppliesTo>
+          <MinimumDuration>1</MinimumDuration><MaximumDuration>1</MaximumDuration><MinimumAmount>3</MinimumAmount><MaximumAmount>3</MaximumAmount>
+        </SplitEventsConstraint>
+        <DistributeSplitEventsConstraint Id="distribute">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E2"/></Events></AppliesTo>
+          <Duration>1</Duration><Minimum>2</Minimum><Maximum>2</Maximum>
+        </DistributeSplitEventsConstraint>
+        <PreferResourcesConstraint Id="preferRoom">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E1"/></Events></AppliesTo>
+          <Resources><Resource Reference="R1"/></Resources>
+          <Role>Room</Role>
+        </PreferResourcesConstraint>
+        <PreferTimesConstraint Id="preferMonday">
+          <Name>a</Name><Required>false</Required><Weight>3</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E1"/><Event Reference="E2"/><Event Reference="E3"/><Event Reference="E4"/></Events></AppliesTo>
+          <TimeGroups><TimeGroup Reference="Monday"/></TimeGroups>
+        </PreferTimesConstraint>
+        <AvoidSplitAssignmentsConstraint Id="sameTeacher">
+          <Name>a</Name><Required>false</Required><Weight>5</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="K1"/></EventGroups></AppliesTo>
+          <Role>Teacher</Role>
+        </AvoidSplitAssignmentsConstraint>
+        <SpreadEventsConstraint Id="spread">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="K1"/></EventGroups></AppliesTo>
+          <TimeGroups>
+            <TimeGroup Reference="Monday"><Minimum>1</Minimum><Maximum>1</Maximum></TimeGroup>
+            <TimeGroup Reference="Tuesday"><Minimum>1</Minimum><Maximum>1</Maximum></TimeGroup>
+          </TimeGroups>
+        </SpreadEventsConstraint>
+        <LinkEventsConstraint Id="link">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Step</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="Linked"/></EventGroups></AppliesTo>
+        </LinkEventsConstraint>
+        <OrderEventsConstraint Id="order">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventPairs><EventPair><FirstEvent Reference="E1"/><SecondEvent Reference="E4"/><MaxSeparation>0</MaxSeparation></EventPair></EventPairs></AppliesTo>
+        </OrderEventsConstraint>
+        <AvoidClashesConstraint Id="clashes">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><ResourceGroups><ResourceGroup Reference="Teachers"/></ResourceGroups><Resources><Resource Reference="C1"/><Resource Reference="C2"/></Resources></AppliesTo>
+        </AvoidClashesConstraint>
+        <AvoidUnavailableTimesConstraint Id="unavailable">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Resources><Resource Reference="T2"/></Resources></AppliesTo>
+          <Times><Time Reference="Mo1"/></Times>
+        </AvoidUnavailableTimesConstraint>
+        <LimitIdleTimesConstraint Id="idle">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Resources><Resource Reference="C1"/></Resources></AppliesTo>
+          <TimeGroups><TimeGroup Reference="Monday"/><TimeGroup Reference="Tuesday"/></TimeGroups>
+          <Minimum>0</Minimum><Maximum>0</Maximum>
+        </LimitIdleTimesConstraint>
+        <ClusterBusyTimesConstraint Id="days">
+          <Name>a</Name><Required>false</Required><Weight>2</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Resources><Resource Reference="T1"/></Resources></AppliesTo>
+          <TimeGroups><TimeGroup Reference="Monday"/><TimeGroup Reference="Tuesday"/></TimeGroups>
+          <Minimum>0</Minimum><Maximum>1</Maximum>
+        </ClusterBusyTimesConstraint>
+        <LimitBusyTimesConstraint Id="busy">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Quadratic</CostFunction>
+          <AppliesTo><Resources><Resource Reference="C2"/></Resources></AppliesTo>
+          <TimeGroups><TimeGroup Reference="Monday"/><TimeGroup Reference="Tuesday"/></TimeGroups>
+          <Minimum>4</Minimum><Maximum>4</Maximum>
+        </LimitBusyTimesConstraint>
+        <LimitWorkloadConstraint Id="workload">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Resources><Resource Reference="T2"/></Resources></AppliesTo>
+          <Minimum>0</Minimum><Maximum>2</Maximum>
+        </LimitWorkloadConstraint>
+      </Constraints>
+    </Instance>
+  </Instances>
+  <SolutionGroups>
+    <SolutionGroup Id="ByHand">
+      <MetaData><Contributor>agenda</Contributor><Date>2026-11-09</Date><Description>by hand</Description></MetaData>
+      <Solution Reference="Small1">
+        <Events>
+          <Event Reference="E1">
+            <Duration>1</Duration><Time Reference="Mo1"/>
+            <Resources><Resource Reference="T2"><Role>Teacher</Role></Resource><Resource Reference="R2"><Role>Room</Role></Resource></Resources>
+          </Event>
+          <Event Reference="E1">
+            <Duration>1</Duration><Time Reference="Mo4"/>
+            <Resources><Resource Reference="R1"><Role>Room</Role></Resource></Resources>
+          </Event>
+          <Event Reference="E2"><Time Reference="Mo1"/></Event>
+          <Event Reference="E4"><Time Reference="Tu2"/></Event>
+        </Events>
+        <Report>
+          <InfeasibilityValue>5</InfeasibilityValue>
+          <ObjectiveValue>27</ObjectiveValue>
+          <Resources><Resource Reference="C1"><Constraint Reference="clashes"><Cost>1</Cost></Constraint></Resource></Resources>
+        </Report>
+      </Solution>
+    </SolutionGroup>
+  </SolutionGroups>
+</HighSchoolTimetableArchive>

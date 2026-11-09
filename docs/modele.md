@@ -274,7 +274,8 @@ Une recherche de replanning doit battre **P1**, pas seulement P0.
 | **ITC 2019** | 30 instances d'universités, 10 établissements ; 19 types de contraintes de distribution ; un validateur en ligne | ensuite, et seulement si on passe au lycée (Q-S2) : son modèle est plus large que le nôtre |
 
 **Avant de comparer** : un évaluateur ne se croit qu'une fois rejoué à l'identique (la leçon des moteurs de
-codingame). Le nôtre doit redonner, au point près, le coût publié de solutions connues d'XHSTT avant qu'on mesure quoi
+codingame). Le nôtre doit redonner, au point près, le coût publié de solutions connues d'XHSTT (fait à J4 : 150
+solutions sur 152, [`mesures-j4.md`](mesures-j4.md)) avant qu'on mesure quoi
 que ce soit dessus. **On ne vise pas le premier rang** : GOAL a gagné les tours 2 et 3 d'ITC 2011, et un MIP de
 Gurobi tient 24 h sur certaines instances d'ITC 2019 sans trouver de solution. On vise une place honnête, mesurée.
 
@@ -315,7 +316,7 @@ durées. C'est là que la lib sert vraiment ce projet.
 | **J1** (fait le 6/11) | les types (`src/types.js`), le générateur de collège par graine, l'évaluateur (dures et souples, pur, testé), R0-naïf et R0 ; les empreintes | R0 contre R0-naïf, par paires, sur S, M, L : [`mesures-j1.md`](mesures-j1.md) |
 | **J2** (fait le 6/11) | les semaines A et B en vrai, les barrettes, les demi-groupes ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges : [`mesures-j2.md`](mesures-j2.md) |
 | **J3** (fait le 9/11) | le recuit et le tabou depuis R0 ; le banc (`npm run bench`) ; la page lance la recherche | contre R0 et R0 répété, par paires, à temps égal : [`mesures-j3.md`](mesures-j3.md) |
-| **J4** | la lecture d'XHSTT, l'évaluateur rejoué contre HSEval sur des solutions publiées | l'écart de coût, nul attendu |
+| **J4** (fait le 9/11) | la lecture d'XHSTT (`src/xhstt/`), l'évaluateur rejoué contre HSEval sur des solutions publiées | 150 solutions sur 152 au coût publié : [`mesures-j4.md`](mesures-j4.md) |
 | **J5** | les absences : P0, P1, puis la recherche locale | contre P1, par paires |
 | **J6** | l'ISMCTS sur les durées inconnues ; peut-être ITC 2019 | contre J5 |
 
@@ -337,8 +338,8 @@ Les questions au professionnel ont du sens à partir de J2, la page montrée.
 **Ce qui pourrait entrer dans la lib** : la recherche taboue ou le recuit, si un second projet en a besoin (les
 protéines, peut-être) ; algorithmes.md les note « non, personne » à ce jour.
 
-**D'ailleurs** : un petit lecteur XML, pur et testé, pour XHSTT et ITC 2019, sans dépendance (le même code dans la
-page et sous Node).
+**D'ailleurs** (fait à J4, `src/xhstt/xml.js`) : un petit lecteur XML, pur et testé, pour XHSTT et ITC 2019, sans
+dépendance (le même code dans la page et sous Node).
 
 ## 10. La page
 
