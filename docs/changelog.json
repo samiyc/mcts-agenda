@@ -4,6 +4,18 @@
   "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
   "versions": [
     {
+      "version": "0.3.0",
+      "title": "La recherche locale : le recuit et le tabou",
+      "date": "9/11/2026",
+      "commits": ["3295d8e", "79eb5af", "673b6ef"],
+      "items": [
+        "Après la règle, la page peut lancer une recherche, le recuit ou le tabou, pendant 2 à 60 secondes. Elle reprend l'emploi du temps de la règle, déplace des cours ou en échange deux, sans jamais casser une contrainte dure.",
+        "Les coûts de la règle s'affichent à côté de ceux de la recherche, contrainte par contrainte.",
+        "En 20 secondes, le recuit divise le coût de R0 par 7 à 12 : presque plus de trous pour les professeurs ni de matière deux fois le même jour. Il fait mieux que le tabou, et beaucoup mieux que R0 relancé pendant le même temps.",
+        "Ce qui reste surtout : le français, les maths ou la LV1 après 15 h, faute de matinées assez longues."
+      ]
+    },
+    {
       "version": "0.2.0",
       "title": "Les barrettes, les demi-groupes et la page",
       "date": "6/11/2026",

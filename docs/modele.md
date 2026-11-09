@@ -3,8 +3,8 @@
 Les emplois du temps d'un collège : placer chaque heure de cours de chaque classe dans la semaine, avec son professeur
 et une salle, sous des contraintes dures et souples. Puis, quand un professeur manque, la veille ou le matin même,
 refaire le moins possible pour perdre le moins d'heures. Ce document fixe ce qu'on va construire et comment on saura
-que ça marche. Le modèle est dans `src/` depuis J1, les barrettes et les demi-groupes depuis J2 ; pas encore de
-recherche.
+que ça marche. Le modèle est dans `src/` depuis J1, les barrettes et les demi-groupes depuis J2, la recherche locale
+depuis J3.
 
 Les chiffres viennent de [`recherche/sources.md`](recherche/sources.md) (les sources, et jusqu'où chacune a été lue).
 Une valeur marquée **H** est une hypothèse, avec sa question dans [`recherche/questions.md`](recherche/questions.md) :
@@ -278,17 +278,35 @@ codingame). Le nôtre doit redonner, au point près, le coût publié de solutio
 que ce soit dessus. **On ne vise pas le premier rang** : GOAL a gagné les tours 2 et 3 d'ITC 2011, et un MIP de
 Gurobi tient 24 h sur certaines instances d'ITC 2019 sans trouver de solution. On vise une place honnête, mesurée.
 
-## 7. La recherche, plus tard
+## 7. La recherche
 
-Rien de tout cela n'est écrit avant que R0 et P1 soient mesurés.
+**Construire** (J3, `src/search/`) : une recherche locale qui part de l'emploi du temps de R0.
 
-- **Construire** : la recherche taboue et le recuit simulé, les deux références de la littérature. Les mouvements :
-  déplacer un cours, échanger deux cours, et les **chaînes de Kempe** (échanger deux créneaux pour tout un groupe de
-  cours en conflit). Le faisceau de la lib (`createBeam`) sur les choix de R0 est l'essai le moins cher.
-- **Replanifier** : la même recherche locale, partie de l'emploi du temps en place, avec le dérangement dans le coût.
-- **L'ISMCTS de la lib**, pour la durée inconnue d'une absence : décider aujourd'hui sans savoir si le professeur
-  reviendra demain. Chaque itération tire une durée ; les mondes communs comparent deux remplacements sur les mêmes
-  durées. C'est là que la lib sert vraiment ce projet.
+- **Les mouvements** : déplacer une barrette vers un autre créneau, ou échanger les créneaux de deux barrettes qui
+  partagent une division ou un professeur. Une barrette ne va que là où `tryLink` l'accepte : aucun mouvement ne
+  casse une contrainte dure. Une barrette laissée par R0 est réessayée en route ; la placer passe avant tout coût.
+- **Le prix d'un mouvement** se lit sur les seuls jours qu'il touche (`linkDelta`, celui de R0) ; la somme des prix
+  égale le coût de l'évaluateur, au point près (`tests/search.test.js`).
+- **Le recuit simulé** : un mouvement tiré à chaque pas, un échange une fois sur deux ; un mouvement qui coûte `d` de
+  plus passe avec la probabilité exp(−d / T), T tombant de 8 à 0,3 (**H**).
+- **Le tabou**, comme Di Gaspero et Schaerf : à chaque pas, 40 barrettes tirées, chacune essayée sur tous les
+  créneaux et dans 4 échanges ; le meilleur mouvement est fait, même s'il coûte. Une barrette ne revient pas au créneau
+  qu'elle quitte avant 30 à 60 pas, sauf pour battre le meilleur emploi du temps vu (**H**).
+- **Le budget** se compte en créneaux essayés, pour qu'une recherche se rejoue de sa graine ; le banc
+  (`npm run bench`) le convertit en temps : environ 140 essais par milliseconde pour le recuit, 580 pour le tabou,
+  dont un essai coûte moins (une barrette levée sert pour ses 39 créneaux).
+- **Le témoin à temps égal** : **R0 répété**, R0 relancé avec d'autres graines d'égalités pendant le même temps, le
+  meilleur gardé. C'est la règle simple avec le budget de la recherche.
+
+Pas encore essayés : les **chaînes de Kempe** (échanger deux créneaux pour tout un groupe de cours en conflit) et le
+faisceau de la lib (`createBeam`) sur les choix de R0.
+
+**Replanifier** (J5) : la même recherche locale, partie de l'emploi du temps en place, avec le dérangement dans le
+coût.
+
+**L'ISMCTS de la lib** (J6), pour la durée inconnue d'une absence : décider aujourd'hui sans savoir si le professeur
+reviendra demain. Chaque itération tire une durée ; les mondes communs comparent deux remplacements sur les mêmes
+durées. C'est là que la lib sert vraiment ce projet.
 
 ## 8. Les jalons
 
@@ -296,7 +314,7 @@ Rien de tout cela n'est écrit avant que R0 et P1 soient mesurés.
 |---|---|---|
 | **J1** (fait le 6/11) | les types (`src/types.js`), le générateur de collège par graine, l'évaluateur (dures et souples, pur, testé), R0-naïf et R0 ; les empreintes | R0 contre R0-naïf, par paires, sur S, M, L : [`mesures-j1.md`](mesures-j1.md) |
 | **J2** (fait le 6/11) | les semaines A et B en vrai, les barrettes, les demi-groupes ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges : [`mesures-j2.md`](mesures-j2.md) |
-| **J3** | le tabou et le recuit ; le banc (`npm run bench`) | contre R0, par paires |
+| **J3** (fait le 9/11) | le recuit et le tabou depuis R0 ; le banc (`npm run bench`) ; la page lance la recherche | contre R0 et R0 répété, par paires, à temps égal : [`mesures-j3.md`](mesures-j3.md) |
 | **J4** | la lecture d'XHSTT, l'évaluateur rejoué contre HSEval sur des solutions publiées | l'écart de coût, nul attendu |
 | **J5** | les absences : P0, P1, puis la recherche locale | contre P1, par paires |
 | **J6** | l'ISMCTS sur les durées inconnues ; peut-être ITC 2019 | contre J5 |
@@ -329,7 +347,8 @@ montre se décide dans `src/view/`, testé ; R0 construit dans un worker.
 
 - **La grille de la semaine**, pour une division, un professeur ou une salle, A et B côte à côte ; les cours non
   placés en rouge, avec leurs raisons (fait). Une contrainte violée marquée dans sa case : avec la recherche.
-- **Les coûts**, par contrainte (faits pour R0 et R0-naïf) ; la recherche à côté, à J3.
+- **Les coûts**, par contrainte (faits pour R0 et R0-naïf) ; depuis J3, le recuit ou le tabou après la règle, pendant
+  2 à 60 s, les coûts de la règle à côté (fait).
 - **Un remplacement** (J5) : la journée avant et après, ce qui a changé en couleur, et le lecteur pour suivre la
   semaine d'absences.
 
