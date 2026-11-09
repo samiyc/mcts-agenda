@@ -19,7 +19,8 @@
     "page": "node node_modules/mcts-commun/bin/serve.js 4805",
     "changelog": "node scripts/changelog.js",
     "bench": "node scripts/search-bench.js",
-    "xhstt": "node scripts/xhstt-check.js"
+    "xhstt": "node scripts/xhstt-check.js",
+    "replan": "node scripts/replan-compare.js"
   },
   "author": "Sami",
   "license": "UNLICENSED",
