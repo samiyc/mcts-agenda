@@ -11,7 +11,8 @@ import { costTables, el, unplacedItems, weekTable } from "./draw.js";
 /** The page's controls by id: inputs, selects and buttons alike. */
 const $ = (id) => /** @type {any} */ (document.getElementById(id));
 const RULES = { r0: "R0", naive: "R0-naïf" };
-const state = { school: null, timetable: null, built: null, rule: "r0" };
+const SEARCHES = { anneal: "le recuit", tabu: "le tabou" };
+const state = { school: null, timetable: null, rule: "r0", search: "", seconds: 5 };
 const worker = new Worker(new URL("./build-worker.js", import.meta.url), { type: "module" });
 
 const fill = (select, options) => select.replaceChildren(...options.map(({ value, name }) => el("option", { value }, [name])));
@@ -29,20 +30,35 @@ function chooseKind() {
   drawWeek();
 }
 
-function summary(evaluation, built) {
-  const { school } = state;
-  const left = built.unplaced.reduce((sum, { courses }) => sum + courses.length, 0);
+const seconds = (ms) => `${(ms / 1000).toFixed(1)} s`;
+
+function placedText(left) {
   const plural = left > 1 ? "s" : "";
-  const placed = left ? `${left} cours non placé${plural}` : "tous les cours placés";
-  return `${school.courses.length} cours en ${school.links.length} barrettes, ${school.teachers.length} professeurs, ${school.rooms.length} salles. ${RULES[state.rule]} : ${placed}, infaisabilité ${evaluation.infeasibility}, coût ${evaluation.cost}, en ${(built.ms / 1000).toFixed(1)} s.`;
+  return left ? `${left} cours non placé${plural}` : "tous les cours placés";
 }
 
-worker.onmessage = ({ data }) => {
-  state.timetable = { slot: data.slot, room: data.room };
-  const evaluation = evaluate(state.school, state.timetable);
-  $("summary").textContent = summary(evaluation, data);
-  $("costs").replaceChildren(...costTables(costRows(evaluation)));
-  const left = unplacedRows(state.school, data.unplaced);
+const countLeft = (unplaced) => unplaced.reduce((sum, { courses }) => sum + courses.length, 0);
+
+function summary(built, before, unplaced, after) {
+  const { school } = state;
+  const head = `${school.courses.length} cours en ${school.links.length} barrettes, ${school.teachers.length} professeurs, ${school.rooms.length} salles.`;
+  const rule = `${RULES[state.rule]} : ${placedText(countLeft(built.unplaced))}, infaisabilité ${before.infeasibility}, coût ${before.cost}, en ${seconds(built.ms)}.`;
+  if (!after) return `${head} ${rule}`;
+  return `${head} ${rule} Puis ${SEARCHES[state.search]} : ${placedText(countLeft(unplaced))}, infaisabilité ${after.evaluation.infeasibility}, coût ${after.evaluation.cost}, en ${seconds(after.ms)}.`;
+}
+
+/** The barrettes the rule left that the search did not place either. */
+const stillLeft = (unplaced, timetable) => unplaced.filter(({ courses }) => timetable.slot[courses[0]] < 0);
+
+worker.onmessage = ({ data: { built, searched } }) => {
+  const before = evaluate(state.school, built);
+  const after = searched && { evaluation: evaluate(state.school, searched), ms: searched.ms };
+  const shown = searched ?? built;
+  const unplaced = stillLeft(built.unplaced, shown);
+  state.timetable = { slot: shown.slot, room: shown.room };
+  $("summary").textContent = summary(built, before, unplaced, after);
+  $("costs").replaceChildren(...costTables(costRows(after?.evaluation ?? before), after ? costRows(before) : null));
+  const left = unplacedRows(state.school, unplaced);
   $("unplaced-section").hidden = left.length === 0;
   $("unplaced").replaceChildren(...unplacedItems(left));
   $("build").disabled = false;
@@ -53,12 +69,15 @@ function build() {
   const size = /** @type {"S" | "M" | "L"} */ ($("size").value);
   const seed = Math.max(1, Math.floor(Number($("seed").value) || 1));
   state.rule = $("rule").value;
+  state.search = $("search").value;
+  state.seconds = Number($("seconds").value);
   state.school = createSchool({ size, seed });
   state.timetable = null;
   $("build").disabled = true;
-  $("summary").textContent = `${RULES[state.rule]} construit l'emploi du temps du collège ${size}, graine ${seed}…`;
+  const then = state.search ? `, puis ${SEARCHES[state.search]} le reprend pendant ${state.seconds} s` : "";
+  $("summary").textContent = `${RULES[state.rule]} construit l'emploi du temps du collège ${size}, graine ${seed}${then}…`;
   chooseKind();
-  worker.postMessage({ size, seed, rule: state.rule });
+  worker.postMessage({ size, seed, rule: state.rule, search: state.search, seconds: state.seconds });
 }
 
 fill($("kind"), Object.entries(VIEWS).map(([value, name]) => ({ value, name })));

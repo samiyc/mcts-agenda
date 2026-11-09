@@ -47,16 +47,23 @@ export function weekTable(cells) {
 
 const num = (value) => el("td", { class: "num" }, [String(value)]);
 
-/** The hard and soft constraints, from `costRows`. */
-export function costTables({ hard, soft }) {
-  const hardRows = hard.map((row) => el("tr", { class: row.count ? "bad" : "" }, [el("td", {}, [row.key]), el("td", {}, [row.label]), num(row.count)]));
-  const softRows = soft.map((row) =>
-    el("tr", {}, [el("td", {}, [row.key]), el("td", {}, [row.label]), num(row.count), num(row.weight), num(row.cost)]),
+const header = (names) => el("thead", {}, [el("tr", {}, names.map((name, i) => el("th", { class: i > 1 ? "num" : "" }, [name])))]);
+
+/**
+ * The hard and soft constraints, from `costRows`; with `before` (the rule's rows when a search ran), a column of
+ * the rule's counts and costs beside.
+ */
+export function costTables({ hard, soft }, before = null) {
+  const hardRows = hard.map((row, i) =>
+    el("tr", { class: row.count ? "bad" : "" }, [el("td", {}, [row.key]), el("td", {}, [row.label]), ...(before ? [num(before.hard[i].count)] : []), num(row.count)]),
   );
-  const header = (names) => el("thead", {}, [el("tr", {}, names.map((name, i) => el("th", { class: i > 1 ? "num" : "" }, [name])))]);
+  const softRows = soft.map((row, i) =>
+    el("tr", {}, [el("td", {}, [row.key]), el("td", {}, [row.label]), num(row.count), num(row.weight), ...(before ? [num(before.soft[i].cost)] : []), num(row.cost)]),
+  );
+  const rule = before ? ["Règle"] : [];
   return [
-    el("table", {}, [header(["", "Dure", "Nombre"]), el("tbody", {}, hardRows)]),
-    el("table", {}, [header(["", "Souple", "Nombre", "Poids", "Coût"]), el("tbody", {}, softRows)]),
+    el("table", {}, [header(["", "Dure", ...rule, "Nombre"]), el("tbody", {}, hardRows)]),
+    el("table", {}, [header(["", "Souple", "Nombre", "Poids", ...rule, "Coût"]), el("tbody", {}, softRows)]),
   ];
 }
 

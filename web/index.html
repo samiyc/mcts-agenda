@@ -32,6 +32,21 @@
             <option value="naive">R0-naïf : dans l'ordre</option>
           </select>
         </label>
+        <label>Puis
+          <select id="search">
+            <option value="">rien</option>
+            <option value="anneal" selected>le recuit</option>
+            <option value="tabu">le tabou</option>
+          </select>
+        </label>
+        <label>Pendant
+          <select id="seconds">
+            <option value="2">2 s</option>
+            <option value="5" selected>5 s</option>
+            <option value="20">20 s</option>
+            <option value="60">60 s</option>
+          </select>
+        </label>
         <button type="button" id="build">Construire</button>
       </section>
       <p class="summary" id="summary" aria-live="polite"></p>
@@ -53,6 +68,7 @@
         <strong>Comment lire.</strong> Une heure par ligne, de 8 h à 16 h ; le mercredi s'arrête à midi. La ligne de midi reste libre : c'est la pause méridienne.
         Les demi-heures de la grille se font une semaine sur deux, d'où les semaines A et B.
         Deux cours dans une même case : deux groupes au même créneau, une barrette. En LV2 et en soutien de 6e, deux divisions forment deux groupes ; en sciences, une moitié de la division fait de la SVT pendant que l'autre fait de la physique-chimie, puis l'inverse la semaine suivante.
+        La recherche part de l'emploi du temps de la règle et ne casse aucune contrainte dure : le recuit déplace une barrette ou en échange deux, et accepte parfois de faire moins bien pour sortir d'un creux ; le tabou essaie à chaque pas beaucoup de mouvements et fait le meilleur, sans revenir tout de suite en arrière. La colonne « Règle » des coûts donne ceux d'avant la recherche.
         « (suite) » : la seconde heure d'un bloc de 2 h. Les professeurs n'ont pas de nom : leur matière et un numéro.
         Le détail du modèle et de ses hypothèses : <code>docs/modele.md</code>.
       </p>
