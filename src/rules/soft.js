@@ -73,7 +73,8 @@ function firstVisit(stamps, index, epoch) {
 function weekCost(board, course, week, day) {
   const { seen } = board;
   let cost = 0;
-  for (const division of course.divisions) {
+  for (let d = 0; d < course.divisions.length; d += 1) {
+    const division = course.divisions[d];
     if (!firstVisit(seen.division, division * WEEKS + week, seen.epoch)) continue;
     cost += divisionDayCost(board, division, week, day);
     if (course.discipline === "eps") cost += WEIGHTS.S8 * epsTooClose(board, division, week);
@@ -86,9 +87,11 @@ function weekCost(board, course, week, day) {
 function localCost(board, link, day) {
   board.seen.epoch += 1;
   let cost = 0;
-  for (const id of board.school.links[link]) {
-    const course = board.school.courses[id];
-    for (const week of weeksOf(course.weeks)) cost += weekCost(board, course, week, day);
+  const ids = board.school.links[link];
+  for (let i = 0; i < ids.length; i += 1) {
+    const course = board.school.courses[ids[i]];
+    const weeks = weeksOf(course.weeks);
+    for (let w = 0; w < weeks.length; w += 1) cost += weekCost(board, course, weeks[w], day);
   }
   return cost;
 }
@@ -108,7 +111,7 @@ export function linkDelta(board, link, slot) {
     own += ownCost(board.school.courses[ids[i]], slot, board.rooms[i]);
   }
   const after = localCost(board, link, day);
-  for (const id of ids) remove(board, id);
+  for (let i = 0; i < ids.length; i += 1) remove(board, ids[i]);
   return after - before + own;
 }
 

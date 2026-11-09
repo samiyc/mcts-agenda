@@ -40,9 +40,12 @@ function mark(layer, index, course, step) {
 function apply(board, id, step) {
   const course = board.school.courses[id];
   const start = board.slot[id];
-  for (const week of weeksOf(course.weeks)) {
+  const parts = board.parts[id];
+  const weeks = weeksOf(course.weeks);
+  for (let w = 0; w < weeks.length; w += 1) {
+    const week = weeks[w];
     for (let k = 0; k < course.length; k += 1) {
-      for (const part of board.parts[id]) mark(board.division, cell(part, week, start + k), id, step);
+      for (let p = 0; p < parts.length; p += 1) mark(board.division, cell(parts[p], week, start + k), id, step);
       mark(board.teacher, cell(course.teacher, week, start + k), id, step);
       mark(board.room, cell(board.roomOf[id], week, start + k), id, step);
     }

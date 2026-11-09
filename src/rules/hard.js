@@ -21,13 +21,16 @@ function unavailable(teacher, slot, length) {
 }
 
 function partsBusy(board, id, week, slot) {
-  for (const part of board.parts[id]) if (busy(board.division, part, week, slot)) return true;
+  const parts = board.parts[id];
+  for (let p = 0; p < parts.length; p += 1) if (busy(board.division, parts[p], week, slot)) return true;
   return false;
 }
 
 /** The first of the division and the teacher that is taken at one of the course's cells, or 0. */
 function peopleHold(board, course, slot) {
-  for (const week of weeksOf(course.weeks)) {
+  const weeks = weeksOf(course.weeks);
+  for (let w = 0; w < weeks.length; w += 1) {
+    const week = weeks[w];
     for (let k = 0; k < course.length; k += 1) {
       if (partsBusy(board, course.id, week, slot + k)) return CODE.division;
       if (busy(board.teacher, course.teacher, week, slot + k)) return CODE.teacher;
@@ -43,8 +46,9 @@ function weekHold(board, course, week, slot) {
   const day = dayOf(slot);
   const bits = courseBits(course, slot);
   const sixieme = board.school.divisions[course.divisions[0]].level === 6;
-  for (const part of board.parts[course.id]) {
-    const mask = dayMask(board.division, part, week, day) | bits;
+  const parts = board.parts[course.id];
+  for (let p = 0; p < parts.length; p += 1) {
+    const mask = dayMask(board.division, parts[p], week, day) | bits;
     if (hasLunch(day) && !breakKept(mask)) return CODE.pause;
     if (sixieme && popcount(mask) > SIXIEME_DAY) return CODE["day-limit"];
   }
@@ -52,23 +56,26 @@ function weekHold(board, course, week, slot) {
 }
 
 function dayHold(board, course, slot) {
-  for (const week of weeksOf(course.weeks)) {
-    const hold = weekHold(board, course, week, slot);
+  const weeks = weeksOf(course.weeks);
+  for (let w = 0; w < weeks.length; w += 1) {
+    const hold = weekHold(board, course, weeks[w], slot);
     if (hold) return hold;
   }
   return 0;
 }
 
 function roomFree(board, room, course, slot) {
-  for (const week of weeksOf(course.weeks)) {
-    for (let k = 0; k < course.length; k += 1) if (busy(board.room, room, week, slot + k)) return false;
+  const weeks = weeksOf(course.weeks);
+  for (let w = 0; w < weeks.length; w += 1) {
+    for (let k = 0; k < course.length; k += 1) if (busy(board.room, room, weeks[w], slot + k)) return false;
   }
   return true;
 }
 
 /** The first room of the right kind free on every cell, the home room first; -1 if none. */
 export function roomAt(board, course, slot) {
-  for (const room of roomsFor(board.school, course)) if (roomFree(board, room, course, slot)) return room;
+  const rooms = roomsFor(board.school, course);
+  for (let r = 0; r < rooms.length; r += 1) if (roomFree(board, rooms[r], course, slot)) return rooms[r];
   return -1;
 }
 
@@ -112,5 +119,6 @@ export function tryLink(board, link, slot) {
 
 /** Puts every course of link `link` at `slot`, in the rooms `tryLink` just found. */
 export function placeLink(board, link, slot) {
-  board.school.links[link].forEach((id, i) => place(board, id, slot, board.rooms[i]));
+  const ids = board.school.links[link];
+  for (let i = 0; i < ids.length; i += 1) place(board, ids[i], slot, board.rooms[i]);
 }

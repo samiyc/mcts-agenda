@@ -17,7 +17,8 @@
     "prepare": "git config core.hooksPath .githooks",
     "compare": "node scripts/compare.js",
     "page": "node node_modules/mcts-commun/bin/serve.js 4805",
-    "changelog": "node scripts/changelog.js"
+    "changelog": "node scripts/changelog.js",
+    "bench": "node scripts/search-bench.js"
   },
   "author": "Sami",
   "license": "UNLICENSED",

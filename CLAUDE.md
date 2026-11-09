@@ -39,14 +39,11 @@ Its line in the roadmap: `mcts-commun/docs/feuille-de-route.md`, § 2.C. Start t
   in `src/view/` and tested; `web/` only draws, and builds in a worker.
 - **The changelog is data** (`docs/changelog.json`, then `npm run changelog` writes `web/changelog.html`; a test
   checks they agree). A version that changes what Sami sees gets an entry, in plain words.
+- **The bench** (since J3): `npm run bench` (`scripts/search-bench.js`), the time, the slots tried a second and the
+  garbage collections of each search. Its hot paths (the board, the rules, the moves) allocate nothing: indexed loops,
+  no `for…of` and no closure there. A screen; the paired measure goes through the queue.
 - **Types come from JSDoc** (`npm run types`); the shapes the modules hand each other are in `src/types.js`.
 - **Commit straight to `main`; push only when Sami asks.** The GitHub repository is his to create, private.
-
-## To add when their turn comes
-
-Each of these exists in the other clients; copy it from them when there is something for it to hold, not before.
-
-- **The bench** (`npm run bench`, `scripts/search-bench.js`), with the first search; its hot paths do not allocate.
 
 ## The machine
 
