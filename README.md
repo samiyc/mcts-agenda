@@ -14,7 +14,10 @@ place presque tout (un cours laissé sur 2 à 5 collèges sur 30), R0-naïf en l
 J3 a ajouté la recherche locale (`src/search/`) : le recuit et le tabou partent de R0, déplacent ou échangent des
 barrettes sans casser de contrainte dure. En 20 s, le recuit divise le coût de R0 par 7 à 12 et bat le tabou
 ([`docs/mesures-j3.md`](docs/mesures-j3.md)). J4 lit le format public XHSTT (`src/xhstt/`) : notre évaluateur
-redonne le coût publié par HSEval de 150 solutions sur 152 ([`docs/mesures-j4.md`](docs/mesures-j4.md)).
+redonne le coût publié par HSEval de 150 solutions sur 152 ([`docs/mesures-j4.md`](docs/mesures-j4.md)). J5 joue des
+semaines d'absences (`src/absence/`) : P1 remplace ce que remplacent les collèges (10 à 12 % des heures), la
+recherche, qui rattrape les heures un autre jour, en sauve 23 à 45 % de plus que P1, au prix de séances déplacées
+([`docs/mesures-j5.md`](docs/mesures-j5.md)).
 La page (`npm run page`) montre la semaine d'une division, d'un professeur ou d'une salle, après la règle et la
 recherche.
 
@@ -37,6 +40,8 @@ recherche.
 | `npm run bench -- --sizes M --n 2` | le banc des recherches : le temps, les essais par milliseconde, les passages du ramasse-miettes, le coût contre R0 |
 | `node scripts/search-compare.js --sizes M --n 30 --from 1001 --seconds 20` | le recuit et le tabou contre R0 et R0 répété, par paires à temps égal, et le témoin A/A ; par la file |
 | `npm run xhstt` | notre évaluateur XHSTT contre les rapports d'HSEval et les valeurs publiées ; les archives dans `data/xhstt/` (voir `docs/mesures-j4.md`) |
+| `npm run replan -- --sizes M --n 30 --weeks 30` | le replanning des absences : P0, P1 et la recherche, par paires ; `--place anneal`, `--hours H` pour les variantes |
+| `npm run tune -- --search anneal --variants "hot=3;swap=0.7"` | les réglages d'une recherche contre ses défauts, sur les graines 2001 et suivantes |
 | `npm run page` | la page sur http://127.0.0.1:4805/web/ : l'emploi du temps d'une division, d'un professeur ou d'une salle, les coûts |
 | `npm run changelog` | réécrit `web/changelog.html` depuis `docs/changelog.json` |
 | `node scripts/refresh-fingerprints.js` | réécrit les empreintes, pour un changement voulu du modèle (le commit le dit, mesures avant et après) |
