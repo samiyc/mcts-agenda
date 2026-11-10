@@ -1,4 +1,5 @@
 import { DAYS } from "../src/time.js";
+import { STATUS_NAMES } from "../src/view/replan.js";
 
 /**
  * The page's drawing: a week as a table (the days across, the hours down), the costs, the courses left unplaced.
@@ -19,27 +20,32 @@ export function el(tag, attrs = {}, children = []) {
   return node;
 }
 
+/** An entry's classes: its discipline, a block's second hour, what happened to it on the replacement page. */
+const entryClass = (entry) => ["entry", "d-" + entry.discipline, entry.first ? "" : "cont", entry.status ? "st-" + entry.status : ""].filter(Boolean).join(" ");
+
 function entryNode(entry) {
   const title = entry.group ? `${entry.title}, ${entry.group}` : entry.title;
-  return el("div", { class: `entry d-${entry.discipline}${entry.first ? "" : " cont"}` }, [
+  const tag = entry.status ? [el("em", { class: "tag" }, [STATUS_NAMES[entry.status]])] : [];
+  return el("div", { class: entryClass(entry) }, [
     el("strong", {}, [entry.first ? title : `${title} (suite)`]),
+    ...tag,
     el("small", {}, [entry.detail]),
   ]);
 }
 
-function cellNode(entries, day, index) {
+function cellNode(entries, day, index, today) {
   if (index >= DAYS[day].count) return el("td", { class: "closed" });
   const lunch = index === NOON ? " lunch" : "";
-  return el("td", { class: `slot${lunch}` }, entries.map(entryNode));
+  return el("td", { class: `slot${lunch}${day === today ? " today" : ""}` }, entries.map(entryNode));
 }
 
-/** One week of a view (`weekOf(...)[week]`) as a table. */
-export function weekTable(cells) {
-  const head = el("tr", {}, [el("th", {}, ["Heure"]), ...DAY_NAMES.map((name) => el("th", {}, [name]))]);
+/** One week of a view (`weekOf(...)[week]`) as a table; `today`, a day to mark. */
+export function weekTable(cells, today = -1) {
+  const head = el("tr", {}, [el("th", {}, ["Heure"]), ...DAY_NAMES.map((name, d) => el("th", { class: d === today ? "today" : "" }, [name]))]);
   const rows = Array.from({ length: HOURS }, (_, index) =>
     el("tr", {}, [
       el("th", { class: "hour" }, [`${8 + index} h`]),
-      ...DAYS.map((day, d) => cellNode(cells[day.first + index] ?? [], d, index)),
+      ...DAYS.map((day, d) => cellNode(cells[day.first + index] ?? [], d, index, today)),
     ]),
   );
   return el("table", { class: "week" }, [el("thead", {}, [head]), el("tbody", {}, rows)]);

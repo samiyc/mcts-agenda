@@ -54,3 +54,21 @@ table.week tbody tr:hover td { background: inherit; }
 .costs tr.bad td { color: #b71c1c; font-weight: 600; }
 .unplaced { color: #b71c1c; padding-left: 22px; }
 .unplaced li { margin: 4px 0; }
+
+/* The replacement page: what happened to a session, the day being decided, the player. */
+.entry .tag, .changes .tag, .hint .tag { display: inline-block; font-style: normal; font-size: 0.68rem; font-weight: 600; padding: 0 4px; border-radius: 3px; background: var(--panel); border: 1px solid var(--line); }
+.entry.st-lost { border: 2px solid #b71c1c; background: repeating-linear-gradient(135deg, #f4d6d0 0 6px, #ead0c8 6px 12px); }
+.entry.st-replaced { border: 2px solid #1f4e8c; }
+.entry.st-moved { border: 2px solid #2e6b2e; }
+.entry.st-room { border: 2px dashed #5f5f00; }
+.entry.st-was { border: 2px dashed #b71c1c; opacity: 0.8; }
+.changes li.st-lost .tag { border-color: #b71c1c; color: #8e1515; }
+.changes li.st-replaced .tag { border-color: #1f4e8c; color: #1f4e8c; }
+.changes li.st-moved .tag { border-color: #2e6b2e; color: #2e6b2e; }
+table.week th.today { background: var(--accent); color: var(--accent-ink); }
+table.week td.today { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
+.player { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; }
+.player input[type="range"] { flex: 1 1 200px; }
+.absences li.unknown { color: var(--ink-2); font-style: italic; }
+.changes { padding-left: 22px; }
+.changes li { margin: 3px 0; }

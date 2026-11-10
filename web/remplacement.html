@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agenda : remplacements</title>
+    <link rel="stylesheet" href="../node_modules/mcts-commun/web/theme.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="importmap">
+      { "imports": { "mcts-commun/": "../node_modules/mcts-commun/src/" } }
+    </script>
+  </head>
+  <body>
+    <header class="masthead">
+      <p class="links"><a href="index.html">L'emploi du temps</a> · <a href="changelog.html">Journal des versions</a></p>
+      <h1>Agenda : les remplacements</h1>
+      <p>Une semaine d'absences dans un collège fictif : chaque jour, la veille à 18 h puis le matin à 7 h 30, on apprend qui manque, et une règle décide. Étude, remplacement par un volontaire, ou cours rattrapé un autre jour.</p>
+    </header>
+    <main>
+      <section class="controls">
+        <label>Collège
+          <select id="size">
+            <option value="S">S : 12 divisions</option>
+            <option value="M" selected>M : 16 divisions</option>
+            <option value="L">L : 24 divisions</option>
+          </select>
+        </label>
+        <label>Graine<input id="seed" type="number" min="1" step="1" value="1" /></label>
+        <label>Emploi du temps
+          <select id="place">
+            <option value="r0" selected>celui de R0</option>
+            <option value="anneal">R0 puis le recuit (5 s)</option>
+          </select>
+        </label>
+        <label>Semaine n°<input id="week" type="number" min="1" step="1" value="1" /></label>
+        <label>Règle
+          <select id="rule">
+            <option value="p0">P0 : des études, rien d'autre</option>
+            <option value="p1">P1 : un volontaire, sinon une étude</option>
+            <option value="r20000">la recherche, 20 000 essais</option>
+            <option value="r200000" selected>la recherche, 200 000 essais</option>
+            <option value="r2000000">la recherche, 2 millions d'essais</option>
+          </select>
+        </label>
+        <button type="button" id="run">Jouer la semaine</button>
+      </section>
+      <p class="summary" id="summary" aria-live="polite"></p>
+      <h2>Les absences</h2>
+      <ul id="absences" class="absences"></ul>
+      <section class="player" aria-label="Le lecteur de la semaine">
+        <button type="button" id="first" title="L'emploi du temps en place">⏮</button>
+        <button type="button" id="back" title="Le moment d'avant">◀</button>
+        <button type="button" id="play">Lire</button>
+        <button type="button" id="next" title="Le moment d'après">▶</button>
+        <button type="button" id="last" title="La fin de la semaine">⏭</button>
+        <input id="moment" type="range" min="0" max="10" step="1" value="10" aria-label="Le moment de la semaine" />
+        <span id="moment-name"></span>
+      </section>
+      <p class="summary" id="score" aria-live="polite"></p>
+      <section class="controls">
+        <label>Voir<select id="kind"></select></label>
+        <label>Laquelle, lequel<select id="which"></select></label>
+      </section>
+      <div class="weeks">
+        <section><h2>Avant : l'emploi du temps en place</h2><div class="scroll" id="before"></div></section>
+        <section><h2 id="after-title">Après</h2><div class="scroll" id="after"></div></section>
+      </div>
+      <h2 id="changes-title">Ce qui a changé dans la semaine</h2>
+      <ul id="changes" class="changes"></ul>
+      <p class="hint">
+        <strong>Comment lire.</strong> À gauche, la semaine telle qu'elle était prévue ; à droite, telle qu'elle est devenue au moment choisi. La colonne du jour dont on décide est surlignée.
+        <em class="tag">étude</em> : le professeur est absent et personne ne le remplace, les élèves vont en étude ;
+        <em class="tag">remplacé</em> : un collègue volontaire fait le cours ; <em class="tag">déplacé</em> : le cours est rattrapé à un autre créneau, où son professeur est là, ou décalé pour faire de la place ;
+        <em class="tag">changé</em>, à gauche : ce cours-là ne se fera pas comme prévu.
+        P1 ne cherche qu'un remplaçant, le jour même. La recherche part de P1 et essaie aussi de rattraper les cours ailleurs dans la semaine ; elle compte d'abord les heures perdues, puis les séances changées (une décision de la veille compte moitié moins qu'une du matin), puis le confort des journées.
+        Les absences, les volontaires et leurs heures sont tirés de la graine et du numéro de semaine, comme dans les mesures : <code>docs/mesures-j5.md</code>.
+      </p>
+    </main>
+    <script type="module" src="replan.js"></script>
+  </body>
+</html>
