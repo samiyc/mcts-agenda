@@ -1,4 +1,4 @@
-# Les mesures de J3 : le recuit et le tabou contre R0 (9/11/2026)
+# Les mesures de J3 : le recuit et le tabou contre R0 (9-10/11/2026)
 
 La recherche locale de J3 ([`modele.md`](modele.md) § 7) part de l'emploi du temps de R0 et ne casse aucune
 contrainte dure. On la compare à R0 et à **R0 répété** (R0 relancé avec d'autres graines d'égalités pendant le même
@@ -64,8 +64,48 @@ S5 (plus de 7 h en cycle 4) et S7 (hors de sa salle) restent à 0.
 6. **Les chemins chauds n'allouent plus** : le banc comptait 129 passages du ramasse-miettes pendant 2 s de recuit
    sur S, il en compte 3 depuis les boucles indexées. R0 y a gagné 20 % de vitesse, sans qu'un placement change.
 
+## Le budget : 60 s contre 20 s (nuit du 9 au 10/11)
+
+Les mêmes 30 collèges par taille, la même commande avec `--seconds 60` (`agenda-j3-60s-S`, `-M`, `-L`, sorties
+`tmp/search-j3-60-*.json`), appariés graine par graine avec les mesures à 20 s. Temps réels : 53 à 56 s.
+
+| Taille | Recuit 20 s → 60 s | 60 s − 20 s, recuit | 60 s − 20 s, tabou | 60 s − 20 s, R0 répété |
+|---|---|---|---|---|
+| S | 32,9 → **16,9** | −16,0 (−19,8 à −12,2) | −17,5 (−20,9 à −14,1) | −13,1 (−19,4 à −6,8) |
+| M | 58,7 → **29,5** | −29,3 (−34,6 à −23,9) | −40,0 (−45,6 à −34,5) | −20,0 (−27,1 à −12,9) |
+| L | 110 → **63,5** | −47,0 (−56,1 à −37,9) | −56,8 (−61,7 à −51,8) | −40,1 (−57,2 à −23,1) |
+
+À 60 s, le recuit bat encore le tabou (−8,6, −14,7, −36,7, bornes hautes sous zéro) et R0 répété (−290, −391,
+−561) ; le témoin A/A contient 0 (−0,1, −3,8, +0,7).
+
+- **Tripler le temps divise à peu près le coût par deux** (−49 %, −50 %, −43 %), et ce qu'on gagne, c'est surtout
+  du lourd après 15 h (S6 : 11,5 en M au lieu de 19,7) et des trous de professeurs. **Q-S6 vaut la peine** : 60 s
+  pour construire l'emploi du temps de l'année, c'est peu, et la recherche n'a pas calé.
+
+## Les réglages (nuit du 9 au 10/11)
+
+`npm run tune` (`scripts/search-tune.js`) sur les graines 2001 à 2030, M, 20 s, chaque variante appariée au réglage
+par défaut (`agenda-tune-anneal-M`, `agenda-tune-tabu-M`). Variante − défaut :
+
+| Recuit (défaut 64,3) | Écart | Tabou (défaut 80,9) | Écart |
+|---|---|---|---|
+| hot=3 | **−11,1** (−17,3 à −4,9) | sample=20 | **−25,0** (−31,8 à −18,2) |
+| cold=0.1 | −6,2 (−12,3 à −0,1) | tenure=60 | −7,8 (−14,3 à −1,4) |
+| swap=0.3 | −3,4 (−9,0 à 2,3) | tenure=15 | +0,6 (−5,9 à 7,0) |
+| swap=0.7 | +13,2 (6,5 à 19,8) | swaps=8 | +7,8 (2,1 à 13,6) |
+| hot=15 | +14,9 (7,5 à 22,4) | sample=80 | +21,9 (12,4 à 31,3) |
+
+- **Le recuit part trop chaud** (8) et **le tabou tire trop de barrettes** (40) : les deux réglages venaient de
+  3 collèges. Le tabou réglé (55,9) passerait devant le recuit par défaut (64,3) sur ces graines : le classement
+  « le recuit bat le tabou » est peut-être un effet de réglage. Il faut les comparer réglés tous les deux.
+- **Rien ne change dans ANNEAL ni TABU avant la confirmation** sur des graines neuves (3001 à 3030, aux trois
+  tailles : `agenda-confirm-anneal-*`, `agenda-confirm-tabu-*`, en file le 10/11), ni avant un second tour autour
+  des gagnants (`agenda-tune2-anneal-M` : hot 2 et 4, cold 0,1 et 0,15 ; `agenda-tune2-tabu-M` : sample 10 et 15,
+  tenure 45 et 60).
+
 ## La suite
 
 - **Le recuit est la recherche de référence** pour la suite (le replanning de J5 partira de lui).
-- **Le budget** : mesurer le recuit à 60 s contre 20 s, pour savoir si Q-S6 vaut la peine.
-- **Les chaînes de Kempe** et un réglage du tabou sur des graines à part, si le recuit cale.
+- **Le budget** : 60 s (Q-S6), mesuré ci-dessus ; à 60 s le gain ne plafonne pas.
+- **Les réglages** : la confirmation, puis recuit réglé contre tabou réglé, par paires.
+- **Les chaînes de Kempe**, si le recuit cale.

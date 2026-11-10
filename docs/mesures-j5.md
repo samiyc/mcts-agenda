@@ -64,12 +64,39 @@ Entre parenthèses pour la recherche : les séances changées.
 5. **Le gain ne plafonne pas encore** à 2 millions d'essais : de 200 000 à 2 millions, encore −0,9 à −2,0 h. Le budget
    du cadrage (10 s le matin) est 25 fois plus grand.
 
+## Les variantes (nuit du 9 au 10/11)
+
+Les mêmes collèges et les mêmes semaines, donc appariables d'un fichier à l'autre. Les commandes ajoutent
+`--place anneal` (`agenda-j5-place-anneal-*`, `tmp/replan-j5-anneal-*.json`) ou `--hours 5` / `--hours 0`
+(`agenda-j5-hours5-M`, `agenda-j5-hours0-M`).
+
+**L'emploi du temps du recuit plutôt que celui de R0** (le recuit à 2,8 millions d'essais, le budget de J3) :
+
+| Taille | P0 | P1 | R 2 000 000 (changées) | R 2 000 000 − P1 | Recuit − R0, R 2 000 000 : perdues ; changées |
+|---|---|---|---|---|---|
+| S | 13,3 h | 11,8 h | 6,4 h (13,7) | −5,47 (−5,79 à −5,15) | −0,12 (−0,33 à 0,09) ; −1,5 (−2,1 à −1,0) |
+| M | 17,7 h | 15,9 h | 8,7 h (20,7) | −7,16 (−7,56 à −6,77) | −0,14 (−0,36 à 0,07) ; +0,7 (0,1 à 1,2) |
+| L | 26,3 h | 23,2 h | 13,1 h (50,4) | −10,16 (−10,59 à −9,74) | +0,22 (−0,06 à 0,50) ; −3,2 (−4,3 à −2,1) |
+
+**Les heures des volontaires**, en M (emploi du temps de R0) :
+
+| Volontaires | P0 | P1 (remplacées) | R 2 000 000 (changées) | R 2 000 000 − P1 |
+|---|---|---|---|---|
+| Aucun | 17,8 h | 17,8 h (0) | 10,3 h (19,1) | −7,51 (−7,89 à −7,14) |
+| Calés : 2 h une semaine sur quatre | 17,8 h | 16,0 h (1,9 h) | 8,9 h (20,1) | −7,11 (−7,48 à −6,74) |
+| 5 h chaque semaine | 17,8 h | 6,7 h (11,6 h) | 2,6 h (23,7) | −4,08 (−4,65 à −3,51) |
+
+- **Un meilleur emploi du temps de l'année ne coûte rien au replanning** : sur celui du recuit, 7 à 12 fois moins
+  cher que celui de R0, on perd autant d'heures (les intervalles contiennent 0) et on change à peu près autant de
+  séances. On ne paie pas la qualité de l'année en semaines d'absences.
+- **Sans aucun volontaire, la recherche sauve encore 7,5 h** sur 17,8 : ce sont les rattrapages, pas les
+  remplacements. Les volontaires calés n'y ajoutent que 1,4 h (8,9 h perdues au lieu de 10,3).
+- **Avec 5 h de volontaires chaque semaine**, P1 remplace 63 % des heures (ce n'est pas le terrain : 13 % publiés), et
+  la recherche enlève encore 61 % de ce qui reste (6,7 → 2,6 h), pour 17 séances changées de plus.
+
 ## Ce qui reste à J5
 
 - **Le coût souple** du nouvel emploi du temps (le 3e critère du score) n'est pas compté : les rattrapages allongent
   des journées sans que le score le voie.
-- **Les variantes** de la nuit du 9 au 10/11 : l'emploi du temps du recuit plutôt que celui de R0
-  (`agenda-j5-place-anneal-*`), des volontaires à 5 h chaque semaine ou sans volontaire (`agenda-j5-hours5-M`,
-  `agenda-j5-hours0-M`).
 - **La page** : la journée avant et après, ce qui a changé (§ 10).
 - **J6** : la durée d'une absence inconnue quand on décide ; ici elle est connue dès que l'absence l'est.
