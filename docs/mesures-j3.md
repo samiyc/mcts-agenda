@@ -49,11 +49,11 @@ S5 (plus de 7 h en cycle 4) et S7 (hors de sa salle) restent à 0.
 
 1. **Le recuit bat R0 de loin** : il divise le coût par 7 à 12, et sa borne haute reste très sous zéro aux trois
    tailles. Il bat aussi R0 répété : donner à R0 le même temps ne fait gagner que 15 % (−74 à −89).
-2. **Le recuit bat le tabou** aux trois tailles, et l'écart grandit avec le collège (−10, −26, −47) ; le recuit coûte moins sur 22, 27 et
-   28 collèges sur 30. Les deux ont
-   les mêmes mouvements et le même temps. Le tabou a été réglé sur 3 collèges seulement (40 barrettes tirées par pas,
-   4 échanges, une interdiction de 30 à 60 pas) ; un réglage plus poussé pourrait réduire l'écart, pas l'inverser sans
-   le mesurer.
+2. **Le recuit bat le tabou** aux trois tailles (avec les réglages de départ ; réglés, ils font jeu égal en S et M, voir
+   plus bas), et l'écart grandit avec le collège (−10, −26, −47) ; le recuit coûte moins sur 22, 27 et 28 collèges sur
+   30. Les deux ont les mêmes mouvements et le même temps. Le tabou a été réglé sur 3 collèges seulement (40 barrettes
+   tirées par pas, 4 échanges, une interdiction de 30 à 60 pas) ; un réglage plus poussé pourrait réduire l'écart, pas
+   l'inverser sans le mesurer.
 3. **Le témoin A/A tient** : ses intervalles contiennent 0 à toutes les tailles (de justesse en L : −19,6 à 0,2).
    Le bruit d'une graine de recherche est de l'ordre de 5 à 10 points, bien sous les écarts mesurés.
 4. **Ce qui résiste** : le lourd après 15 h (S6), qui fait maintenant un tiers du coût. Le français, les maths et la
@@ -114,15 +114,32 @@ défaut :
 - **Les deux gagnants tiennent sur des graines neuves, aux trois tailles**, et le gain grandit avec le collège : ils
   entrent dans les défauts le 10/11, **recuit hot=3** et **tabou sample=20, tenure=60** (le froid à 0,1 n'apporte
   rien de sûr). Le coût moyen à 20 s baisse de 21 à 26 % pour le recuit, de 33 à 40 % pour le tabou.
-- **Le second tour suggère d'aller plus loin** (recuit hot=2, tabou sample=15), sur les graines du réglage :
-  confirmation sur les graines 4001 à 4030 en file (`agenda-confirm2-*`), contre les nouveaux défauts.
-- **Le classement de J3 est à refaire** : le tabou réglé rejoint presque le recuit réglé sur les graines 3001 à
-  3030 (27,8 contre 26,5 en S, 50,8 contre 48,7 en M), mais pas en L (104 contre 86). La mesure par paires sur les graines 1001 à 1030 est en file
-  (`agenda-j3-tuned-*`, `tmp/search-j3-tuned-*.json`).
+- **Le second tour ne tient pas** : sur les graines neuves 4001 à 4030 (`agenda-confirm2-*`), contre les nouveaux
+  défauts, recuit hot=2 −2,3 (−4,9 à 0,3), −4,5 (−10,3 à 1,3), +1,2 (−7,2 à 9,6) ; tabou sample=15 +6,3 (3,4 à 9,1),
+  +1,1 (−5,1 à 7,3), −4,9 (−11,7 à 1,8). Ses gains sur les graines du réglage venaient du choix du meilleur parmi
+  quatre ; les défauts restent hot=3 et sample=20, tenure=60.
+
+## Recuit réglé contre tabou réglé (10/11)
+
+Les graines de la mesure (1001 à 1030), 20 s, les nouveaux défauts (`agenda-j3-tuned-*`,
+`tmp/search-j3-tuned-*.json`) :
+
+| Taille | Recuit (avant réglage) | Tabou (avant réglage) | Recuit − tabou | Recuit − témoin |
+|---|---|---|---|---|
+| S | **27,1** (32,9) | 27,5 (43,1) | −0,4 (−4,3 à 3,6) | +4,1 (0,2 à 8,0) |
+| M | 50,2 (58,7) | **46,2** (84,2) | +4,0 (−0,8 à 8,9) | +3,0 (−3,0 à 9,0) |
+| L | **89,3** (110) | 107 (157) | −18,0 (−25,8 à −10,3) | −0,8 (−6,9 à 5,4) |
+
+- **Réglés tous les deux, ils font jeu égal en S et M, le recuit gagne en L.** L'écart de J3 (−10, −26, −47) venait
+  surtout du réglage du tabou. Le tabou laisse un peu moins de lourd après 15 h (S6), le recuit moins de trous de
+  professeurs et de matières deux fois le même jour.
+- **Le témoin A/A sort de justesse en S** (0,2 à 8,0) : un intervalle sur vingt doit le faire ; les autres le
+  contiennent. Le bruit d'une graine de recherche est de 4 à 9 points en S et M.
+- **Le recuit reste la recherche de référence** : jamais battu, meilleur sur les grands collèges, et un seul réglage
+  qui compte (la température de départ).
 
 ## La suite
 
 - **Le budget** : 60 s (Q-S6), mesuré ci-dessus ; à 60 s le gain ne plafonne pas.
-- **Les réglages** : recuit réglé contre tabou réglé par paires, et la seconde confirmation ; la recherche de
-  référence (le recuit jusqu'ici) se choisit sur cette mesure.
-- **Les chaînes de Kempe**, si la recherche cale.
+- **Les chaînes de Kempe**, si la recherche cale ; ou un départ du tabou depuis le recuit, puisqu'ils ne laissent pas
+  les mêmes coûts.
