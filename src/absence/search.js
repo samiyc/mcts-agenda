@@ -3,6 +3,7 @@ import { SLOTS, dayOf } from "../time.js";
 import { placeFor, teacherThere } from "./moves.js";
 import { lengthOf, mark, orphan, setSession, shareOf } from "./plan.js";
 import { canReplace, inTeam, p1, sameSubject } from "./rules.js";
+import { areaCost, softOf } from "./soft.js";
 
 /**
  * The replanning search (docs/modele.md § 7): at each moment of the week, P1 decides first, then simulated annealing
@@ -10,14 +11,18 @@ import { canReplace, inTeam, p1, sameSubject } from "./rules.js";
  * - a lost session goes to a volunteer of its discipline or its class's team, or is caught up (« rattrapée ») at
  *   another slot of the week where its teacher is back;
  * - another session moves, to make room, or goes back where it was.
- * The value is `LOST` points a lost hour (by share of division) plus the weighted changes, in that order (Q-S4). The
- * best plan met is kept. The budget counts the moves tried at each moment (H).
+ * The value is `LOST` points a lost hour (by share of division), plus the weighted changes, plus `soft` times the
+ * week's soft cost (`soft.js`), in that order (Q-S4): at 0,01 a point, a change outweighs a hole of a division
+ * (10 points) ten times (H). The best plan met is kept. The budget counts the moves tried at each moment (H).
  */
-export const REPLAN = Object.freeze({ tries: 4000, hot: 2, cold: 0.05, seed: 1 });
+export const REPLAN = Object.freeze({ tries: 4000, hot: 2, cold: 0.05, seed: 1, soft: 0.01 });
 const LOST = 100;
 
 /** A session's part of the value: its lost hours, its weighted change. */
 const valueOf = (plan, s) => (orphan(plan, s) ? LOST * lengthOf(plan, s) * shareOf(plan, s) : 0) + plan.changed[s];
+
+/** The soft part of the value that a move of session `s` over `run.area` may change. */
+const softPart = (run, s) => (run.soft > 0 ? run.soft * areaCost(run.plan, s, run.area) : 0);
 
 const keep = (delta, run) => delta <= 0 || run.rng.next() < Math.exp(-delta / run.temperature);
 
@@ -31,11 +36,12 @@ function aim(run, teacher, slot, room) {
 /** Tries session `s` at `run.target`: kept by the annealing, or undone. */
 function attempt(run, s) {
   const { plan } = run;
-  const before = valueOf(plan, s);
-  const { old, target } = run;
+  const { old, target, area } = run;
   Object.assign(old, { teacher: plan.teacher[s], slot: plan.slot[s], room: plan.room[s], changed: plan.changed[s] });
+  Object.assign(area, { day0: dayOf(old.slot), day1: dayOf(target.slot), teacher0: old.teacher, teacher1: target.teacher });
+  const before = valueOf(plan, s) + softPart(run, s);
   setSession(plan, s, target, run.ctx.weight);
-  const delta = valueOf(plan, s) - before;
+  const delta = valueOf(plan, s) + softPart(run, s) - before;
   if (keep(delta, run)) {
     run.value += delta;
     return;
@@ -93,6 +99,9 @@ function step(run) {
   else shift(run, s);
 }
 
+/** The objects a run overwrites move after move, made once a moment. */
+const scratch = () => ({ old: { teacher: 0, slot: 0, room: 0, changed: 0 }, target: { teacher: 0, slot: 0, room: 0 }, area: { day0: 0, day1: 0, teacher0: 0, teacher1: 0 } });
+
 /** The arrays that make a plan, to keep the best one met. */
 const snapshot = (plan) => ({ slot: plan.slot.slice(), teacher: plan.teacher.slice(), room: plan.room.slice(), changed: plan.changed.slice(), replacements: plan.replacements.slice() });
 
@@ -108,26 +117,28 @@ function restoreBest(run) {
   const { plan, best } = run;
   for (const key of ["slot", "teacher", "room", "changed", "replacements"]) plan[key].set(best[key]);
   for (const layer of Object.values(plan.busy)) layer.fill(0);
+  plan.at.fill(-1);
   for (let s = 0; s < plan.course.length; s += 1) mark(plan, s, 1);
 }
 
-const totalOf = (plan) => {
-  let value = 0;
+function totalOf(plan, soft) {
+  let value = soft > 0 ? soft * softOf(plan) : 0;
   for (let s = 0; s < plan.course.length; s += 1) value += valueOf(plan, s);
   return value;
-};
+}
 
 /**
- * The search as a rule (`run.js`): `replanSearch({ tries, seed })` decides at each moment.
- * @param {{ tries?: number, hot?: number, cold?: number, seed?: number }} [options]
+ * The search as a rule (`run.js`): `replanSearch({ tries, seed })` decides at each moment; `soft: 0` leaves the
+ * soft cost out of the value.
+ * @param {{ tries?: number, hot?: number, cold?: number, seed?: number, soft?: number }} [options]
  */
 export function replanSearch(options = {}) {
-  const { tries, hot, cold, seed } = { ...REPLAN, ...options };
+  const { tries, hot, cold, seed, soft } = { ...REPLAN, ...options };
   const rng = createRng(seed);
   const cooling = Math.pow(cold / hot, 1 / tries);
   return (plan, ctx) => {
     p1(plan, ctx);
-    const run = { plan, ctx, rng, temperature: hot, value: totalOf(plan), best: null, old: { teacher: 0, slot: 0, room: 0, changed: 0 }, target: { teacher: 0, slot: 0, room: 0 } };
+    const run = { plan, ctx, rng, soft, temperature: hot, value: totalOf(plan, soft), best: null, ...scratch() };
     run.best = { ...snapshot(plan), value: run.value };
     for (let i = 0; i < tries; i += 1) {
       step(run);

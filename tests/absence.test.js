@@ -2,11 +2,13 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { buildGreedy } from "../src/build/greedy.js";
 import { placeFor } from "../src/absence/moves.js";
-import { changesOf, mark, orphan, planOf, replace } from "../src/absence/plan.js";
+import { changesOf, mark, orphan, planOf, replace, setSession } from "../src/absence/plan.js";
 import { canReplace, orphansOf, p0, p1 } from "../src/absence/rules.js";
 import { runWeek } from "../src/absence/run.js";
 import { drawWeek, volunteersOf } from "../src/absence/scenario.js";
 import { replanSearch } from "../src/absence/search.js";
+import { areaCost, softOf } from "../src/absence/soft.js";
+import { evaluate } from "../src/evaluate.js";
 import { createSchool } from "../src/school/generate.js";
 import { DAYS, SLOTS, dayOf } from "../src/time.js";
 
@@ -86,6 +88,31 @@ describe("the plan", () => {
     assert.equal(placeFor(plan, late, 0, 1), -1);
     const other = Array.from(plan.course.keys()).find((s) => s !== late && plan.parts[plan.course[s]].some((p) => plan.parts[plan.course[late]].includes(p)));
     assert.equal(placeFor(plan, late, plan.slot[other], 0), -1);
+  });
+});
+
+describe("the soft cost of a week", () => {
+  it("adds up, weeks A and B with no absence, to the evaluator's cost", () => {
+    assert.equal(softOf(planOf(school, timetable, 0)) + softOf(planOf(school, timetable, 1)), evaluate(school, timetable).cost);
+  });
+
+  it("prices a move on the area it touches, as the whole week does", () => {
+    const plan = planOf(school, timetable, weeks[2].week);
+    for (const a of weeks[2].absences) for (let d = a.from; d <= a.to; d += 1) plan.absent[a.teacher * DAYS.length + d] = 1;
+    let moves = 0;
+    for (let i = 0; i < 400; i += 1) {
+      const s = (i * 37) % plan.course.length;
+      const slot = (i * 13) % SLOTS;
+      const room = placeFor(plan, s, slot, 0);
+      if (room < 0) continue;
+      const teacher = i % 3 === 0 ? (i * 7) % school.teachers.length : plan.teacher[s];
+      const area = { day0: dayOf(plan.slot[s]), day1: dayOf(slot), teacher0: plan.teacher[s], teacher1: teacher };
+      const [whole, part] = [softOf(plan), areaCost(plan, s, area)];
+      setSession(plan, s, { teacher, slot, room }, 1);
+      assert.equal(softOf(plan) - whole, areaCost(plan, s, area) - part, `move ${i}`);
+      moves += 1;
+    }
+    assert.ok(moves > 20);
   });
 });
 

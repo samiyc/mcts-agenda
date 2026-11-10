@@ -1,5 +1,6 @@
 import { DAYS, SLOTS } from "../time.js";
 import { changesOf, lengthOf, orphan, planOf, shareOf } from "./plan.js";
+import { softOf } from "./soft.js";
 
 /**
  * A week of absences played out (docs/modele.md § 4): day after day, the evening before (« veille », 18 h) then the
@@ -7,6 +8,7 @@ import { changesOf, lengthOf, orphan, planOf, shareOf } from "./plan.js";
  * evening before weighs half a change of the morning (Q-P16). Then the week is scored, in this order (Q-S4):
  * - **lost**: the hours of a division nobody taught (a session whose teacher is away: an étude), by share of division;
  * - **changes**: the sessions changed, weighted;
+ * - **soft**: the soft cost of the week as it now stands (`soft.js`), an étude left where its course was;
  * - **the replacements**: the hours each volunteer gave, the most of them for fairness.
  * Beside them, **over**: the études beyond the two the vie scolaire can watch at once (H), slot by slot.
  */
@@ -33,7 +35,7 @@ export function scoreOf(plan) {
   }
   const over = studies.reduce((sum, n) => sum + Math.max(0, n - STUDY_ROOMS), 0);
   const given = Array.from(plan.replacements);
-  return { lost, changes: changesOf(plan), replaced: given.reduce((a, b) => a + b, 0), mostReplaced: Math.max(0, ...given), over };
+  return { lost, changes: changesOf(plan), soft: softOf(plan), replaced: given.reduce((a, b) => a + b, 0), mostReplaced: Math.max(0, ...given), over };
 }
 
 /**

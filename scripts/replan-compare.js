@@ -19,7 +19,7 @@ import { createSchool } from "../src/school/generate.js";
  *
  * Variants: `--place anneal` puts in place the timetable of the annealing from R0's (2,8 million slots tried, about
  * 20 s, J3's budget) instead of R0's; `--hours H` gives every volunteer H hours every week instead of the drawn ones
- * (0: no replacement at all).
+ * (0: no replacement at all); `--soft W` weighs the soft cost in the search's value by W a point (0: left out).
  */
 const { values } = parseArgs({
   options: {
@@ -31,10 +31,13 @@ const { values } = parseArgs({
     json: { type: "string" },
     place: { type: "string", default: "r0" },
     hours: { type: "string" },
+    soft: { type: "string" },
   },
 });
 const PLACE_TRIES = 2800000;
-const KEYS = ["lost", "changes", "replaced", "mostReplaced", "over", "ms"];
+const KEYS = ["lost", "changes", "soft", "replaced", "mostReplaced", "over", "ms"];
+/** The search's options beyond its budget and seed: the soft weight, when `--soft` gives one. */
+const EXTRA = values.soft === undefined ? {} : { soft: Number(values.soft) };
 const WITNESS_OFFSET = 500000;
 
 function rulesOf(seed) {
@@ -42,8 +45,8 @@ function rulesOf(seed) {
   return {
     P0: () => p0,
     P1: () => p1,
-    ...Object.fromEntries(budgets.map((tries) => [`R ${tries}`, () => replanSearch({ tries, seed })])),
-    témoin: () => replanSearch({ tries: budgets[0], seed: seed + WITNESS_OFFSET }),
+    ...Object.fromEntries(budgets.map((tries) => [`R ${tries}`, () => replanSearch({ ...EXTRA, tries, seed })])),
+    témoin: () => replanSearch({ ...EXTRA, tries: budgets[0], seed: seed + WITNESS_OFFSET }),
   };
 }
 
@@ -86,12 +89,13 @@ function report(size, rows) {
   const of = (name, key) => rows.map((row) => row[name][key]);
   const names = Object.keys(rows[0]);
   const hours = values.hours === undefined ? "" : ", " + values.hours + " h par volontaire chaque semaine";
-  const variant = `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${hours}`;
+  const soft = values.soft === undefined ? "" : ", poids souple " + values.soft;
+  const variant = `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${hours}${soft}`;
   const lines = [`## ${size} : ${rows.length} collèges, ${values.weeks} semaines chacun (moyennes par semaine) ; ${variant}`];
-  for (const name of names) lines.push(`- ${name} : perdues ${fmt(mean(of(name, "lost")))} h, changées ${fmt(mean(of(name, "changes")))}, remplacées ${fmt(mean(of(name, "replaced")))} h (au plus ${fmt(mean(of(name, "mostReplaced")))}), études en trop ${fmt(mean(of(name, "over")))}, ${fmt(mean(of(name, "ms")))} ms`);
+  for (const name of names) lines.push(`- ${name} : perdues ${fmt(mean(of(name, "lost")))} h, changées ${fmt(mean(of(name, "changes")))}, souple ${fmt(mean(of(name, "soft")))}, remplacées ${fmt(mean(of(name, "replaced")))} h (au plus ${fmt(mean(of(name, "mostReplaced")))}), études en trop ${fmt(mean(of(name, "over")))}, ${fmt(mean(of(name, "ms")))} ms`);
   const searches = names.filter((name) => name.startsWith("R "));
   const pairs = [["P1", "P0"], ...searches.map((name) => [name, "P1"]), [searches[0], "témoin"]];
-  for (const [a, b] of pairs) lines.push(`- ${a} − ${b} : perdues ${gap(paired(of(a, "lost"), of(b, "lost")))} ; changées ${gap(paired(of(a, "changes"), of(b, "changes")))}`);
+  for (const [a, b] of pairs) lines.push(`- ${a} − ${b} : perdues ${gap(paired(of(a, "lost"), of(b, "lost")))} ; changées ${gap(paired(of(a, "changes"), of(b, "changes")))} ; souple ${gap(paired(of(a, "soft"), of(b, "soft")))}`);
   console.log(`${lines.join("\n")}\n`);
 }
 

@@ -5,7 +5,8 @@ import { DAYS, SLOTS, dayOf, weeksOf } from "../time.js";
  * One week of the timetable in place (A or B), as the replanning sees it (docs/modele.md § 4): each course of that
  * week is a session, with its slot, its teacher and its room, which a rule may change. Beside them, who is busy when
  * (the parts of divisions, the teachers, the rooms, slot by slot), the absences known so far, and the replacement
- * hours each teacher gives.
+ * hours each teacher gives. `at` names the session each part of a division has at each slot (−1: none), for the
+ * soft cost (`soft.js`).
  *
  * The disruption is counted session by session (Müller et al.): a session that differs from the timetable in place
  * weighs the weight of the moment it last changed (half the evening before, one the morning: Q-P16), and nothing
@@ -31,6 +32,7 @@ export function planOf(school, timetable, week) {
       teacher: new Uint8Array(school.teachers.length * SLOTS),
       room: new Uint8Array(school.rooms.length * SLOTS),
     },
+    at: new Int16Array(school.divisions.length * PARTS * SLOTS).fill(-1),
     absent: new Uint8Array(school.teachers.length * DAYS.length),
     replacements: new Int16Array(school.teachers.length),
   };
@@ -42,13 +44,22 @@ export function planOf(school, timetable, week) {
 
 export const lengthOf = (plan, s) => plan.school.courses[plan.course[s]].length;
 
+/** Session `s` in (step 1) or out (step −1) of the parts' cells of `at`. */
+function name(plan, cell, s, step) {
+  if (step > 0) plan.at[cell] = s;
+  else if (plan.at[cell] === s) plan.at[cell] = -1;
+}
+
 /** Counts session `s` in (step 1) or out (step −1) of the busy layers, where it stands. */
 export function mark(plan, s, step) {
   const parts = plan.parts[plan.course[s]];
   const { division, teacher, room } = plan.busy;
   for (let k = 0; k < lengthOf(plan, s); k += 1) {
     const slot = plan.slot[s] + k;
-    for (let p = 0; p < parts.length; p += 1) division[parts[p] * SLOTS + slot] += step;
+    for (let p = 0; p < parts.length; p += 1) {
+      division[parts[p] * SLOTS + slot] += step;
+      name(plan, parts[p] * SLOTS + slot, s, step);
+    }
     teacher[plan.teacher[s] * SLOTS + slot] += step;
     room[plan.room[s] * SLOTS + slot] += step;
   }
