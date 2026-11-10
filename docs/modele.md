@@ -330,7 +330,7 @@ durées. C'est là que la lib sert vraiment ce projet.
 | **J2** (fait le 6/11) | les semaines A et B en vrai, les barrettes, les demi-groupes ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges : [`mesures-j2.md`](mesures-j2.md) |
 | **J3** (fait le 9/11) | le recuit et le tabou depuis R0 ; le banc (`npm run bench`) ; la page lance la recherche | contre R0 et R0 répété, par paires, à temps égal : [`mesures-j3.md`](mesures-j3.md) |
 | **J4** (fait le 9/11) | la lecture d'XHSTT (`src/xhstt/`), l'évaluateur rejoué contre HSEval sur des solutions publiées | 150 solutions sur 152 au coût publié : [`mesures-j4.md`](mesures-j4.md) |
-| **J5** (mesuré le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; le coût souple compté ; reste la page |
+| **J5** (fait le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) ; la page des remplacements | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; le coût souple compté |
 | **J6** | l'ISMCTS sur les durées inconnues ; peut-être ITC 2019 | contre J5 |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.
@@ -363,8 +363,8 @@ montre se décide dans `src/view/`, testé ; R0 construit dans un worker.
   placés en rouge, avec leurs raisons (fait). Une contrainte violée marquée dans sa case : avec la recherche.
 - **Les coûts**, par contrainte (faits pour R0 et R0-naïf) ; depuis J3, le recuit ou le tabou après la règle, pendant
   2 à 60 s, les coûts de la règle à côté (fait).
-- **Un remplacement** (J5) : la journée avant et après, ce qui a changé en couleur, et le lecteur pour suivre la
-  semaine d'absences.
+- **Un remplacement** (J5, `web/remplacement.html`, fait) : la semaine avant et après, ce qui a changé en couleur, et
+  le lecteur pour suivre la semaine d'absences, moment par moment.
 
 ## 11. Ce qui est décidé, et ce qui reste à Sami
 

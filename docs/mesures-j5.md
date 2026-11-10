@@ -9,60 +9,85 @@ remet une séance à sa place).
 **La commande** (les graines 1001 à 1030, celles des jalons précédents ; 30 semaines par collège) :
 
 ```text
-node scripts/replan-compare.js --sizes S --n 30 --from 1001 --weeks 30 --tries 20000,200000,2000000 --json tmp/replan-j5-S.json
+node scripts/replan-compare.js --sizes S --n 30 --from 1001 --weeks 30 --tries 20000,200000,2000000 --json tmp/replan-j5b-S.json
 ```
 
-Un job de la file par taille (`agenda-j5-replan-S`, `-M`, `-L`). L'emploi du temps en place est celui de R0, comme le
-veut le cadrage (§ 6.1). **Un échantillon est un collège** : la moyenne de ses 30 semaines, car elles partagent un
-emploi du temps. Les budgets de la recherche se comptent en mouvements essayés à chaque moment (la veille, le matin),
-dix moments par semaine : 20 000 (environ 4 ms par moment), 200 000 (40 ms) et 2 millions (0,4 s). Le cadrage
-accorde 60 s la veille et 10 s le matin (Q-S6) : on reste très en dessous.
+Un job de la file par taille (`agenda-j5b-S`, `-M`, `-L`, le 10/11 au soir). Les chiffres qui suivent sont ceux de la
+recherche **corrigée** (une séance remise à sa place reprend sa salle, voir plus bas) et **avec le coût souple** au
+poids 0,01 ; les premiers chiffres, du 9/11, sont gardés plus bas comme « avant le correctif ». L'emploi du temps en
+place est celui de R0, comme le veut le cadrage (§ 6.1). **Un échantillon est un collège** : la moyenne de ses 30
+semaines, car elles partagent un emploi du temps. Les budgets de la recherche se comptent en mouvements essayés à
+chaque moment (la veille, le matin), dix moments par semaine : 20 000 (environ 7 ms par moment), 200 000 (65 ms) et
+2 millions (0,65 s). Le cadrage accorde 60 s la veille et 10 s le matin (Q-S6) : on reste très en dessous.
 
 **Ce que comptent les chiffres**, par semaine : les **heures perdues**, les heures de cours d'une division que personne
 n'a données (une demi-division compte une demi-heure) ; les **séances changées**, celles qui diffèrent de l'emploi du
-temps en place (½ si décidé la veille, 1 le matin) ; les **heures remplacées** par des volontaires ; les **études en
-trop**, au-delà de deux études à la fois (**H**).
+temps en place (½ si décidé la veille, 1 le matin) ; le **coût souple** de la semaine devenue (S1 à S8) ; les **heures
+remplacées** par des volontaires ; les **études en trop**, au-delà de deux études à la fois (**H**).
 
 ## Les chiffres
 
-**Par semaine, en moyenne sur 30 collèges** :
+**Par semaine, en moyenne sur 30 collèges** (entre parenthèses pour la recherche : les séances changées) :
 
 | Taille | P0 : perdues | P1 : perdues (changées, remplacées) | R 20 000 | R 200 000 | R 2 000 000 |
 |---|---|---|---|---|---|
-| S | 13,4 h | 11,9 h (1,0 ; 1,6 h) | 8,9 h (6,9) | 7,3 h (11,6) | **6,5 h** (15,3) |
-| M | 17,8 h | 16,0 h (1,1 ; 1,9 h) | 12,2 h (9,2) | 10,1 h (15,4) | **8,9 h** (20,1) |
-| L | 26,2 h | 23,1 h (1,9 ; 3,2 h) | 18,1 h (21,6) | 14,9 h (40,5) | **12,9 h** (53,6) |
-
-Entre parenthèses pour la recherche : les séances changées.
+| S | 13,4 h | 11,9 h (1,0 ; 1,6 h) | 8,9 h (3,4) | 7,5 h (4,8) | **6,5 h** (5,9) |
+| M | 17,8 h | 16,0 h (1,1 ; 1,9 h) | 12,2 h (4,1) | 10,3 h (5,9) | **8,9 h** (7,4) |
+| L | 26,2 h | 23,1 h (1,9 ; 3,2 h) | 18,2 h (6,2) | 15,1 h (8,7) | **13,0 h** (11,5) |
 
 **Les écarts par paires** (A − B, moyenne et intervalle à 95 %, en heures perdues par semaine) :
 
 | Taille | P1 − P0 | R 20 000 − P1 | R 200 000 − P1 | R 2 000 000 − P1 | Témoin A/A (R 20 000, autre graine) |
 |---|---|---|---|---|---|
-| S | −1,52 (−1,75 à −1,28) | −3,03 (−3,25 à −2,81) | −4,55 (−4,82 à −4,27) | −5,41 (−5,73 à −5,09) | +0,02 (−0,04 à 0,08) |
-| M | −1,86 (−2,12 à −1,60) | −3,74 (−4,00 à −3,49) | −5,83 (−6,18 à −5,49) | −7,11 (−7,48 à −6,74) | −0,01 (−0,09 à 0,06) |
-| L | −3,11 (−3,52 à −2,70) | −4,96 (−5,23 à −4,70) | −8,23 (−8,60 à −7,87) | −10,22 (−10,65 à −9,80) | −0,05 (−0,15 à 0,04) |
+| S | −1,52 (−1,75 à −1,28) | −2,99 (−3,21 à −2,77) | −4,43 (−4,70 à −4,15) | −5,38 (−5,70 à −5,06) | +0,04 (−0,03 à 0,11) |
+| M | −1,86 (−2,12 à −1,60) | −3,72 (−3,98 à −3,45) | −5,69 (−6,02 à −5,35) | −7,05 (−7,43 à −6,68) | −0,07 (−0,15 à 0,01) |
+| L | −3,11 (−3,52 à −2,70) | −4,91 (−5,17 à −4,66) | −7,95 (−8,33 à −7,58) | −10,13 (−10,56 à −9,70) | −0,03 (−0,14 à 0,08) |
 
-**Le prix en séances changées**, R − P1 : +6,0, +10,6, +14,3 en S ; +8,1, +14,3, +18,9 en M ; +19,7, +38,6, +51,7 en L
-(intervalles de ±0,3 à ±1,3). Soit, pour une heure sauvée, 2 à 2,6 séances changées en S et M, 4 à 5 en L.
+**Le prix en séances changées**, R − P1 : +2,5, +3,9, +4,9 en S ; +3,0, +4,8, +6,3 en M ; +4,3, +6,8, +9,6 en L
+(intervalles de ±0,2 à ±0,5). Soit **0,8 à 0,95 séance changée par heure sauvée**, à toutes les tailles.
 
-**Les études en trop** baissent avec la recherche : de 0,58 à 0,25 en M, de 1,77 à 0,73 en L.
+**Le prix en coût souple**, R 2 000 000 − P1 : +42 (39 à 44) en S, +56 (52 à 61) en M, +85 (80 à 90) en L, sur 196,
+262 et 369 points pour P1.
+
+**Les études en trop** baissent avec la recherche : de 0,58 à 0,26 en M, de 1,77 à 0,72 en L.
 
 ## Ce qu'on en tire
 
 1. **P1 remplace ce que remplacent les collèges** : 10 à 12 % des heures perdues par P0, dans l'ordre des 13 % publiés
    pour 2024-2025. C'est le calage des volontaires (2 h une semaine sur quatre, `modele.md` § 4) qui le donne.
-2. **La recherche bat P1 de loin, et plus elle cherche, plus elle sauve** : 23 à 25 % des heures que P1 perd dès
-   20 000 essais par moment, 44 à 45 % à 2 millions, en 0,4 s par moment. Les bornes hautes restent très sous zéro à
-   toutes les tailles et tous les budgets ; le témoin A/A contient 0 partout.
+2. **La recherche bat P1 de loin, et plus elle cherche, plus elle sauve** : 21 à 25 % des heures que P1 perd dès
+   20 000 essais par moment, 44 à 45 % à 2 millions, en 0,65 s par moment. Les bornes hautes restent très sous zéro
+   à toutes les tailles et tous les budgets ; le témoin A/A contient 0 partout.
 3. **Elle sauve surtout par les rattrapages** : elle remplace un peu moins d'heures que P1 (1,7 h contre 1,9 h en M),
-   mais déplace le cours perdu un autre jour où son professeur est là, et d'autres séances pour lui faire de la place.
-4. **Le prix est le dérangement**, et il grandit avec le collège : 2 à 2,6 séances changées par heure sauvée en S et
-   M, 4 à 5 en L. Le score met les heures perdues d'abord (Q-S4), c'est donc un gain ; mais 54 séances changées par
-   semaine dans un grand collège, c'est beaucoup à annoncer. À montrer à un principal adjoint (Q-P16) : faut-il un
-   plafond de changements, ou un poids qui rachète une heure perdue par un certain nombre de changements ?
-5. **Le gain ne plafonne pas encore** à 2 millions d'essais : de 200 000 à 2 millions, encore −0,9 à −2,0 h. Le budget
-   du cadrage (10 s le matin) est 25 fois plus grand.
+   mais déplace le cours perdu un autre jour où son professeur est là.
+4. **Le prix est d'environ une séance changée par heure sauvée**, à toutes les tailles : la plupart des heures
+   sauvées sont un rattrapage direct, le cours perdu posé dans un créneau libre, sans déplacer d'autre séance. Dans
+   un grand collège, 11,5 séances changées par semaine pour 10 heures sauvées. Le score met les heures perdues
+   d'abord (Q-S4) ; reste à savoir d'un principal adjoint si c'est trop à annoncer (Q-P16).
+5. **Le gain ne plafonne pas encore** à 2 millions d'essais : de 200 000 à 2 millions, encore −1,0 à −2,2 h. Le budget
+   du cadrage (10 s le matin) est 15 fois plus grand.
+
+## Le correctif des salles (10/11)
+
+La page des remplacements (§ 10) a montré, sur la première semaine affichée, des séances qui ne changeaient que de
+salle. La cause : une séance remise à son créneau d'origine gardait la salle où un déplacement l'avait mise, et plus
+aucun mouvement ne pouvait la lui rendre ; elle comptait comme changée sans rien gagner. Depuis 26780be, une séance
+reprend d'abord sa salle d'origine, si elle est libre. **Les écarts par paires au premier chiffrage**
+(`tmp/replan-soft0.01-*`, le même poids souple, les mêmes graines ; perdues ; changées ; souple) :
+
+| Taille | R 20 000 : corrigé − avant | R 2 000 000 : corrigé − avant |
+|---|---|---|
+| S | +0,02 (−0,02 à 0,06) ; **−3,3** (−3,6 à −3,0) ; −0,8 (−2,0 à 0,3) | +0,05 (−0,01 à 0,11) ; **−9,6** (−10,1 à −9,2) ; −3,5 (−5,4 à −1,6) |
+| M | +0,00 (−0,05 à 0,06) ; **−5,0** (−5,4 à −4,6) ; −1,7 (−2,7 à −0,6) | +0,03 (−0,03 à 0,09) ; **−12,8** (−13,4 à −12,3) ; +1,1 (−0,5 à 2,7) |
+| L | +0,02 (−0,07 à 0,11) ; **−14,9** (−15,8 à −14,1) ; −3,2 (−4,5 à −1,9) | +0,03 (−0,05 à 0,10) ; **−44,6** (−45,8 à −43,4) ; −1,1 (−3,5 à 1,4) |
+
+Le correctif ne coûte aucune heure (tous les intervalles contiennent 0) et retire **la moitié à quatre cinquièmes des
+séances changées** : en L à 2 millions, de 56 à 11,5. Le coût souple ne bouge presque pas.
+
+**Avant le correctif** (9/11, sans coût souple ; `tmp/replan-j5-*.json`), les heures perdues étaient les mêmes à
+0,25 h près (l'écart vient du poids souple), mais les séances changées étaient 15,3, 20,1 et 53,6 à 2 millions
+d'essais : 2 à 2,6 séances par heure sauvée en S et M, 4 à 5 en L. Les séances changées des deux sections suivantes
+datent d'avant le correctif : elles comptent ces salles et ne valent que comparées entre elles.
 
 ## Les variantes (nuit du 9 au 10/11)
 
@@ -133,5 +158,7 @@ cent points souples (dix trous d'une division) valent un cours changé ; à 0,1,
 
 ## Ce qui reste à J5
 
-- **La page** : la journée avant et après, ce qui a changé (§ 10).
+- **La page** est faite (`web/remplacement.html`, 10/11) : la semaine d'une division, d'un professeur ou d'une salle
+  avant et après, moment par moment, ce qui a changé et les absences connues ; c'est elle qui a montré le défaut des
+  salles.
 - **J6** : la durée d'une absence inconnue quand on décide ; ici elle est connue dès que l'absence l'est.

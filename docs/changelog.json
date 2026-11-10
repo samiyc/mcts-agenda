@@ -4,6 +4,18 @@
   "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
   "versions": [
     {
+      "version": "0.4.0",
+      "title": "Les remplacements",
+      "date": "10/11/2026",
+      "commits": ["5e275c7", "26780be"],
+      "items": [
+        "Une nouvelle page rejoue une semaine d'absences : on choisit le collège, la semaine et la façon de remplacer (des études, un volontaire, ou la recherche), puis on suit la semaine de la veille du lundi au vendredi matin.",
+        "La semaine d'une classe, d'un professeur ou d'une salle s'affiche avant et après, côte à côte : les études en rouge, les cours remplacés, déplacés ou changés de salle chacun dans sa couleur, et la liste de tout ce qui a changé.",
+        "La recherche sauve 21 à 45 % des heures que perd un remplacement par volontaire, en déplaçant environ un cours par heure sauvée ; elle tient compte aussi des trous et des journées longues qu'elle crée.",
+        "Corrigé : un cours remis à sa place reprend sa salle ; avant, la recherche changeait jusqu'à 45 cours de salle par semaine sans rien gagner."
+      ]
+    },
+    {
       "version": "0.3.1",
       "title": "Le recuit et le tabou réglés",
       "date": "10/11/2026",
