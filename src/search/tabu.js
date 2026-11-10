@@ -11,7 +11,7 @@ import { back, costAt, createState, insert, lift, neighboursOf } from "./state.j
  * is made, even when it costs more. A barrette may not go back to the slot it leaves for `tenure` to 2 × `tenure`
  * steps, unless that beats the best timetable met (aspiration). The budget counts the slots tried, a swap two.
  */
-export const TABU = Object.freeze({ tries: 200000, sample: 40, swaps: 4, tenure: 30 });
+export const TABU = Object.freeze({ tries: 200000, sample: 20, swaps: 4, tenure: 60 });
 const SHIFT = 0;
 const SWAP = 1;
 

@@ -4,6 +4,16 @@
   "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
   "versions": [
     {
+      "version": "0.3.1",
+      "title": "Le recuit et le tabou réglés",
+      "date": "10/11/2026",
+      "commits": ["1cf0155"],
+      "items": [
+        "Le recuit part moins chaud et le tabou essaie moins de cours à chaque pas : réglés sur 30 collèges, vérifiés sur 30 autres, ils donnent des emplois du temps 21 à 26 % moins coûteux pour le recuit, 33 à 40 % pour le tabou, dans le même temps.",
+        "Laisser la recherche tourner 60 secondes au lieu de 20 divise encore le coût par deux environ."
+      ]
+    },
+    {
       "version": "0.3.0",
       "title": "La recherche locale : le recuit et le tabou",
       "date": "9/11/2026",

@@ -301,13 +301,13 @@ Gurobi tient 24 h sur certaines instances d'ITC 2019 sans trouver de solution. O
 - **Le prix d'un mouvement** se lit sur les seuls jours qu'il touche (`linkDelta`, celui de R0) ; la somme des prix
   égale le coût de l'évaluateur, au point près (`tests/search.test.js`).
 - **Le recuit simulé** : un mouvement tiré à chaque pas, un échange une fois sur deux ; un mouvement qui coûte `d` de
-  plus passe avec la probabilité exp(−d / T), T tombant de 8 à 0,3 (**H**).
-- **Le tabou**, comme Di Gaspero et Schaerf : à chaque pas, 40 barrettes tirées, chacune essayée sur tous les
+  plus passe avec la probabilité exp(−d / T), T tombant de 3 à 0,3 (réglé, [`mesures-j3.md`](mesures-j3.md)).
+- **Le tabou**, comme Di Gaspero et Schaerf : à chaque pas, 20 barrettes tirées, chacune essayée sur tous les
   créneaux et dans 4 échanges ; le meilleur mouvement est fait, même s'il coûte. Une barrette ne revient pas au créneau
-  qu'elle quitte avant 30 à 60 pas, sauf pour battre le meilleur emploi du temps vu (**H**).
+  qu'elle quitte avant 60 à 120 pas, sauf pour battre le meilleur emploi du temps vu (réglé, même source).
 - **Le budget** se compte en créneaux essayés, pour qu'une recherche se rejoue de sa graine ; le banc
   (`npm run bench`) le convertit en temps : environ 140 essais par milliseconde pour le recuit, 580 pour le tabou,
-  dont un essai coûte moins (une barrette levée sert pour ses 39 créneaux).
+  dont un essai coûte moins (une barrette levée sert pour tous ses créneaux).
 - **Le témoin à temps égal** : **R0 répété**, R0 relancé avec d'autres graines d'égalités pendant le même temps, le
   meilleur gardé. C'est la règle simple avec le budget de la recherche.
 

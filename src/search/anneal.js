@@ -11,7 +11,7 @@ import { createState, insert, neighboursOf } from "./state.js";
  * geometrically from `hot` to `cold` over the budget. Now and then a barrette R0 left tries a slot. The budget counts
  * the slots tried, a swap two.
  */
-export const ANNEAL = Object.freeze({ tries: 200000, hot: 8, cold: 0.3, swap: 0.5 });
+export const ANNEAL = Object.freeze({ tries: 200000, hot: 3, cold: 0.3, swap: 0.5 });
 /** One step in this many tries a barrette left unplaced, when there is one. */
 const INSERT_EVERY = 16;
 

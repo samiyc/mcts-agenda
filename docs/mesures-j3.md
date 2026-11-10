@@ -98,14 +98,31 @@ par défaut (`agenda-tune-anneal-M`, `agenda-tune-tabu-M`). Variante − défaut
 - **Le recuit part trop chaud** (8) et **le tabou tire trop de barrettes** (40) : les deux réglages venaient de
   3 collèges. Le tabou réglé (55,9) passerait devant le recuit par défaut (64,3) sur ces graines : le classement
   « le recuit bat le tabou » est peut-être un effet de réglage. Il faut les comparer réglés tous les deux.
-- **Rien ne change dans ANNEAL ni TABU avant la confirmation** sur des graines neuves (3001 à 3030, aux trois
-  tailles : `agenda-confirm-anneal-*`, `agenda-confirm-tabu-*`, en file le 10/11), ni avant un second tour autour
-  des gagnants (`agenda-tune2-anneal-M` : hot 2 et 4, cold 0,1 et 0,15 ; `agenda-tune2-tabu-M` : sample 10 et 15,
-  tenure 45 et 60).
+**La confirmation** (10/11, graines neuves 3001 à 3030, 20 s, `agenda-confirm-*`, `tmp/confirm-*.json`), variante −
+défaut :
+
+| Taille | Recuit hot=3 | Recuit hot=3, cold=0.1 | Tabou sample=20 | Tabou sample=20, tenure=60 |
+|---|---|---|---|---|
+| S | −8,2 (−12,9 à −3,6) | −10,9 (−16,0 à −5,8) | −18,1 (−23,4 à −12,7) | −17,4 (−21,3 à −13,5) |
+| M | −12,8 (−17,4 à −8,3) | −10,0 (−15,0 à −5,0) | −29,2 (−37,2 à −21,1) | **−34,1** (−41,9 à −26,3) |
+| L | **−30,2** (−37,8 à −22,6) | −23,3 (−32,1 à −14,5) | −37,3 (−45,3 à −29,3) | **−50,6** (−56,6 à −44,7) |
+
+**Le second tour** (graines 2001 à 2030, M, `agenda-tune2-*`), variante − ancien défaut : recuit hot=2 −18,5 (−25,0
+à −11,9), hot=4 −9,6, hot=3 et cold=0.15 −16,3, hot=2 et cold=0.1 −13,5 ; tabou sample=15 **−30,5** (−36,9 à
+−24,1), sample=10 −12,5, sample=20 et tenure=45 −24,7, sample=10 et tenure=60 +6,2.
+
+- **Les deux gagnants tiennent sur des graines neuves, aux trois tailles**, et le gain grandit avec le collège : ils
+  entrent dans les défauts le 10/11, **recuit hot=3** et **tabou sample=20, tenure=60** (le froid à 0,1 n'apporte
+  rien de sûr). Le coût moyen à 20 s baisse de 21 à 26 % pour le recuit, de 33 à 40 % pour le tabou.
+- **Le second tour suggère d'aller plus loin** (recuit hot=2, tabou sample=15), sur les graines du réglage :
+  confirmation sur les graines 4001 à 4030 en file (`agenda-confirm2-*`), contre les nouveaux défauts.
+- **Le classement de J3 est à refaire** : le tabou réglé rejoint presque le recuit réglé sur les graines 3001 à
+  3030 (27,8 contre 26,5 en S, 50,8 contre 48,7 en M), mais pas en L (104 contre 86). La mesure par paires sur les graines 1001 à 1030 est en file
+  (`agenda-j3-tuned-*`, `tmp/search-j3-tuned-*.json`).
 
 ## La suite
 
-- **Le recuit est la recherche de référence** pour la suite (le replanning de J5 partira de lui).
 - **Le budget** : 60 s (Q-S6), mesuré ci-dessus ; à 60 s le gain ne plafonne pas.
-- **Les réglages** : la confirmation, puis recuit réglé contre tabou réglé, par paires.
-- **Les chaînes de Kempe**, si le recuit cale.
+- **Les réglages** : recuit réglé contre tabou réglé par paires, et la seconde confirmation ; la recherche de
+  référence (le recuit jusqu'ici) se choisit sur cette mesure.
+- **Les chaînes de Kempe**, si la recherche cale.
