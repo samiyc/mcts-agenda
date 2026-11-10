@@ -23,6 +23,13 @@ function rebuilt(plan) {
   return copy.busy;
 }
 
+/** Whether `room` is free over session `s`'s slots in the timetable in place: the move a put-back could keep. */
+function freeAt(plan, s, room) {
+  const { length } = school.courses[plan.course[s]];
+  for (let k = 0; k < length; k += 1) if (plan.busy.room[room * SLOTS + plan.origin.slot[s] + k] > 0) return false;
+  return true;
+}
+
 const clashFree = (plan) => [plan.busy.division, plan.busy.teacher, plan.busy.room].every((layer) => layer.every((n) => n <= 1));
 
 describe("the absences", () => {
@@ -80,6 +87,19 @@ describe("the plan", () => {
     assert.deepEqual([changesOf(plan), plan.replacements[second]], [0.5, school.courses[plan.course[0]].length]);
     replace(plan, 0, first, 1);
     assert.deepEqual([changesOf(plan), plan.replacements[second]], [0, 0]);
+  });
+
+  it("puts a session back in its own room, not the one it was moved to", () => {
+    const plan = planOf(school, timetable, 0);
+    const s = Array.from(plan.course.keys()).find((i) => {
+      for (let slot = 0; slot < SLOTS; slot += 1) {
+        const room = placeFor(plan, i, slot, 0);
+        if (room >= 0 && room !== plan.room[i] && slot !== plan.slot[i] && freeAt(plan, i, room)) return setSession(plan, i, { teacher: plan.teacher[i], slot, room }, 1) ?? true;
+      }
+      return false;
+    });
+    assert.ok(s !== undefined, "a session moved to another room");
+    assert.equal(placeFor(plan, s, plan.origin.slot[s], 0), plan.origin.room[s]);
   });
 
   it("finds no room for a session on a day before the decision, or across another session", () => {

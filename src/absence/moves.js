@@ -48,8 +48,12 @@ function roomFree(plan, room, slot, length) {
   return true;
 }
 
-/** Its own room when free, else the first free room of its kind; −1 if none. */
+/**
+ * Its room in the timetable in place when free (a session put back gets its room back too), else the room it has now,
+ * else the first free room of its kind; −1 if none.
+ */
 function roomFor(plan, s, slot, length) {
+  if (roomFree(plan, plan.origin.room[s], slot, length)) return plan.origin.room[s];
   if (roomFree(plan, plan.room[s], slot, length)) return plan.room[s];
   const rooms = roomsFor(plan.school, plan.school.courses[plan.course[s]]);
   for (let r = 0; r < rooms.length; r += 1) if (roomFree(plan, rooms[r], slot, length)) return rooms[r];
