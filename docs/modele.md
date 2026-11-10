@@ -244,9 +244,10 @@ libre), montre que R0 n'est pas trivial à battre.
   d'autres jours que celui de l'absence : c'est un mouvement de la recherche.
 - **Le matin**, seuls les volontaires déjà au collège ce jour-là remplacent (**H**, la lecture stricte de Q-P12).
 
-Une recherche de replanning doit battre **P1**, pas seulement P0. Le coût souple (le 3e critère du score) n'est pas
-encore compté à J5 : les mouvements tiennent les contraintes dures, et le score s'arrête aux heures perdues, aux
-changements et aux remplacements.
+Une recherche de replanning doit battre **P1**, pas seulement P0. Le coût souple (le 3e critère du score) est
+compté depuis le 10/11 (`src/absence/soft.js`) : la recherche ajoute à sa valeur 0,01 fois le coût souple de la
+semaine, cent points valant un cours changé (**H**, Q-P16) ; il retire la moitié de ce que les rattrapages coûtaient
+aux journées, sans perdre d'heures ([`mesures-j5.md`](mesures-j5.md)).
 
 ## 6. Les mesures
 
@@ -329,7 +330,7 @@ durées. C'est là que la lib sert vraiment ce projet.
 | **J2** (fait le 6/11) | les semaines A et B en vrai, les barrettes, les demi-groupes ; la page (la grille d'une division, d'un professeur, d'une salle) | R0 sur les nouveaux collèges : [`mesures-j2.md`](mesures-j2.md) |
 | **J3** (fait le 9/11) | le recuit et le tabou depuis R0 ; le banc (`npm run bench`) ; la page lance la recherche | contre R0 et R0 répété, par paires, à temps égal : [`mesures-j3.md`](mesures-j3.md) |
 | **J4** (fait le 9/11) | la lecture d'XHSTT (`src/xhstt/`), l'évaluateur rejoué contre HSEval sur des solutions publiées | 150 solutions sur 152 au coût publié : [`mesures-j4.md`](mesures-j4.md) |
-| **J5** (mesuré le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; reste le coût souple et la page |
+| **J5** (mesuré le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; le coût souple compté ; reste la page |
 | **J6** | l'ISMCTS sur les durées inconnues ; peut-être ITC 2019 | contre J5 |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.

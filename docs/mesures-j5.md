@@ -94,9 +94,44 @@ Les mêmes collèges et les mêmes semaines, donc appariables d'un fichier à l'
 - **Avec 5 h de volontaires chaque semaine**, P1 remplace 63 % des heures (ce n'est pas le terrain : 13 % publiés), et
   la recherche enlève encore 61 % de ce qui reste (6,7 → 2,6 h), pour 17 séances changées de plus.
 
+## Le coût souple dans le score (10/11)
+
+Le 3e critère du score ([`modele.md`](modele.md) § 4) : le coût souple de la semaine telle qu'elle est devenue (S1 à
+S8, ceux de l'évaluateur, `src/absence/soft.js`), sans la journée d'un professeur absent ; une étude reste où était
+son cours. La recherche ajoute à sa valeur **W × le coût souple** ; on mesure trois poids, chacun aux trois tailles,
+avec `--soft W` (`agenda-j5-soft{0,0.01,0.1}-*`, `tmp/replan-soft*-*.json` ; 20 000 et 2 millions d'essais). À 0,01,
+cent points souples (dix trous d'une division) valent un cours changé ; à 0,1, un trou vaut un cours changé (**H**).
+
+**Par semaine, recherche à 2 millions d'essais** (coût souple de P1 : 196 en S, 262 en M, 369 en L ; P1 − P0 : +2 à
++4) :
+
+| Taille | W = 0 : perdues, changées, souple | W = 0,01 | W = 0,1 |
+|---|---|---|---|
+| S | 6,48 h ; 15,3 ; 277 | 6,46 h ; 15,5 ; **241** | 6,63 h ; 16,3 ; **205** |
+| M | 8,85 h ; 20,1 ; 363 | 8,88 h ; 20,3 ; **318** | 9,17 h ; 21,3 ; **273** |
+| L | 12,86 h ; 53,6 ; 547 | 12,93 h ; 56,2 ; **455** | 13,29 h ; 58,1 ; **385** |
+
+**Les écarts par paires au poids 0**, à 2 millions d'essais (perdues ; changées ; souple) :
+
+| Taille | W = 0,01 − W = 0 | W = 0,1 − W = 0 |
+|---|---|---|
+| S | −0,02 (−0,07 à 0,04) ; +0,2 (−0,1 à 0,5) ; **−36** (−38 à −34) | +0,15 (0,10 à 0,20) ; +1,1 (0,7 à 1,4) ; **−73** (−77 à −68) |
+| M | +0,02 (−0,05 à 0,09) ; +0,2 (−0,1 à 0,5) ; **−45** (−48 à −43) | +0,32 (0,24 à 0,39) ; +1,3 (0,9 à 1,7) ; **−90** (−94 à −85) |
+| L | +0,07 (−0,03 à 0,17) ; +2,6 (1,9 à 3,3) ; **−92** (−97 à −87) | +0,43 (0,33 à 0,53) ; +4,5 (3,9 à 5,2) ; **−162** (−170 à −154) |
+
+- **Sans le coût souple, la recherche abîmait les journées** : +81, +100, +178 points par semaine sur P1, 40 à 50 %
+  du coût souple d'une semaine. C'est le prix caché des rattrapages, des trous et des journées longues.
+- **À 0,01, la moitié de ce prix disparaît sans perdre d'heures** (intervalles qui contiennent 0) ; en S et M, sans
+  changer plus de séances ; en L, pour 2,6 séances changées de plus sur 56. Ce poids devient le défaut (`REPLAN`).
+- **À 0,1, il n'en reste presque rien** (+9, +10, +16 sur P1), pour 0,15 à 0,43 h perdue de plus par semaine et une à
+  cinq séances changées de plus. Choisir entre les deux, c'est dire combien vaut une journée mieux faite en minutes
+  de cours perdues : la question est ajoutée à Q-P16.
+- **Le poids 0 rejoue exactement les chiffres du début** (heures perdues et séances changées identiques) : le coût
+  souple n'a rien changé d'autre à la recherche. Il coûte du temps : 7 s par semaine à 2 millions d'essais au lieu de
+  4 s, soit 0,7 s par moment, toujours loin des 10 s du matin.
+- **Le témoin A/A** contient 0 sur les trois critères, partout.
+
 ## Ce qui reste à J5
 
-- **Le coût souple** du nouvel emploi du temps (le 3e critère du score) n'est pas compté : les rattrapages allongent
-  des journées sans que le score le voie.
 - **La page** : la journée avant et après, ce qui a changé (§ 10).
 - **J6** : la durée d'une absence inconnue quand on décide ; ici elle est connue dès que l'absence l'est.
