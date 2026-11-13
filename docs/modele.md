@@ -17,8 +17,8 @@ Une valeur marquée **H** est une hypothèse, avec sa question dans [`recherche/
    cours découpés en sections que chaque étudiant choisit, des semaines différentes d'un cours à l'autre, des créneaux
    de 5 minutes et des temps de trajet entre bâtiments. La compétition de **2011** (ITC 2011, le format XHSTT) portait,
    elle, sur les **lycées et collèges** : des classes fixes, des professeurs déjà affectés, une semaine type. C'est
-   notre problème. Ses 25 instances de référence viennent de 12 pays, aucune de France. On propose XHSTT d'abord,
-   ITC 2019 ensuite (Q-S2).
+   notre problème. Ses 25 instances de référence viennent de 12 pays, aucune de France. XHSTT-2014 est le banc
+   (validé par Sami le 13/11, Q-S2) ; ITC 2019 seulement si le lycée vient.
 2. **La valeur est dans le remplacement plus que dans la construction.** Un emploi du temps se construit une fois par
    an, l'été, avec un logiciel que l'éditeur dit installé dans plus de 9 100 collèges et lycées. Les absences, elles,
    coûtent toute l'année : la Cour des comptes compte 9 % des heures de cours perdues dans les collèges publics en
@@ -182,8 +182,12 @@ quand on l'apprend.
 
 - **Les absences** (**H**, Q-P17) : chaque professeur manque en moyenne un jour par mois. Deux absences sur trois sont
   connues d'avance (une formation, une réunion, une sortie scolaire), une sur trois le matin même (une maladie). Elles
-  durent 1 à 3 jours, et leur durée n'est pas toujours connue quand on décide (à J5, elle l'est dès que l'absence
-  l'est ; J6 lève cette facilité). Le code : `src/absence/scenario.js`.
+  durent 1 à 3 jours, et leur durée n'est pas toujours connue quand on décide. À J5, elle l'est dès que l'absence
+  l'est. **À J6** (**H**, Q-P17) : une absence prévue vient avec sa durée (une formation a ses dates) ; une maladie
+  sur deux aussi (l'arrêt dit jusqu'à quand), l'autre s'apprend jour après jour, chaque jour de plus la veille au
+  soir (le professeur appelle avant 18 h), et la fin la veille du jour où il revient. Variantes : le jour de plus
+  appris le matin seulement, toutes les maladies apprises jour après jour. Le code : `src/absence/scenario.js`,
+  `run.js`.
 - **Les volontaires** (**H**, Q-P14) : un professeur sur cinq. Le Pacte paie le remplacement court jusqu'à 18 heures
   par an, une demi-heure par semaine : chaque semaine, un volontaire sur quatre peut donner 2 heures, les autres
   rien. P1 remplace alors 10 à 30 % des heures perdues, l'ordre des taux publiés : 13 % en 2024-2025, 13 à 19 % en
@@ -318,9 +322,14 @@ faisceau de la lib (`createBeam`) sur les choix de R0.
 **Replanifier** (J5) : la même recherche locale, partie de l'emploi du temps en place, avec le dérangement dans le
 coût.
 
-**L'ISMCTS de la lib** (J6), pour la durée inconnue d'une absence : décider aujourd'hui sans savoir si le professeur
-reviendra demain. Chaque itération tire une durée ; les mondes communs comparent deux remplacements sur les mêmes
-durées. C'est là que la lib sert vraiment ce projet.
+**Sous une durée inconnue** (J6) : décider aujourd'hui sans savoir si le professeur reviendra demain. D'abord les
+règles simples, trois **croyances** de la même recherche (`src/absence/belief.js`) : une heure perdue compte par la
+probabilité que son professeur manque ce jour-là ; **known**, celle de J5, le croit revenu le lendemain ; **worst**,
+absent jusqu'au troisième jour ; **odds**, la probabilité que donne le scénario (une absence de 1 à 3 jours au hasard,
+déjà là depuis `k` jours : 2/3 qu'elle dure un jour de plus après le premier, 1/2 après le deuxième). Sous worst et
+odds, la recherche peut aussi remplacer d'avance un cours dont le professeur manquera peut-être. **L'ISMCTS de la lib**
+ne vient qu'ensuite, et seulement s'il reste à gagner entre ces règles et la recherche qui connaît les durées : chaque
+itération tirerait une durée, les mondes communs compareraient deux plans sur les mêmes durées.
 
 ## 8. Les jalons
 
@@ -331,7 +340,7 @@ durées. C'est là que la lib sert vraiment ce projet.
 | **J3** (fait le 9/11) | le recuit et le tabou depuis R0 ; le banc (`npm run bench`) ; la page lance la recherche | contre R0 et R0 répété, par paires, à temps égal : [`mesures-j3.md`](mesures-j3.md) |
 | **J4** (fait le 9/11) | la lecture d'XHSTT (`src/xhstt/`), l'évaluateur rejoué contre HSEval sur des solutions publiées | 150 solutions sur 152 au coût publié : [`mesures-j4.md`](mesures-j4.md) |
 | **J5** (fait le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) ; la page des remplacements | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; le coût souple compté |
-| **J6** | l'ISMCTS sur les durées inconnues ; peut-être ITC 2019 | contre J5 |
+| **J6** (commencé le 14/11) | les durées apprises jour après jour (`hidden`) ; trois croyances de la recherche ; les annonces comptées ; l'ISMCTS s'il reste à gagner | contre J5 (la croyance known) et contre les durées connues, par paires |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.
 
@@ -375,6 +384,9 @@ montre se décide dans `src/view/`, testé ; R0 construit dans un worker.
 - `schedule` pris pour sa forme seulement.
 
 Il y ajoute l'EPS en deux blocs de 2 h, « à ajuster plus tard si besoin » (§ 2.4).
+
+**Validé par Sami le 13/11** (relayé par la session de mcts-commun) : XHSTT-2014 comme banc public, à la place
+d'ITC 2019, qui est universitaire (Q-S2).
 
 Encore proposé, en attendant sa réponse : un **collège** public fictif, pas un lycée (Q-S1 ; les choix d'options du
 lycée en font un autre problème, celui d'ITC 2019).

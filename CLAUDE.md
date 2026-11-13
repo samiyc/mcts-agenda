@@ -23,7 +23,7 @@ Its line in the roadmap: `mcts-commun/docs/feuille-de-route.md`, § 2.C. Start t
 - **Randomness is seeded** (`createRng` of `mcts-commun`): an instance and a search replay from their seed.
 - **A simple rule first** (a greedy fill), measured on the same schools; a search must beat it, paired over the same
   instances, with its interval. A quick screen rejects, it never promotes (lopin's lesson). The public instances of
-  ITC 2019 are the bench to compare with.
+  XHSTT-2014 (ITC 2011's schools) are the bench to compare with (Sami, 13/11; ITC 2019 only if the lycée comes).
 - **Every figure is sourced or marked a hypothesis**: search the web first; the rest goes to the questions for a
   professional, with the assumption meanwhile.
 - **Markdown files stay under 800 lines**, this one under 300.
