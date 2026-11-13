@@ -6,7 +6,8 @@ import { DAYS, SLOTS, dayOf, weeksOf } from "../time.js";
  * week is a session, with its slot, its teacher and its room, which a rule may change. Beside them, who is busy when
  * (the parts of divisions, the teachers, the rooms, slot by slot), the absences known so far, and the replacement
  * hours each teacher gives. `at` names the session each part of a division has at each slot (−1: none), for the
- * soft cost (`soft.js`).
+ * soft cost (`soft.js`). `ongoing` follows an absence whose length is not known yet (J6): its first day by teacher
+ * (−1: none) and the days known so far; `notices` counts the changes announced, moment after moment (`run.js`).
  *
  * The disruption is counted session by session (Müller et al.): a session that differs from the timetable in place
  * weighs the weight of the moment it last changed (half the evening before, one the morning: Q-P16), and nothing
@@ -34,6 +35,8 @@ export function planOf(school, timetable, week) {
     },
     at: new Int16Array(school.divisions.length * PARTS * SLOTS).fill(-1),
     absent: new Uint8Array(school.teachers.length * DAYS.length),
+    ongoing: { from: new Int8Array(school.teachers.length).fill(-1), days: new Int8Array(school.teachers.length) },
+    notices: 0,
     replacements: new Int16Array(school.teachers.length),
   };
   for (let s = 0; s < ids.length; s += 1) mark(plan, s, 1);

@@ -20,6 +20,12 @@ import { createSchool } from "../src/school/generate.js";
  * Variants: `--place anneal` puts in place the timetable of the annealing from R0's (2,8 million slots tried, about
  * 20 s, J3's budget) instead of R0's; `--hours H` gives every volunteer H hours every week instead of the drawn ones
  * (0: no replacement at all); `--soft W` weighs the soft cost in the search's value by W a point (0: left out).
+ *
+ * J6: `--hidden veille` learns the length of half the morning absences day after day, each further day the evening
+ * before (`--hidden matin`: that morning; `--told-whole P`: a share P of the morning absences told whole, not half;
+ * `run.js`, `scenario.js`); `--beliefs known,odds`
+ * plays the search under each belief (`belief.js`) at each budget, `R 200000 odds` beside `R 200000` (known, J5's),
+ * and pairs each belief with J5's search at the same budget.
  */
 const { values } = parseArgs({
   options: {
@@ -32,21 +38,28 @@ const { values } = parseArgs({
     place: { type: "string", default: "r0" },
     hours: { type: "string" },
     soft: { type: "string" },
+    hidden: { type: "string" },
+    "told-whole": { type: "string" },
+    beliefs: { type: "string", default: "known" },
   },
 });
 const PLACE_TRIES = 2800000;
-const KEYS = ["lost", "changes", "soft", "replaced", "mostReplaced", "over", "ms"];
+const KEYS = ["lost", "changes", "notices", "soft", "replaced", "mostReplaced", "over", "ms"];
 /** The search's options beyond its budget and seed: the soft weight, when `--soft` gives one. */
 const EXTRA = values.soft === undefined ? {} : { soft: Number(values.soft) };
 const WITNESS_OFFSET = 500000;
+const BELIEFS = /** @type {("known" | "worst" | "odds")[]} */ (values.beliefs.split(","));
+/** A search's name: its budget, then its belief unless J5's. */
+const nameOf = (tries, belief) => (belief === "known" ? `R ${tries}` : `R ${tries} ${belief}`);
 
 function rulesOf(seed) {
   const budgets = values.tries.split(",").map(Number);
+  const searches = budgets.flatMap((tries) => BELIEFS.map((belief) => [nameOf(tries, belief), () => replanSearch({ ...EXTRA, tries, seed, belief })]));
   return {
     P0: () => p0,
     P1: () => p1,
-    ...Object.fromEntries(budgets.map((tries) => [`R ${tries}`, () => replanSearch({ ...EXTRA, tries, seed })])),
-    témoin: () => replanSearch({ ...EXTRA, tries: budgets[0], seed: seed + WITNESS_OFFSET }),
+    ...Object.fromEntries(searches),
+    témoin: () => replanSearch({ ...EXTRA, tries: budgets[0], seed: seed + WITNESS_OFFSET, belief: BELIEFS[0] }),
   };
 }
 
@@ -58,7 +71,8 @@ function inPlace(school, seed) {
 
 /** Week `k` of a collège, its volunteers' hours replaced when `--hours` says so. */
 function scenarioOf(school, volunteers, seed) {
-  const scenario = drawWeek(school, seed);
+  const told = values["told-whole"] === undefined ? {} : { toldWhole: Number(values["told-whole"]) };
+  const scenario = { ...drawWeek(school, seed, told), hidden: /** @type {false | "veille" | "matin"} */ (values.hidden ?? false) };
   if (values.hours !== undefined) scenario.budget = Uint8Array.from(volunteers, (v) => v * Number(values.hours));
   return scenario;
 }
@@ -90,12 +104,16 @@ function report(size, rows) {
   const names = Object.keys(rows[0]);
   const hours = values.hours === undefined ? "" : ", " + values.hours + " h par volontaire chaque semaine";
   const soft = values.soft === undefined ? "" : ", poids souple " + values.soft;
-  const variant = `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${hours}${soft}`;
+  const told = values["told-whole"] === undefined ? "" : ", dites " + values["told-whole"];
+  const hidden = values.hidden ? `, durées apprises jour après jour (${values.hidden}${told})` : "";
+  const variant = `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${hours}${soft}${hidden}`;
   const lines = [`## ${size} : ${rows.length} collèges, ${values.weeks} semaines chacun (moyennes par semaine) ; ${variant}`];
-  for (const name of names) lines.push(`- ${name} : perdues ${fmt(mean(of(name, "lost")))} h, changées ${fmt(mean(of(name, "changes")))}, souple ${fmt(mean(of(name, "soft")))}, remplacées ${fmt(mean(of(name, "replaced")))} h (au plus ${fmt(mean(of(name, "mostReplaced")))}), études en trop ${fmt(mean(of(name, "over")))}, ${fmt(mean(of(name, "ms")))} ms`);
+  for (const name of names) lines.push(`- ${name} : perdues ${fmt(mean(of(name, "lost")))} h, changées ${fmt(mean(of(name, "changes")))}, annonces ${fmt(mean(of(name, "notices")))}, souple ${fmt(mean(of(name, "soft")))}, remplacées ${fmt(mean(of(name, "replaced")))} h (au plus ${fmt(mean(of(name, "mostReplaced")))}), études en trop ${fmt(mean(of(name, "over")))}, ${fmt(mean(of(name, "ms")))} ms`);
   const searches = names.filter((name) => name.startsWith("R "));
-  const pairs = [["P1", "P0"], ...searches.map((name) => [name, "P1"]), [searches[0], "témoin"]];
-  for (const [a, b] of pairs) lines.push(`- ${a} − ${b} : perdues ${gap(paired(of(a, "lost"), of(b, "lost")))} ; changées ${gap(paired(of(a, "changes"), of(b, "changes")))} ; souple ${gap(paired(of(a, "soft"), of(b, "soft")))}`);
+  const beliefs = searches.filter((name) => name.split(" ").length > 2).map((name) => [name, name.split(" ").slice(0, 2).join(" ")]);
+  const pairs = [["P1", "P0"], ...searches.map((name) => [name, "P1"]), ...beliefs.filter(([, b]) => names.includes(b)), [searches[0], "témoin"]];
+  const gapOf = (a, b, key) => gap(paired(of(a, key), of(b, key)));
+  for (const [a, b] of pairs) lines.push(`- ${a} − ${b} : perdues ${gapOf(a, b, "lost")} ; changées ${gapOf(a, b, "changes")} ; annonces ${gapOf(a, b, "notices")} ; souple ${gapOf(a, b, "soft")}`);
   console.log(`${lines.join("\n")}\n`);
 }
 
