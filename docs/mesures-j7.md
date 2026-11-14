@@ -108,3 +108,22 @@ KS-PR-11 passe de 274 à 2 à 4 violations, et une course n'en a aucune. AU-BG-9
 moins bien avec la première phase : ses classes aussi sont pleines (25 heures pour 25 places), mais ses conflits sont
 surtout des professeurs, entre des cours liés de 2 à 9 classes. Sans `slide`, `feasible` seul fait déjà tomber
 KS-PR-11 vers 130 ; l'échange de plages (`block`) n'y a rien changé.
+
+**Sur les 25 instances** (50 jobs `agenda-j7-comb-*`, copie figée de 7486fec, graines 1 et 2, 3 millions d'essais,
+contre hard=10) :
+
+| réglage (avec hard=10) | rang moyen | courses sans infaisabilité | instances sans infaisabilité | contre hard=10 (rang) | mieux / égal / moins bien |
+|---|---|---|---|---|---|
+| — | 2,25 | 22/50 | 10/25 | | |
+| slide=0.1 | 2,14 | 23/50 | 10/25 | −0,11 (−0,50 à +0,28) | 10 / 2 / 13 |
+| feasible=0.5, slide=0.1 | 2,49 | **28/50** | **13/25** | +0,24 (−0,40 à +0,88) | 9 / 1 / 15 |
+| feasible=0.8, slide=0.1, free=0.5 | 3,12 | 24/50 | 10/25 | +0,87 (+0,22 à +1,52) | 8 / 1 / 16 |
+
+Le décalage seul ne change presque rien ailleurs qu'à KS-PR-11 (274 → 255 : il lui faut aussi la première phase).
+La première phase à moitié du budget rend trois instances faisables de plus (BR-SM-00, GR-PA-08 de 35 à 0, BR-SN-00) et
+fait tomber KS-PR-11 à 4,5 et AU-BG-98 à 55. Mais elle perd au rang : là où les deux réglages sont faisables, la
+moitié du budget ôtée à l'objectif se paie (US-WS-09 : 2 366 → 3 579), et NL-KP-05 remonte de 29,5 à 56,5. La
+variante à 80 % avec `free` est **écartée** (son intervalle exclut zéro).
+
+D'où une retouche : **la première phase s'arrête dès qu'un plan n'a plus d'infaisabilité** (11b55b9), et rend le
+reste du budget à l'objectif. Elle n'est alors longue que là où il le faut.
