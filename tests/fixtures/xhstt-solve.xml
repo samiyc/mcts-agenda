@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A small XHSTT instance written for the solver's tests (tests/xhstt-solve.test.js): two days of four times, linked
+     events, a required cut, rooms to assign, one list of rooms, a shared room for a course. -->
+<HighSchoolTimetableArchive Id="Solve">
+  <Instances>
+    <Instance Id="Solve1">
+      <MetaData><Name>Solve</Name><Contributor>agenda</Contributor><Date>2026-11-14</Date><Country>-</Country><Description>for the solver</Description></MetaData>
+      <Times>
+        <TimeGroups>
+          <Day Id="Mo"><Name>Mo</Name></Day>
+          <Day Id="Tu"><Name>Tu</Name></Day>
+          <TimeGroup Id="DoubleStarts"><Name>DoubleStarts</Name></TimeGroup>
+        </TimeGroups>
+        <Time Id="Mo1"><Name>Mo1</Name><Day Reference="Mo"/><TimeGroups><TimeGroup Reference="DoubleStarts"/></TimeGroups></Time>
+        <Time Id="Mo2"><Name>Mo2</Name><Day Reference="Mo"/></Time>
+        <Time Id="Mo3"><Name>Mo3</Name><Day Reference="Mo"/><TimeGroups><TimeGroup Reference="DoubleStarts"/></TimeGroups></Time>
+        <Time Id="Mo4"><Name>Mo4</Name><Day Reference="Mo"/></Time>
+        <Time Id="Tu1"><Name>Tu1</Name><Day Reference="Tu"/><TimeGroups><TimeGroup Reference="DoubleStarts"/></TimeGroups></Time>
+        <Time Id="Tu2"><Name>Tu2</Name><Day Reference="Tu"/></Time>
+        <Time Id="Tu3"><Name>Tu3</Name><Day Reference="Tu"/><TimeGroups><TimeGroup Reference="DoubleStarts"/></TimeGroups></Time>
+        <Time Id="Tu4"><Name>Tu4</Name><Day Reference="Tu"/></Time>
+      </Times>
+      <Resources>
+        <ResourceTypes>
+          <ResourceType Id="Teacher"><Name>Teacher</Name></ResourceType>
+          <ResourceType Id="Class"><Name>Class</Name></ResourceType>
+          <ResourceType Id="Room"><Name>Room</Name></ResourceType>
+        </ResourceTypes>
+        <ResourceGroups>
+          <ResourceGroup Id="Everyone"><Name>Everyone</Name><ResourceType Reference="Teacher"/></ResourceGroup>
+          <ResourceGroup Id="Classes"><Name>Classes</Name><ResourceType Reference="Class"/></ResourceGroup>
+        </ResourceGroups>
+        <Resource Id="T1"><Name>T1</Name><ResourceType Reference="Teacher"/><ResourceGroups><ResourceGroup Reference="Everyone"/></ResourceGroups></Resource>
+        <Resource Id="T2"><Name>T2</Name><ResourceType Reference="Teacher"/><ResourceGroups><ResourceGroup Reference="Everyone"/></ResourceGroups></Resource>
+        <Resource Id="T3"><Name>T3</Name><ResourceType Reference="Teacher"/><ResourceGroups><ResourceGroup Reference="Everyone"/></ResourceGroups></Resource>
+        <Resource Id="C1"><Name>C1</Name><ResourceType Reference="Class"/><ResourceGroups><ResourceGroup Reference="Classes"/></ResourceGroups></Resource>
+        <Resource Id="C2"><Name>C2</Name><ResourceType Reference="Class"/><ResourceGroups><ResourceGroup Reference="Classes"/></ResourceGroups></Resource>
+        <Resource Id="C3"><Name>C3</Name><ResourceType Reference="Class"/><ResourceGroups><ResourceGroup Reference="Classes"/></ResourceGroups></Resource>
+        <Resource Id="R1"><Name>R1</Name><ResourceType Reference="Room"/></Resource>
+        <Resource Id="R2"><Name>R2</Name><ResourceType Reference="Room"/></Resource>
+      </Resources>
+      <Events>
+        <EventGroups>
+          <Course Id="K"><Name>K</Name></Course>
+          <EventGroup Id="All"><Name>All</Name></EventGroup>
+          <EventGroup Id="L"><Name>L</Name></EventGroup>
+        </EventGroups>
+        <Event Id="E1">
+          <Name>E1</Name><Duration>2</Duration><Course Reference="K"/>
+          <Resources><Resource Reference="C1"/><Resource Reference="T1"/><Resource><Role>Room</Role><ResourceType Reference="Room"/></Resource></Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+        <Event Id="E2">
+          <Name>E2</Name><Duration>1</Duration><Course Reference="K"/>
+          <Resources><Resource Reference="C1"/><Resource Reference="T1"/><Resource><Role>Room</Role><ResourceType Reference="Room"/></Resource></Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+        <Event Id="E3">
+          <Name>E3</Name><Duration>1</Duration>
+          <Resources><Resource Reference="C2"/><Resource Reference="T2"/><Resource><Role>Room</Role><ResourceType Reference="Room"/></Resource></Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+        <Event Id="E4">
+          <Name>E4</Name><Duration>2</Duration>
+          <Resources><Resource Reference="C2"/><Resource Reference="T3"/></Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+        <Event Id="E5">
+          <Name>E5</Name><Duration>3</Duration>
+          <Resources><Resource Reference="C3"/><Resource Reference="T2"/></Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+        <Event Id="E6">
+          <Name>E6</Name><Duration>3</Duration>
+          <Resources><Resource Reference="C1"/><Resource Reference="T3"/></Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+        <Event Id="E7">
+          <Name>E7</Name><Duration>2</Duration>
+          <Resources><Resource Reference="C2"/><Resource Reference="T1"/></Resources>
+          <EventGroups><EventGroup Reference="All"/><EventGroup Reference="L"/></EventGroups>
+        </Event>
+        <Event Id="E8">
+          <Name>E8</Name><Duration>2</Duration>
+          <Resources><Resource Reference="C3"/><Resource Reference="T3"/></Resources>
+          <EventGroups><EventGroup Reference="All"/><EventGroup Reference="L"/></EventGroups>
+        </Event>
+        <Event Id="E9">
+          <Name>E9</Name><Duration>1</Duration><Time Reference="Tu4"/>
+          <Resources><Resource Reference="C3"/><Resource Reference="T1"/></Resources>
+          <EventGroups><EventGroup Reference="All"/></EventGroups>
+        </Event>
+      </Events>
+      <Constraints>
+        <AssignTimeConstraint Id="assignTime">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="All"/></EventGroups></AppliesTo>
+        </AssignTimeConstraint>
+        <AssignResourceConstraint Id="assignRoom">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="All"/></EventGroups></AppliesTo>
+          <Role>Room</Role>
+        </AssignResourceConstraint>
+        <SplitEventsConstraint Id="cutE5">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E5"/></Events></AppliesTo>
+          <MinimumDuration>1</MinimumDuration><MaximumDuration>2</MaximumDuration><MinimumAmount>2</MinimumAmount><MaximumAmount>2</MaximumAmount>
+        </SplitEventsConstraint>
+        <SplitEventsConstraint Id="cutE6">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E6"/></Events></AppliesTo>
+          <MinimumDuration>1</MinimumDuration><MaximumDuration>3</MaximumDuration><MinimumAmount>1</MinimumAmount><MaximumAmount>3</MaximumAmount>
+        </SplitEventsConstraint>
+        <DistributeSplitEventsConstraint Id="oneDouble">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E6"/></Events></AppliesTo>
+          <Duration>2</Duration><Minimum>1</Minimum><Maximum>1</Maximum>
+        </DistributeSplitEventsConstraint>
+        <PreferTimesConstraint Id="doubles">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="All"/></EventGroups></AppliesTo>
+          <TimeGroups><TimeGroup Reference="DoubleStarts"/></TimeGroups>
+          <Duration>2</Duration>
+        </PreferTimesConstraint>
+        <PreferResourcesConstraint Id="labE3">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Events><Event Reference="E3"/></Events></AppliesTo>
+          <Resources><Resource Reference="R1"/></Resources>
+          <Role>Room</Role>
+        </PreferResourcesConstraint>
+        <AvoidSplitAssignmentsConstraint Id="oneRoomK">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="K"/></EventGroups></AppliesTo>
+          <Role>Room</Role>
+        </AvoidSplitAssignmentsConstraint>
+        <SpreadEventsConstraint Id="spreadK">
+          <Name>a</Name><Required>false</Required><Weight>2</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="K"/></EventGroups></AppliesTo>
+          <TimeGroups>
+            <TimeGroup Reference="Mo"><Minimum>0</Minimum><Maximum>1</Maximum></TimeGroup>
+            <TimeGroup Reference="Tu"><Minimum>0</Minimum><Maximum>1</Maximum></TimeGroup>
+          </TimeGroups>
+        </SpreadEventsConstraint>
+        <LinkEventsConstraint Id="link">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventGroups><EventGroup Reference="L"/></EventGroups></AppliesTo>
+        </LinkEventsConstraint>
+        <OrderEventsConstraint Id="order">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><EventPairs><EventPair><FirstEvent Reference="E2"/><SecondEvent Reference="E3"/></EventPair></EventPairs></AppliesTo>
+        </OrderEventsConstraint>
+        <AvoidClashesConstraint Id="clashes">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><ResourceGroups><ResourceGroup Reference="Everyone"/><ResourceGroup Reference="Classes"/></ResourceGroups><Resources><Resource Reference="R1"/><Resource Reference="R2"/></Resources></AppliesTo>
+        </AvoidClashesConstraint>
+        <AvoidUnavailableTimesConstraint Id="unavailable">
+          <Name>a</Name><Required>true</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Resources><Resource Reference="T2"/></Resources></AppliesTo>
+          <Times><Time Reference="Mo1"/></Times>
+        </AvoidUnavailableTimesConstraint>
+        <LimitIdleTimesConstraint Id="idle">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><ResourceGroups><ResourceGroup Reference="Classes"/></ResourceGroups></AppliesTo>
+          <TimeGroups><TimeGroup Reference="Mo"/><TimeGroup Reference="Tu"/></TimeGroups>
+          <Minimum>0</Minimum><Maximum>0</Maximum>
+        </LimitIdleTimesConstraint>
+        <ClusterBusyTimesConstraint Id="days">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Resources><Resource Reference="T3"/></Resources></AppliesTo>
+          <TimeGroups><TimeGroup Reference="Mo"/><TimeGroup Reference="Tu"/></TimeGroups>
+          <Minimum>0</Minimum><Maximum>1</Maximum>
+        </ClusterBusyTimesConstraint>
+        <LimitBusyTimesConstraint Id="busy">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Quadratic</CostFunction>
+          <AppliesTo><Resources><Resource Reference="T1"/></Resources></AppliesTo>
+          <TimeGroups><TimeGroup Reference="Mo"/><TimeGroup Reference="Tu"/></TimeGroups>
+          <Minimum>0</Minimum><Maximum>2</Maximum>
+        </LimitBusyTimesConstraint>
+        <LimitWorkloadConstraint Id="workload">
+          <Name>a</Name><Required>false</Required><Weight>1</Weight><CostFunction>Linear</CostFunction>
+          <AppliesTo><Resources><Resource Reference="R1"/></Resources></AppliesTo>
+          <Minimum>0</Minimum><Maximum>3</Maximum>
+        </LimitWorkloadConstraint>
+      </Constraints>
+    </Instance>
+  </Instances>
+</HighSchoolTimetableArchive>

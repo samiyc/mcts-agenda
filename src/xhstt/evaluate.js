@@ -8,14 +8,14 @@ import { RESOURCE_DEVIATIONS } from "./deviations-resources.js";
  * add up to the infeasibility, the others to the objective. Also each cost by point and constraint, keyed as HSEval's
  * reports are (`point id|constraint id`), to compare them line by line.
  */
-const COST_FUNCTIONS = Object.freeze({
+export const COST_FUNCTIONS = Object.freeze({
   Linear: (d) => d,
   Quadratic: (d) => d * d,
   Step: (d) => (d > 0 ? 1 : 0),
 });
 
 /** Who attends what, when; and each resource's workload. */
-function contextOf(instance, solution) {
+export function contextOf(instance, solution) {
   const T = instance.times.ids.length;
   const R = instance.resources.list.length;
   const attend = new Int32Array(R * T);
@@ -34,18 +34,31 @@ function contextOf(instance, solution) {
   return { instance, solution, T, attend, workload, byEvent };
 }
 
-/** The deviation and the name of a point, by the kind of points of the constraint. */
-function pointOf(constraint, ctx, point) {
-  const { instance } = ctx;
+/** The deviation of a constraint at a point, by the kind of points of the constraint. */
+export function deviationOf(constraint, ctx, point) {
   switch (POINTS[constraint.kind]) {
     case "event":
-      return { id: instance.events.list[point].id, deviation: EVENT_DEVIATIONS[constraint.kind](constraint, ctx, point) };
+      return EVENT_DEVIATIONS[constraint.kind](constraint, ctx, point);
     case "group":
-      return { id: point.id, deviation: GROUP_DEVIATIONS[constraint.kind](constraint, ctx, point) };
+      return GROUP_DEVIATIONS[constraint.kind](constraint, ctx, point);
     case "resource":
-      return { id: instance.resources.list[point].id, deviation: RESOURCE_DEVIATIONS[constraint.kind](constraint, ctx, point) };
+      return RESOURCE_DEVIATIONS[constraint.kind](constraint, ctx, point);
     default:
-      return { id: instance.events.list[point.first].id, deviation: orderDeviation(constraint, ctx, point) };
+      return orderDeviation(constraint, ctx, point);
+  }
+}
+
+/** The name of a point, as HSEval's reports give it. */
+function nameOf(constraint, { instance }, point) {
+  switch (POINTS[constraint.kind]) {
+    case "event":
+      return instance.events.list[point].id;
+    case "group":
+      return point.id;
+    case "resource":
+      return instance.resources.list[point].id;
+    default:
+      return instance.events.list[point.first].id;
   }
 }
 
@@ -68,8 +81,8 @@ export function evaluateSolution(instance, solution) {
   for (const constraint of instance.constraints) {
     const f = COST_FUNCTIONS[constraint.costFunction];
     for (const point of constraint.points) {
-      const { id, deviation } = pointOf(constraint, ctx, point);
-      if (deviation > 0) add(result, constraint, id, constraint.weight * f(deviation));
+      const deviation = deviationOf(constraint, ctx, point);
+      if (deviation > 0) add(result, constraint, nameOf(constraint, ctx, point), constraint.weight * f(deviation));
     }
   }
   return result;

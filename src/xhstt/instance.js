@@ -4,8 +4,8 @@ import { child, childrenOf, references, textOf } from "./xml.js";
 /**
  * An XHSTT instance (the format of ITC 2011, http://jeffreykingston.id.au/cgi-bin/hseval.cgi?op=spec), read into
  * arrays and indexes: the times in their order, the time groups (Week and Day among them) as lists of time indexes,
- * the resources and their groups, the events with their event resources, the event groups (Course among them), and
- * the constraints (`constraints-read.js`). Everything refers to everything else by index.
+ * the day of each time, the resources and their groups, the events with their event resources, the event groups
+ * (Course among them), and the constraints (`constraints-read.js`). Everything refers to everything else by index.
  */
 
 /**
@@ -25,14 +25,18 @@ const groupsOfTime = (time) => [
   ...references(time, "TimeGroups", "TimeGroup"),
 ];
 
+/** The times, their groups, and the day of each time (an index among the Day groups, −1 when it has none). */
 function readTimes(node) {
   const groups = new Map();
   for (const kind of ["Week", "Day", "TimeGroup"]) for (const g of childrenOf(child(node, "TimeGroups"), kind)) groups.set(g.attrs.Id, []);
-  const ids = childrenOf(node, "Time").map((time, index) => {
+  const dayIds = childrenOf(child(node, "TimeGroups"), "Day").map((g) => g.attrs.Id);
+  const times = childrenOf(node, "Time");
+  const ids = times.map((time, index) => {
     for (const ref of groupsOfTime(time)) join(groups, ref, index);
     return time.attrs.Id;
   });
-  return { ids, index: new Map(ids.map((id, i) => [id, i])), groups };
+  const dayOf = Int16Array.from(times, (time) => dayIds.indexOf(child(time, "Day")?.attrs.Reference ?? ""));
+  return { ids, index: new Map(ids.map((id, i) => [id, i])), groups, dayOf };
 }
 
 function readResources(node) {

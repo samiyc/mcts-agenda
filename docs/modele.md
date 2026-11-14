@@ -342,6 +342,7 @@ le rattrape en heures au prix de séances déplacées d'avance ; l'ISMCTS n'est 
 | **J4** (fait le 9/11) | la lecture d'XHSTT (`src/xhstt/`), l'évaluateur rejoué contre HSEval sur des solutions publiées | 150 solutions sur 152 au coût publié : [`mesures-j4.md`](mesures-j4.md) |
 | **J5** (fait le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) ; la page des remplacements | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; le coût souple compté |
 | **J6** (mesuré le 14/11) | les durées apprises jour après jour (`hidden`) ; trois croyances de la recherche ; les annonces comptées ; pas d'ISMCTS : il n'y a presque rien à gagner | contre J5 (la croyance known) et contre les durées connues, par paires : [`mesures-j6.md`](mesures-j6.md) |
+| **J7** (en cours, 14/11) | le banc XHSTT-2014 : un solveur pour ses instances (`src/xhstt/`, § 13), la règle simple puis le recuit | contre la règle simple par paires, et contre le meilleur connu de chaque instance, au budget d'ITC 2011 |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.
 
@@ -407,3 +408,37 @@ Les questions, chacune avec sa recommandation : [`recherche/questions.md`](reche
 - **Les risques** : des poids souples inventés (le professionnel les corrigera, et les mesures avant et après iront
   dans le commit) ; un remplacement réel qui dépend des personnes plus que des créneaux (qui accepte, qui est fâché) ;
   et un banc public où l'on restera loin des meilleurs, ce qu'il faudra dire tel quel.
+
+## 13. Le banc XHSTT (J7)
+
+Le banc public validé par Sami le 13/11 : les 25 instances d'XHSTT-2014, lues dans l'archive de toutes les instances
+(`data/xhstt/all`), qui porte les corrections faites depuis 2014 et les solutions publiées. Le meilleur connu de chaque
+instance est la plus petite (infaisabilité, objectif) parmi les valeurs de sa page et les solutions de son fichier,
+évaluées par le nôtre (J4). Ces instances demandent plus que nos collèges : découper les événements, affecter des
+salles (et, en Australie, des professeurs), seize types de contraintes. Le solveur est donc à part (`src/xhstt/`), et
+son coût est celui de l'évaluateur, recalculé point par point.
+
+- **La disposition** (`layout.js`) : des **unités**, les événements qu'une LinkEvents requise lie (même durée), coupés
+  pareil et placés ensemble ; pour chaque unité, une réserve de **créneaux** (un par morceau possible) ; les
+  **domaines**, où un morceau d'une durée peut commencer (dans un jour, là où les PreferTimes requises le permettent,
+  ou nulle part) ; les **tâches**, une salle ou un professeur à affecter, ses candidats tirés des PreferResources
+  requises ; une AvoidSplitAssignments requise fait une seule tâche de tous les morceaux d'un cours.
+- **Le premier découpage** (`split.js`) : la partition la moins chère pour les SplitEvents et DistributeSplitEvents,
+  et pour les PreferTimes requises (AU-SA-96 interdit les morceaux longs par là, sans SplitEvents) ; puis le moins de
+  morceaux. Un événement sans SplitEvents part entier et peut se couper librement, comme le dit le format.
+- **« Nulle part » est une option** : ne pas placer un morceau, ou ne pas affecter de salle, coûte son AssignTime ou
+  son AssignResource. C'est parfois le moins cher : les meilleures solutions de DK-HG-12 laissent des salles vides
+  plutôt que de violer deux listes de salles requises disjointes, à 1 000 chacune.
+- **La règle simple** (`greedy.js`) : les morceaux un par un, les plus contraints d'abord, chacun au moins cher ; puis
+  les tâches.
+- **Le recuit** (`anneal.js`, `draws.js`) : déplacer un morceau, en échanger deux qui partagent une ressource, une
+  **chaîne de Kempe** (`kempe.js`), couper un morceau en deux ou en recoller deux qui se suivent (`reshape.js`),
+  changer une affectation. Le coût est infaisabilité × `hard` × l'échelle + objectif, l'échelle étant la hausse moyenne
+  de l'objectif d'un mouvement tiré ; le meilleur gardé l'est infaisabilité d'abord.
+- **Ce qui le vérifie** : le coût tenu à jour égale celui de l'évaluateur après chaque mouvement, fait ou défait
+  (`tests/xhstt-solve.test.js`, deux petites instances écrites à la main), et à la fin de chaque course du banc
+  (`scripts/xhstt-bench.js`, qui s'arrête sinon).
+
+**La mesure** : d'abord un écrémage des réglages sur les 25 instances à budget court (il rejette, ne promeut pas),
+puis le budget d'ITC 2011 (1 000 s par instance, 10 graines), contre la règle simple par paires et contre le meilleur
+connu. **On ne vise pas le premier rang** : on dit où l'on est.
