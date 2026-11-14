@@ -328,8 +328,9 @@ probabilité que son professeur manque ce jour-là ; **known**, celle de J5, le 
 absent jusqu'au troisième jour ; **odds**, la probabilité que donne le scénario (une absence de 1 à 3 jours au hasard,
 déjà là depuis `k` jours : 2/3 qu'elle dure un jour de plus après le premier, 1/2 après le deuxième). Sous worst et
 odds, la recherche peut aussi remplacer d'avance un cours dont le professeur manquera peut-être. **L'ISMCTS de la lib**
-ne vient qu'ensuite, et seulement s'il reste à gagner entre ces règles et la recherche qui connaît les durées : chaque
-itération tirerait une durée, les mondes communs compareraient deux plans sur les mêmes durées.
+ne vient qu'ensuite, et seulement s'il reste à gagner entre ces règles et la recherche qui connaît les durées. Mesuré
+le 14/11 ([`mesures-j6.md`](mesures-j6.md)) : ne pas savoir coûte 0,03 à 0,05 h par semaine (0,2 h au pire cas), odds
+le rattrape en heures au prix de séances déplacées d'avance ; l'ISMCTS n'est pas construit.
 
 ## 8. Les jalons
 
@@ -340,7 +341,7 @@ itération tirerait une durée, les mondes communs compareraient deux plans sur 
 | **J3** (fait le 9/11) | le recuit et le tabou depuis R0 ; le banc (`npm run bench`) ; la page lance la recherche | contre R0 et R0 répété, par paires, à temps égal : [`mesures-j3.md`](mesures-j3.md) |
 | **J4** (fait le 9/11) | la lecture d'XHSTT (`src/xhstt/`), l'évaluateur rejoué contre HSEval sur des solutions publiées | 150 solutions sur 152 au coût publié : [`mesures-j4.md`](mesures-j4.md) |
 | **J5** (fait le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) ; la page des remplacements | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; le coût souple compté |
-| **J6** (commencé le 14/11) | les durées apprises jour après jour (`hidden`) ; trois croyances de la recherche ; les annonces comptées ; l'ISMCTS s'il reste à gagner | contre J5 (la croyance known) et contre les durées connues, par paires |
+| **J6** (mesuré le 14/11) | les durées apprises jour après jour (`hidden`) ; trois croyances de la recherche ; les annonces comptées ; pas d'ISMCTS : il n'y a presque rien à gagner | contre J5 (la croyance known) et contre les durées connues, par paires : [`mesures-j6.md`](mesures-j6.md) |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.
 

@@ -5,7 +5,7 @@ les remplacements quand un professeur manque, la veille ou le matin même.
 
 Client de [`mcts-commun`](../mcts-commun/README.md). La recherche est choisie par la mesure, contre un remplissage glouton.
 
-**État** (10/11/2026) : le cadrage est écrit, et le jalon J1 est là : le collège tiré par graine (`src/school/`), l'évaluateur
+**État** (14/11/2026) : le cadrage est écrit, et le jalon J1 est là : le collège tiré par graine (`src/school/`), l'évaluateur
 (`src/evaluate.js`, les contraintes dures et souples de `src/rules/`), les deux règles simples R0-naïf et R0
 (`src/build/greedy.js`). La première mesure, [`docs/mesures-j1.md`](docs/mesures-j1.md) : R0
 place presque tout (un cours laissé sur 2 à 5 collèges sur 30), R0-naïf en laisse 12 à 22. J2 a ajouté les barrettes
@@ -17,13 +17,14 @@ barrettes sans casser de contrainte dure. En 20 s, le recuit divise le coût de 
 redonne le coût publié par HSEval de 150 solutions sur 152 ([`docs/mesures-j4.md`](docs/mesures-j4.md)). J5 joue des
 semaines d'absences (`src/absence/`) : P1 remplace ce que remplacent les collèges (10 à 12 % des heures), la
 recherche, qui rattrape les heures un autre jour, en sauve 21 à 45 % de plus que P1, au prix d'environ une séance déplacée par heure sauvée
-([`docs/mesures-j5.md`](docs/mesures-j5.md)).
+([`docs/mesures-j5.md`](docs/mesures-j5.md)). J6 cache la durée d'une maladie sur deux : ne pas la
+connaître ne coûte que 0,03 à 0,05 h par semaine à cette recherche ([`docs/mesures-j6.md`](docs/mesures-j6.md)).
 La page (`npm run page`) montre la semaine d'une division, d'un professeur ou d'une salle, après la règle et la
 recherche ; `remplacement.html` rejoue une semaine d'absences, avant et après, moment par moment.
 
 - [`docs/modele.md`](docs/modele.md) : un collège fictif tiré par graine, ses contraintes dures et souples, les
   absences et le replanning, les règles à battre (le glouton R0, le remplacement P1), les mesures par paires, les bancs
-  publics (XHSTT-2014 d'ITC 2011, puis ITC 2019), ce qu'on prend de la lib, les jalons J1 à J6 ;
+  publics (XHSTT-2014 d'ITC 2011 ; ITC 2019 si le lycée vient), ce qu'on prend de la lib, les jalons J1 à J6 ;
 - [`docs/recherche/`](docs/recherche/README.md) : les sources et leur niveau de lecture, le glossaire, le prompt de
   recherche métier, les questions pour Sami et pour un principal adjoint ou un CPE.
 
