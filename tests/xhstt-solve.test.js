@@ -33,8 +33,8 @@ const fullOf = (state) => {
 const sameCosts = (state) => assert.deepEqual(costsOf(state), fullOf(state));
 
 /** Random moves on `state`, half taken back: the costs the search and the evaluator give, every 50 moves. */
-function walk(state, seed) {
-  const run = runOf(state, { ...XANNEAL, seed, reshape: 0.3 });
+function walk(state, seed, shares = {}) {
+  const run = runOf(state, { ...XANNEAL, seed, reshape: 0.3, ...shares });
   const seen = [];
   for (let i = 0; i < 3000; i += 1) {
     const moved = !Number.isNaN(draw(state, run));
@@ -96,6 +96,12 @@ describe("the XHSTT search state", () => {
     }
   });
 
+  it("keeps them too when swaps look for a piece as long, tasks for a free resource, spans change places, and weeks slide", () => {
+    for (const instance of [small, solve]) {
+      for (const [ours, theirs] of walk(ruled(instance), 8, { alike: 0.7, free: 0.7, block: 0.2, slide: 0.2 })) assert.deepEqual(ours, theirs);
+    }
+  });
+
   it("cuts a piece in two and joins them back, to the same costs", () => {
     const state = ruled(solve);
     const s = state.live.live.find((x) => state.slotDuration[x] === 2 && state.slotTime[x] >= 0 && state.layout.units[state.layout.slots[x].unit].slots.length > 1);
@@ -124,5 +130,13 @@ describe("the XHSTT annealing", () => {
 
   it("finds a timetable without any required constraint broken on the small instance", () => {
     assert.equal(anneal(ruled(solve), { tries: 50000, seed: 1 }).state.infeasibility, 0);
+  });
+
+  it("finds one as well with a first phase on the infeasibility alone, and replays from its seed", () => {
+    const options = { tries: 50000, seed: 2, feasible: 0.5 };
+    const once = anneal(ruled(solve), options);
+    sameCosts(once.state);
+    assert.equal(once.state.infeasibility, 0);
+    assert.deepEqual(planNow(anneal(ruled(solve), options).state), planNow(once.state));
   });
 });

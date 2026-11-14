@@ -81,3 +81,30 @@ mesure, et se rejoue de sa graine. Ces essais vont de 15 millions (DK-HG-12, DK-
 projets), pour que le travail sur les instances dures puisse continuer dans `src/` pendant la mesure.
 
 Les résultats viendront ici.
+
+## 3. Au peigne fin : KS-PR-11, AU-BG-98, UK-SP-06
+
+Les trois instances où le recuit reste le plus loin du meilleur connu (§ 1), regardées de près pendant la mesure du
+§ 2 (des essais courts, par les créneaux de la machine ; ce sont des écrémages).
+
+**KS-PR-11 (Kosovo) : une marche que le recuit ne franchissait pas.** Les classes y sont pleines : 30 ou 31 heures
+pour 31 places, sans trou permis. Une contrainte requise veut qu'une classe occupée à l'une des premières heures de
+ses demi-journées le soit à cinq au moins. Placer une seule séance à une première heure coûte donc plus qu'elle ne
+rapporte, et le recuit laissait toutes les premières heures vides : 26 places pour 31 heures, d'où des conflits et
+des séances non placées. Il finissait à **274 violations quelles que soient la graine et la durée** (3 et 20 millions
+d'essais). Deux options y répondent (`modele.md` § 13) :
+
+- `slide` décale toute la semaine d'une ressource d'une heure : la classe prend ses cinq premières heures d'un coup ;
+- `feasible` passe une première part du budget sur l'infaisabilité seule.
+
+| KS-PR-11, AU-BG-98 : 3 millions d'essais ; UK-SP-06 : 1 million ; graines 1 et 2 | KS-PR-11 | AU-BG-98 | UK-SP-06 |
+|---|---|---|---|
+| meilleur connu | 0/0 | 0/128 | 2/1410 |
+| défaut (hard=50) | 274/850 | 144/995 | 59,5/1799 |
+| feasible=0.8, slide=0.1 | **4/1174** | **48,5/2095** | 75/2130 |
+| feasible=0.8, slide=0.1, free=0.5, alike=0.5 | **2/1147** (une course à 0) | **45/1823** | 77/2251 |
+
+KS-PR-11 passe de 274 à 2 à 4 violations, et une course n'en a aucune. AU-BG-98 tombe de 144 à 45. UK-SP-06 fait
+moins bien avec la première phase : ses classes aussi sont pleines (25 heures pour 25 places), mais ses conflits sont
+surtout des professeurs, entre des cours liés de 2 à 9 classes. Sans `slide`, `feasible` seul fait déjà tomber
+KS-PR-11 vers 130 ; l'échange de plages (`block`) n'y a rien changé.

@@ -1,5 +1,5 @@
 import { splitConstraintsOf, splitOf } from "./split.js";
-import { finder, leastBroken, tasksOf } from "./tasks.js";
+import { finder, tasksOf } from "./tasks.js";
 
 /**
  * What the XHSTT solver moves (docs/modele.md § 13), laid out once from the instance:
@@ -9,8 +9,9 @@ import { finder, leastBroken, tasksOf } from "./tasks.js";
  * - the **pieces**, the solution events: one per event of the unit and slot, with a duration (0 while its slot is
  *   idle), a time (−1 until placed, or the preassigned one) and a resource for each of its event resources (−1 for an
  *   open one). The search cuts a piece in two or joins two (`reshape.js`), which wakes or idles a slot;
- * - the **domains**: where a piece of a unit and a duration may start: in one day, at the times that break the fewest
- *   required PreferTimes constraints of its events (none, most often), or nowhere (−1);
+ * - the **domains**: where a piece of a unit and a duration may start: in one day, at the times that break the least
+ *   weight of the required PreferTimes constraints of its events, and of the required AvoidUnavailableTimes of their
+ *   preassigned resources (none, most often), or nowhere (−1);
  * - the **tasks** (`tasks.js`): an open event resource to fill.
  *
  * `initial` gives each slot's duration to start from, `byEvent` the pieces each event starts with.
@@ -45,28 +46,48 @@ function preferTimesOf(instance) {
   return of;
 }
 
+/** The required AvoidUnavailableTimes constraints of each resource. */
+function unavailableOf(instance) {
+  const of = instance.resources.list.map(() => []);
+  for (const c of instance.constraints) if (c.kind === "AvoidUnavailableTimes" && c.required) for (const r of c.points) of[r].push(c);
+  return of;
+}
+
+/** What starting at `t` costs a piece of `duration` under `prefer` (start times) and `avoid` (every time it runs). */
+function startCost(prefer, avoid, t, duration) {
+  let cost = 0;
+  for (const c of prefer) if (c.preferred[t] !== 1) cost += c.weight * duration;
+  for (const c of avoid) for (let k = 0; k < duration; k += 1) if (c.unavailable[t + k] === 1) cost += c.weight;
+  return cost;
+}
+
 /**
- * Where a piece of `duration` of `events` may start: in one day if it can, then the times that break the least weight
- * of their required PreferTimes constraints (`least`, 0 most often); and −1, unplaced, which can be cheaper. Also the
- * same as flags over the times (`allowed`).
+ * Where a piece of `duration` of `events` may start: in one day if it can, then the times that cost the least under
+ * their required PreferTimes and their preassigned resources' required AvoidUnavailableTimes (`least`, 0 most often);
+ * and −1, unplaced, which can be cheaper. Also the same as flags over the times (`allowed`).
  */
-function domainOf(instance, preferred, events, duration) {
+function domainOf(instance, { preferred, unavailable }, events, duration) {
   const { dayOf } = instance.times;
   const all = Array.from({ length: Math.max(0, dayOf.length - duration + 1) }, (_, t) => t);
   const inDay = all.filter((t) => fits(dayOf, t, duration));
-  const rules = events.flatMap((e) => preferred[e]).filter((c) => c.duration === 0 || c.duration === duration);
-  const { kept, least } = leastBroken(inDay.length ? inDay : all, rules, (c, t) => c.preferred[t] === 1);
+  const prefer = events.flatMap((e) => preferred[e]).filter((c) => c.duration === 0 || c.duration === duration);
+  const resources = new Set(events.flatMap((e) => instance.events.list[e].resources.map((er) => er.resource).filter((r) => r >= 0)));
+  const avoid = [...resources].flatMap((r) => unavailable[r]);
+  const base = inDay.length ? inDay : all;
+  const costs = base.map((t) => startCost(prefer, avoid, t, duration));
+  const least = base.length ? Math.min(...costs) : 0;
+  const kept = base.filter((_, i) => costs[i] === least);
   const allowed = new Uint8Array(dayOf.length);
   for (const t of kept) allowed[t] = 1;
   return { domain: Int16Array.from([...kept, -1]), allowed, least };
 }
 
 /** A unit: its events, duration, preassigned time, cut bounds, and its domains by duration, worked out when asked. */
-function unitOf(instance, { splits, preferred }, events) {
+function unitOf(instance, context, events) {
   const { duration, time } = instance.events.list[events[0]];
   const domains = new Array(duration + 1);
-  const domainAt = (d) => (domains[d] ??= domainOf(instance, preferred, events, d));
-  const { parts, lo, hi, cap } = splitOf(instance, splits, events, (d) => domainAt(d).least * d);
+  const domainAt = (d) => (domains[d] ??= domainOf(instance, context, events, d));
+  const { parts, lo, hi, cap } = splitOf(instance, context.splits, events, (d) => domainAt(d).least);
   return { events: Int32Array.from(events), duration, time, lo, hi, cap, parts, domains, domainAt, slots: new Int32Array(0) };
 }
 
@@ -93,7 +114,7 @@ function pool(unit, u, layout) {
  * @param {any} instance an XHSTT instance (`instance.js`)
  */
 export function layoutOf(instance) {
-  const context = { splits: splitConstraintsOf(instance), preferred: preferTimesOf(instance) };
+  const context = { splits: splitConstraintsOf(instance), preferred: preferTimesOf(instance), unavailable: unavailableOf(instance) };
   const units = unitsOf(instance).map((events) => unitOf(instance, context, events));
   const layout = { instance, units, slots: [], pieces: [], initial: [], byEvent: instance.events.list.map(() => []), tasks: [] };
   units.forEach((unit, u) => pool(unit, u, layout));

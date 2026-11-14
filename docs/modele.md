@@ -420,8 +420,8 @@ son coût est celui de l'évaluateur, recalculé point par point.
 
 - **La disposition** (`layout.js`) : des **unités**, les événements qu'une LinkEvents requise lie (même durée), coupés
   pareil et placés ensemble ; pour chaque unité, une réserve de **créneaux** (un par morceau possible) ; les
-  **domaines**, où un morceau d'une durée peut commencer (dans un jour, là où les PreferTimes requises le permettent,
-  ou nulle part) ; les **tâches**, une salle ou un professeur à affecter, ses candidats tirés des PreferResources
+  **domaines**, où un morceau d'une durée peut commencer (dans un jour, là où les PreferTimes requises le permettent
+  et où ses ressources fixées ne sont pas indisponibles d'une AvoidUnavailableTimes requise, ou nulle part) ; les **tâches**, une salle ou un professeur à affecter, ses candidats tirés des PreferResources
   requises ; une AvoidSplitAssignments requise fait une seule tâche de tous les morceaux d'un cours.
 - **Le premier découpage** (`split.js`) : la partition la moins chère pour les SplitEvents et DistributeSplitEvents,
   et pour les PreferTimes requises (AU-SA-96 interdit les morceaux longs par là, sans SplitEvents) ; puis le moins de
@@ -442,6 +442,19 @@ son coût est celui de l'évaluateur, recalculé point par point.
 **La mesure** : d'abord un écrémage des réglages sur les 25 instances à budget court (il rejette, ne promeut pas),
 puis le budget d'ITC 2011 (1 000 s par instance, 10 graines), contre la règle simple par paires et contre le meilleur
 connu. **On ne vise pas le premier rang** : on dit où l'on est.
+
+**Pour les instances dures** (KS-PR-11, AU-BG-98, UK-SP-06 ; [`mesures-j7.md`](mesures-j7.md) § 3), des options du
+recuit, nulles par défaut :
+
+- `feasible` : une première part du budget sur l'infaisabilité seule, la température comptée en violations (de
+  `fhot` à `fcold`) quelle que soit l'échelle de l'objectif ; le recuit reprend du meilleur plan de cette phase ;
+- `slide` : toutes les séances d'une ressource une heure plus tôt ou plus tard, chacune dans son jour
+  (`block.js`). À KS-PR-11, une classe occupée à une première heure doit l'être à cinq au moins : y mettre une
+  séance seule coûte plus qu'elle ne rapporte, et le recuit restait à 274 violations quelles que soient la graine et
+  la durée ; décaler toute la semaine d'un coup franchit la marche ;
+- `block` : un morceau échange sa plage avec ce qu'une de ses ressources fait ailleurs (un double contre deux
+  simples d'une classe pleine) ; `alike` : l'échange cherche un morceau de même durée ; `free` : une tâche va
+  à un candidat libre à ses heures.
 
 L'écrémage est fait ([`mesures-j7.md`](mesures-j7.md) § 1) : il écarte un poids requis trop bas (`hard=1`) et le
 retrait des chaînes de Kempe ou des coupes ; la mesure à 1 000 s compare le défaut (`hard=50`) à `hard=10`.

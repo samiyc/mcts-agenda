@@ -22,6 +22,7 @@ export function neighbourhoodOf(state) {
   return {
     resourcesOf, slotsOf: slotsOf.map((l) => Int32Array.from(l)),
     chain: new Int32Array(MAX), times: new Int16Array(MAX), count: 0, t1: -1, t2: -1, mark: new Int32Array(slots.length), stamp: 0,
+    r: -1, d: 0,
   };
 }
 
