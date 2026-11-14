@@ -41,6 +41,7 @@ recherche ; `remplacement.html` rejoue une semaine d'absences, avant et après, 
 | `npm run bench -- --sizes M --n 2` | le banc des recherches : le temps, les essais par milliseconde, les passages du ramasse-miettes, le coût contre R0 |
 | `node scripts/search-compare.js --sizes M --n 30 --from 1001 --seconds 20` | le recuit et le tabou contre R0 et R0 répété, par paires à temps égal, et le témoin A/A ; par la file |
 | `npm run xhstt` | notre évaluateur XHSTT contre les rapports d'HSEval et les valeurs publiées ; les archives dans `data/xhstt/` (voir `docs/mesures-j4.md`) |
+| `npm run xhstt:bench -- --only KS-PR-11 --seeds 1,2 --tries 3000000 --configs "hard=50;hard=10"` | le banc XHSTT-2014 : la règle simple puis le recuit, chaque course vérifiée par l'évaluateur ; `--json F`, puis `node scripts/xhstt-report.js --prefix F` pour les rangs d'ITC 2011 (voir `docs/mesures-j7.md`) |
 | `npm run replan -- --sizes M --n 30 --weeks 30` | le replanning des absences : P0, P1 et la recherche, par paires ; `--place anneal`, `--hours H` pour les variantes |
 | `npm run tune -- --search anneal --variants "hot=3;swap=0.7"` | les réglages d'une recherche contre ses défauts, sur les graines 2001 et suivantes |
 | `npm run page` | la page sur http://127.0.0.1:4805/web/ : l'emploi du temps d'une division, d'un professeur ou d'une salle, les coûts |

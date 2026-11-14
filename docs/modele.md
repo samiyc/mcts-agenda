@@ -442,3 +442,6 @@ son coût est celui de l'évaluateur, recalculé point par point.
 **La mesure** : d'abord un écrémage des réglages sur les 25 instances à budget court (il rejette, ne promeut pas),
 puis le budget d'ITC 2011 (1 000 s par instance, 10 graines), contre la règle simple par paires et contre le meilleur
 connu. **On ne vise pas le premier rang** : on dit où l'on est.
+
+L'écrémage est fait ([`mesures-j7.md`](mesures-j7.md) § 1) : il écarte un poids requis trop bas (`hard=1`) et le
+retrait des chaînes de Kempe ou des coupes ; la mesure à 1 000 s compare le défaut (`hard=50`) à `hard=10`.
