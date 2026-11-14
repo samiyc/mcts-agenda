@@ -127,3 +127,14 @@ variante à 80 % avec `free` est **écartée** (son intervalle exclut zéro).
 
 D'où une retouche : **la première phase s'arrête dès qu'un plan n'a plus d'infaisabilité** (11b55b9), et rend le
 reste du budget à l'objectif. Elle n'est alors longue que là où il le faut.
+
+**La retouche ne suffit pas** (50 jobs `agenda-j7-comb2-*`, mêmes graines, rangs recalculés sur les six réglages) :
+feasible=0.5 avec arrêt précoce donne les mêmes 13 instances faisables, et ne regagne qu'un peu d'objectif (rang
+contre hard=10 : +0,11, de −0,74 à +0,96 ; 10 mieux, 14 moins bien). US-WS-09 reste à 3 468 contre 2 366 : la
+première phase, chaude sur l'objectif (une violation y vaut 100 points d'objectif), rend un plan faisable mais
+désordonné, que le recuit ne remet pas en ordre. À 80 %, elle est **écartée** (+1,47, de +0,37 à +2,57).
+
+**Où l'on en est** : le décalage et la première phase règlent KS-PR-11 (de 274 à 4 violations), AU-BG-98 (de 144
+à 55) et GR-PA-08 (de 35 à 0), mais coûtent de l'objectif ailleurs ; aucun réglage n'est promu, et la mesure du § 2
+garde le recuit tel quel. Les pistes : une première phase plus froide sur l'objectif, ou lancée seulement quand le
+recuit ordinaire reste infaisable ; et pour UK-SP-06, des mouvements pour ses cours liés.
