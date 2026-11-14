@@ -15,7 +15,8 @@ import { createState, planNow } from "./state.js";
  *
  * A first share of the budget (`feasible`) can go to the infeasibility alone: an objective point then weighs 1/`HARD`
  * of an infeasibility point, and the temperature falls from `fhot` to `fcold` infeasibility points, whatever the
- * objective's scale; the annealing proper starts from the best plan of that phase.
+ * objective's scale; it ends early once a plan has no infeasibility left, and the annealing proper starts from the
+ * best plan of that phase, with the rest of the budget.
  */
 export const XANNEAL = Object.freeze({
   tries: 1e6, hot: 2, cold: 0.05, hard: 50, swap: 0.25, kempe: 0.25, reshape: 0.1, task: 0.3, feasible: 0, fhot: 2, fcold: 0.1, alike: 0, free: 0, block: 0, slide: 0,
@@ -45,16 +46,23 @@ function snapshot(state, best) {
   best.plan.resources.set(state.taskResource);
 }
 
-/** The annealing itself, from `hot` to `cold` over `tries` moves, keeping the best plan seen in `best`. */
-function walk(state, run, { best, tries, hot, cold }) {
+/**
+ * The annealing itself, from `hot` to `cold` over `tries` moves, keeping the best plan seen in `best`; it stops
+ * early once the best has no more infeasibility than `floor`. Returns the moves tried.
+ */
+function walk(state, run, { best, tries, hot, cold, floor }) {
   const cooling = Math.pow(cold / hot, 1 / tries);
   let temperature = hot;
   for (let done = 0; done < tries; done += 1, temperature *= cooling) {
     const delta = draw(state, run);
     if (Number.isNaN(delta)) continue;
     if (delta > 0 && run.rng.next() >= Math.exp(-delta / temperature)) undo(state);
-    else if (better(state, best)) snapshot(state, best);
+    else if (better(state, best)) {
+      snapshot(state, best);
+      if (best.infeasibility <= floor) return done + 1;
+    }
   }
+  return tries;
 }
 
 /** Can some unit be cut differently? */
@@ -83,15 +91,15 @@ export function anneal(state, options = {}) {
   const scale = scaleOf(state, run);
   const best = { infeasibility: 0, objective: 0, plan: planNow(state) };
   snapshot(state, best);
-  const first = Math.round(o.tries * o.feasible);
+  let first = Math.round(o.tries * o.feasible);
   let now = state;
   if (first > 0) {
     now.hard = HARD;
-    walk(now, run, { best, tries: first, hot: o.fhot * HARD, cold: o.fcold * HARD });
+    first = walk(now, run, { best, tries: first, hot: o.fhot * HARD, cold: o.fcold * HARD, floor: 0 });
     now = createState(state.instance, state.layout, { plan: best.plan });
   }
   now.hard = o.hard * scale;
-  walk(now, run, { best, tries: o.tries - first, hot: o.hot * scale, cold: o.cold * scale });
+  walk(now, run, { best, tries: o.tries - first, hot: o.hot * scale, cold: o.cold * scale, floor: -1 });
   const final = createState(state.instance, state.layout, { plan: best.plan, hard: now.hard });
   return { state: final, plan: best.plan, tries: o.tries, scale };
 }
