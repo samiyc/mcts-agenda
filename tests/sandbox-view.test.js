@@ -1,10 +1,12 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { drawWeek, volunteersOf } from "../src/absence/scenario.js";
 import { buildGreedy } from "../src/build/greedy.js";
 import { evaluate } from "../src/evaluate.js";
 import { applyEdits, emptyEdits } from "../src/sandbox/edits.js";
 import { moveLink, optionsFor } from "../src/sandbox/moves.js";
 import { createSchool } from "../src/school/generate.js";
+import { absenceLines, addAbsence, removeAbsence, setVolunteer, volunteerRows, withDrawn } from "../src/view/absences.js";
 import { cycleHalf, halfSlots, setWeight, teacherWeek, weightRows } from "../src/view/settings.js";
 
 /** What the sandbox's panel shows and does (docs/modele.md § 14): the weights, a teacher's half-days, a course moved. */
@@ -52,5 +54,35 @@ describe("the sandbox's panel", () => {
     const { edits } = moveLink(empty, drawn, timetable, { link, ...options[0] });
     const rebuilt = buildGreedy(applyEdits(drawn, edits), { seed: 7 }).timetable;
     assert.ok(drawn.links[link].every((id) => rebuilt.slot[id] === options[0].slot));
+  });
+});
+
+describe("the absences chosen by hand", () => {
+  const one = { teacher: 2, from: 3, to: 1, known: "veille", told: "whole" };
+
+  it("put the days in order, refuse a second absence of the teacher on the same days, and say each in words", () => {
+    const { edits } = addAbsence(empty, one);
+    assert.deepEqual(edits.absences, [{ ...one, from: 1, to: 3 }]);
+    assert.match(addAbsence(edits, { ...one, from: 3, to: 4 }).error, /déjà absent/);
+    assert.equal(addAbsence(edits, { ...one, teacher: 3 }).edits.absences.length, 2);
+    assert.match(absenceLines(drawn, edits)[0], /absent du mardi au jeudi, prévenue la veille, durée connue$/);
+    assert.deepEqual(removeAbsence(edits, 0).absences, []);
+  });
+
+  it("start from the week the measures draw", () => {
+    const week = drawWeek(drawn, 2005);
+    const edits = withDrawn(empty, drawn, 2005);
+    assert.deepEqual([edits.week, edits.absences], [week.week, week.absences]);
+  });
+
+  it("give the collège's volunteers their hours, and keep them when one is set by hand", () => {
+    const flags = volunteersOf(drawn);
+    assert.deepEqual(volunteerRows(drawn, empty).map((r) => r.hours > 0), Array.from(flags, Boolean));
+    const other = flags.indexOf(0);
+    const set = setVolunteer(empty, drawn, other, 3);
+    const hours = volunteerRows(drawn, set).map((r) => r.hours);
+    assert.equal(hours[other], 3);
+    assert.equal(hours.filter((h) => h > 0).length, flags.reduce((a, b) => a + b, 0) + 1);
+    assert.equal(volunteerRows(drawn, setVolunteer(set, drawn, other, 0))[other].hours, 0);
   });
 });

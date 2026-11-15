@@ -1,18 +1,22 @@
+import { applyEdits } from "../src/sandbox/edits.js";
 import { createSchool } from "../src/school/generate.js";
 import { STATUS_NAMES, absenceRows, busiestDivision, changeRows, dayOfMoment, momentName, planAt, sideOf } from "../src/view/replan.js";
 import { VIEWS, choicesOf } from "../src/view/week.js";
+import { drawHand } from "./absences.js";
 import { el, weekTable } from "./draw.js";
+import { loadEdits, saveEdits } from "./storage.js";
 
 /**
  * The replacement page (docs/modele.md § 10): a week of absences played in a worker by P0, P1 or the search, then
  * replayed here moment by moment: the week of a division, a teacher or a room before and after, the changes, the
- * absences known so far.
+ * absences known so far. The timetable in place keeps the sandbox's settings (docs/modele.md § 14), and the week may be
+ * the absences chosen by hand (`absences.js`).
  */
 /** The page's controls by id. */
 const $ = (id) => /** @type {any} */ (document.getElementById(id));
 const LAST = 10;
 const STEP_MS = 1400;
-const state = { school: null, timetable: null, scenario: null, moments: null, k: LAST, timer: 0 };
+const state = { drawn: null, edits: null, school: null, timetable: null, scenario: null, moments: null, k: LAST, timer: 0 };
 const worker = new Worker(new URL("./replan-worker.js", import.meta.url), { type: "module" });
 
 const fill = (select, options) => select.replaceChildren(...options.map(({ value, name }) => el("option", { value }, [name])));
@@ -84,20 +88,41 @@ worker.onmessage = ({ data }) => {
   chooseKind(busiestDivision(state.school, planAt(state.school, state.timetable, week, data.moments[LAST])));
 };
 
-function run() {
-  stop();
+const weekNumber = () => Math.max(1, Math.floor(Number($("week").value) || 1));
+
+/** The settings now, kept, and the editor drawn again. */
+function change(edits, fresh = false) {
+  state.edits = edits;
+  state.school = applyEdits(state.drawn, edits);
+  saveEdits(edits);
+  drawHand({ school: state.school, edits, fresh, drawSeed: state.drawn.seed * 1000 + weekNumber(), change });
+}
+
+/** The collège of the controls, with the settings kept for it; the editor shown when the absences are by hand. */
+function prepare() {
   const size = /** @type {"S" | "M" | "L"} */ ($("size").value);
   const seed = Math.max(1, Math.floor(Number($("seed").value) || 1));
-  const week = Math.max(1, Math.floor(Number($("week").value) || 1));
-  state.school = createSchool({ size, seed });
+  const fresh = !state.drawn || state.drawn.size !== size || state.drawn.seed !== seed;
+  if (fresh) state.drawn = createSchool({ size, seed });
+  $("hand").hidden = $("source").value !== "hand";
+  change(fresh ? loadEdits(state.drawn) : state.edits, fresh);
+}
+
+function run() {
+  stop();
+  prepare();
+  const { size, seed } = state.drawn;
   state.moments = null;
   $("run").disabled = true;
   $("summary").textContent = "La semaine se joue…";
-  worker.postMessage({ size, seed, place: $("place").value, week, rule: $("rule").value });
+  worker.postMessage({ size, seed, place: $("place").value, week: weekNumber(), rule: $("rule").value, edits: state.edits, source: $("source").value });
 }
 
 fill($("kind"), Object.entries(VIEWS).map(([value, name]) => ({ value, name })));
 $("run").addEventListener("click", run);
+$("source").addEventListener("change", prepare);
+$("size").addEventListener("change", prepare);
+$("seed").addEventListener("change", prepare);
 $("kind").addEventListener("change", () => chooseKind());
 $("which").addEventListener("change", draw);
 $("moment").addEventListener("input", () => go(Number($("moment").value)));

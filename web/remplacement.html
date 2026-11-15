@@ -32,6 +32,12 @@
             <option value="anneal">R0 puis le recuit (5 s)</option>
           </select>
         </label>
+        <label>Absences
+          <select id="source">
+            <option value="drawn" selected>tirées de la graine</option>
+            <option value="hand">choisies à la main</option>
+          </select>
+        </label>
         <label>Semaine n°<input id="week" type="number" min="1" step="1" value="1" /></label>
         <label>Règle
           <select id="rule">
@@ -43,6 +49,19 @@
           </select>
         </label>
         <button type="button" id="run">Jouer la semaine</button>
+      </section>
+      <section id="hand" class="settings" hidden aria-labelledby="hand-title">
+        <h2 id="hand-title">Les absences choisies</h2>
+        <p class="hint">Gardées dans ce navigateur avec les réglages du collège (verrous, disponibilités) ; « Jouer la semaine » les joue sur l'emploi du temps en place, construit avec ces réglages. « Apprise jour après jour » : on ne sait le matin du premier jour que ce jour-là, puis chaque jour suivant la veille au soir.</p>
+        <ul id="hand-list"></ul>
+        <div class="controls" id="hand-form"></div>
+        <p class="note" id="hand-note" aria-live="polite"></p>
+        <label>Semaine<select id="hand-week"><option value="0">A</option><option value="1">B</option></select></label>
+        <button type="button" id="hand-draw">Partir de la semaine n° tirée</button>
+        <details>
+          <summary>Les volontaires et leurs heures cette semaine</summary>
+          <div id="volunteers"></div>
+        </details>
       </section>
       <p class="summary" id="summary" aria-live="polite"></p>
       <h2>Les absences</h2>
@@ -73,7 +92,7 @@
         <em class="tag">remplacé</em> : un collègue volontaire fait le cours ; <em class="tag">déplacé</em> : le cours est rattrapé à un autre créneau, où son professeur est là, ou décalé pour faire de la place ;
         <em class="tag">changé</em>, à gauche : ce cours-là ne se fera pas comme prévu.
         P1 ne cherche qu'un remplaçant, le jour même. La recherche part de P1 et essaie aussi de rattraper les cours ailleurs dans la semaine ; elle compte d'abord les heures perdues, puis les séances changées (une décision de la veille compte moitié moins qu'une du matin), puis le confort des journées.
-        Les absences, les volontaires et leurs heures sont tirés de la graine et du numéro de semaine, comme dans les mesures : <code>docs/mesures-j5.md</code>.
+        Les absences, les volontaires et leurs heures sont tirés de la graine et du numéro de semaine, comme dans les mesures (<code>docs/mesures-j5.md</code>), ou choisis à la main. L'emploi du temps en place garde les réglages de la page principale : un cours verrouillé peut être remplacé, jamais déplacé.
       </p>
     </main>
     <script type="module" src="replan.js"></script>
