@@ -2,7 +2,7 @@ import { createRng } from "mcts-commun/random.js";
 import { SLOTS } from "../time.js";
 import { keepBest, resultOf, startBest } from "./best.js";
 import { makeShift, makeSwap, shiftDelta, swapDelta } from "./moves.js";
-import { createState, insert, neighboursOf } from "./state.js";
+import { createState, insert, movable, neighboursOf } from "./state.js";
 
 /**
  * Simulated annealing from a timetable (docs/modele.md § 7), most often R0's. Each step draws a move: a barrette to
@@ -41,11 +41,11 @@ function step(run) {
     return 1;
   }
   const link = rng.int(state.at.length);
-  if (state.at[link] < 0) return 0;
+  if (!movable(state, link)) return 0;
   const partners = near[link];
   if (rng.next() >= run.swapShare || partners.length === 0) return shift(run, link);
   const other = partners[rng.int(partners.length)];
-  return state.at[other] < 0 || state.at[other] === state.at[link] ? 0 : swap(run, link, other);
+  return !movable(state, other) || state.at[other] === state.at[link] ? 0 : swap(run, link, other);
 }
 
 /**

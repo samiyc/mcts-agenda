@@ -3,6 +3,7 @@ import { createBoard, timetableOf } from "../board.js";
 import { placeLink, reasonOf, tryLink } from "../rules/hard.js";
 import { linkDelta } from "../rules/soft.js";
 import { SLOTS } from "../time.js";
+import { placeLocked } from "./locked.js";
 
 /**
  * The simple rules a search must beat (docs/modele.md § 5.1). They place barrettes (`School.links`), a lone course
@@ -12,10 +13,12 @@ import { SLOTS } from "../time.js";
  * - **R0**: the barrette with the fewest options first (Brélaz's saturation degree); between equals the longer, then
  *   the one with more courses, then the one of the busier teacher, then the file's order. It goes where it adds the
  *   least soft cost; between equal options, the seed draws.
+ * Both put the barrettes the sandbox locks first, where they are locked (`locked.js`).
  */
 
 /** Why a barrette could start nowhere: each reason with the slots it closed. */
 function refusals(board, link) {
+  /** @type {Record<string, number>} */
   const reasons = {};
   for (let slot = 0; slot < SLOTS; slot += 1) {
     const reason = reasonOf(tryLink(board, link, slot));
@@ -30,8 +33,9 @@ const result = (board, unplaced) => ({ timetable: timetableOf(board), unplaced }
 /** @param {import("../types.js").School} school */
 export function buildNaive(school) {
   const board = createBoard(school);
-  const unplaced = [];
+  const { done, unplaced } = placeLocked(board);
   school.links.forEach((_, link) => {
+    if (done.has(link)) return;
     let slot = 0;
     while (slot < SLOTS && tryLink(board, link, slot) < 0) slot += 1;
     if (slot < SLOTS) placeLink(board, link, slot);
@@ -92,15 +96,16 @@ function cheapest(board, link, rng) {
 /**
  * @param {import("../types.js").School} school
  * @param {{ seed?: number }} [options]
- * @returns {{ timetable: import("../types.js").Timetable, unplaced: { link: number, courses: number[], reasons: Record<string, number> }[], added: number }}
+ * @returns {{ timetable: import("../types.js").Timetable, unplaced: { link: number, courses: number[], reasons: Record<string, number>, locked?: true }[], added: number }}
  */
 export function buildGreedy(school, { seed = 1 } = {}) {
   const rng = createRng(seed);
   const board = createBoard(school);
   const weights = school.links.map((_, link) => weightOf(school, link));
-  const waiting = new Set(school.links.keys());
-  const unplaced = [];
-  let added = 0;
+  const locked = placeLocked(board);
+  const waiting = new Set([...school.links.keys()].filter((link) => !locked.done.has(link)));
+  const { unplaced } = locked;
+  let added = locked.added;
   while (waiting.size) {
     const { link, options } = mostConstrained(board, waiting, weights);
     waiting.delete(link);

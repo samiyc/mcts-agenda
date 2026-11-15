@@ -2,7 +2,7 @@ import { createRng } from "mcts-commun/random.js";
 import { SLOTS } from "../time.js";
 import { keepBest, resultOf, startBest } from "./best.js";
 import { makeShift, makeSwap, swapDelta } from "./moves.js";
-import { back, costAt, createState, insert, lift, neighboursOf } from "./state.js";
+import { back, costAt, createState, insert, lift, movable, neighboursOf } from "./state.js";
 
 /**
  * Tabu search from a timetable (docs/modele.md § 7), as Di Gaspero and Schaerf run it on course timetabling. At each
@@ -50,7 +50,7 @@ function swaps(run, link, bestCost) {
   run.kind = SWAP;
   for (let k = 0; k < run.swaps && partners.length; k += 1) {
     const other = partners[rng.int(partners.length)];
-    if (state.at[other] < 0 || state.at[other] === state.at[link]) continue;
+    if (!movable(state, other) || state.at[other] === state.at[link]) continue;
     run.tries += 2;
     const delta = swapDelta(state, link, other);
     if (!Number.isNaN(delta) && (swapAllowed(run, link, other) || state.cost + delta < bestCost)) consider(run, link, other, delta);
@@ -85,7 +85,7 @@ function step(run, best) {
   run.move.a = -1;
   for (let k = 0; k < run.sample; k += 1) {
     const link = rng.int(state.at.length);
-    if (state.at[link] < 0) continue;
+    if (!movable(state, link)) continue;
     shifts(run, link, best.cost);
     swaps(run, link, best.cost);
   }

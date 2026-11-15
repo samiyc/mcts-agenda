@@ -64,7 +64,7 @@ function dayHold(board, course, slot) {
   return 0;
 }
 
-function roomFree(board, room, course, slot) {
+export function roomFree(board, room, course, slot) {
   const weeks = weeksOf(course.weeks);
   for (let w = 0; w < weeks.length; w += 1) {
     for (let k = 0; k < course.length; k += 1) if (busy(board.room, room, weeks[w], slot + k)) return false;

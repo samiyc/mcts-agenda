@@ -6,11 +6,13 @@ import { planOf } from "../src/absence/plan.js";
 import { softOf } from "../src/absence/soft.js";
 import { buildGreedy } from "../src/build/greedy.js";
 import { evaluate } from "../src/evaluate.js";
+import { replanSearch } from "../src/absence/search.js";
 import { applyEdits, emptyEdits, readEdits, scenarioOf } from "../src/sandbox/edits.js";
+import { linksOfDivision, lockDivision, lockedCount } from "../src/sandbox/locks.js";
 import { createSchool } from "../src/school/generate.js";
 import { anneal } from "../src/search/anneal.js";
 import { tabu } from "../src/search/tabu.js";
-import { weeksOf } from "../src/time.js";
+import { dayOf, weeksOf } from "../src/time.js";
 
 /** The sandbox (docs/modele.md § 14): settings by hand on a drawn collège, which leave the model alone when empty. */
 const school = createSchool({ size: "S", seed: 2 });
@@ -92,5 +94,48 @@ describe("the sandbox's weights and avoided slots", () => {
     }
     const weeks = [0, 1].map((week) => softOf(planOf(edited, timetable, week)));
     assert.equal(weeks[0] + weeks[1], evaluate(edited, timetable).cost);
+  });
+});
+
+describe("the sandbox's locks", () => {
+  const locked = lockDivision(emptyEdits("S", 2), school, timetable, 0);
+  const edited = applyEdits(school, locked);
+  const ids = linksOfDivision(school, 0).flatMap((link) => school.links[link]);
+  const kept = (found) => ids.every((id) => found.slot[id] === timetable.slot[id] && found.room[id] === timetable.room[id]);
+
+  it("take a division's week whole, its shared barrettes too", () => {
+    const others = school.divisions.slice(1).filter((d) => lockedCount(locked, school, d.id).locked > 0);
+    assert.ok(others.length > 0, "a barrette across a pair locks some courses of the other division");
+    assert.ok(others.every((d) => lockedCount(locked, school, d.id).locked < lockedCount(locked, school, d.id).of));
+    assert.deepEqual(lockedCount(locked, school, 0), { locked: lockedCount(locked, school, 0).of, of: school.courses.filter((c) => c.divisions.includes(0)).length });
+  });
+
+  it("hold through both rules and both searches, from another seed", () => {
+    const built = buildGreedy(edited, { seed: 9 });
+    assert.ok(kept(built.timetable));
+    assert.ok(kept(anneal(edited, built.timetable, { seed: 9, tries: 20000 }).timetable));
+    assert.ok(kept(tabu(edited, built.timetable, { seed: 9, tries: 20000 }).timetable));
+  });
+
+  it("left in conflict when the teacher is now away, unplaced with why, and no search moves it", () => {
+    const id = ids.find((c) => school.links[school.courses[c].link].length === 1);
+    const { teacher, length } = school.courses[id];
+    const away = Array.from({ length }, (_, k) => timetable.slot[id] + k);
+    const conflict = applyEdits(school, { ...locked, teachers: { [teacher]: { away, avoid: [] } } });
+    const built = buildGreedy(conflict, { seed: 9 });
+    const left = built.unplaced.find((u) => u.courses.includes(id));
+    assert.deepEqual([left.locked, left.reasons], [true, { unavailable: 1 }]);
+    assert.equal(anneal(conflict, built.timetable, { seed: 9, tries: 20000 }).timetable.slot[id], -1);
+  });
+
+  it("let a locked session be replaced when its teacher is away, never moved", () => {
+    const id = ids.find((c) => timetable.slot[c] >= 0 && weeksOf(school.courses[c].weeks).includes(0));
+    const day = dayOf(timetable.slot[id]);
+    const edits = { ...locked, absences: [{ teacher: school.courses[id].teacher, from: day, to: day, known: "veille", told: "whole" }] };
+    const { plan } = runWeek(edited, timetable, scenarioOf(edited, edits), replanSearch({ tries: 4000, seed: 3 }));
+    for (let s = 0; s < plan.course.length; s += 1) {
+      if (plan.locked[s]) assert.deepEqual([plan.slot[s], plan.room[s]], [plan.origin.slot[s], plan.origin.room[s]]);
+    }
+    assert.ok(plan.locked.some((x) => x === 1));
   });
 });

@@ -62,11 +62,11 @@ function roomFor(plan, s, slot, length) {
 
 /**
  * The room session `s` would take at `slot`, or −1 when it cannot go there; the board is left as it was. `fromDay`
- * is the first day the decision may touch.
+ * is the first day the decision may touch. A locked session (the sandbox) goes nowhere.
  */
 export function placeFor(plan, s, slot, fromDay) {
   const length = lengthOf(plan, s);
-  if (!fits(slot, length) || dayOf(slot) < fromDay) return -1;
+  if (plan.locked[s] || !fits(slot, length) || dayOf(slot) < fromDay) return -1;
   mark(plan, s, -1);
   const ok = teacherThere(plan, plan.teacher[s], slot, length) && pupilsFit(plan, s, slot, length);
   const room = ok ? roomFor(plan, s, slot, length) : -1;

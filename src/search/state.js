@@ -23,12 +23,16 @@ const cellsOf = (school, link) => school.links[link].reduce((sum, id) => sum + s
 export function createState(school, timetable) {
   const { infeasibility, cost } = evaluate(school, timetable);
   const at = Int16Array.from(school.links, (ids) => timetable.slot[ids[0]]);
+  const locked = Uint8Array.from(school.links, (ids) => (school.courses[ids[0]].fixed ? 1 : 0));
   const waiting = [];
   at.forEach((slot, link) => {
-    if (slot < 0) waiting.push(link);
+    if (slot < 0 && !locked[link]) waiting.push(link);
   });
-  return { school, board: boardOf(school, timetable), at, room: timetable.room.slice(), infeasibility, cost, waiting };
+  return { school, board: boardOf(school, timetable), at, room: timetable.room.slice(), infeasibility, cost, waiting, locked };
 }
+
+/** Whether a search may move barrette `link`: placed, and not locked by the sandbox (`Course.fixed`). */
+export const movable = (state, link) => state.at[link] >= 0 && state.locked[link] === 0;
 
 /** @typedef {ReturnType<typeof createState>} State */
 

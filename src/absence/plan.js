@@ -38,6 +38,8 @@ export function planOf(school, timetable, week) {
     ongoing: { from: new Int8Array(school.teachers.length).fill(-1), days: new Int8Array(school.teachers.length) },
     notices: 0,
     replacements: new Int16Array(school.teachers.length),
+    /** 1 on a session the sandbox locks (`Course.fixed`): it may get a replacement, never another slot or room. */
+    locked: Uint8Array.from(ids, (id) => (school.courses[id].fixed ? 1 : 0)),
   };
   for (let s = 0; s < ids.length; s += 1) mark(plan, s, 1);
   return plan;
