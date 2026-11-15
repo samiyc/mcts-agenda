@@ -60,7 +60,8 @@ function detailOf(school, course, room, kind) {
 
 /**
  * The week of one division, teacher or room: for each of the weeks A and B, each of the 40 slots, what is there.
- * An entry is `{ course, discipline, title, group, detail, first }`; `first` is false on the second hour of a block.
+ * An entry is `{ course, discipline, title, group, detail, first }`; `first` is false on the second hour of a block;
+ * `locked` is there, true, on a course the sandbox locks.
  * @param {import("../types.js").School} school
  * @param {import("../types.js").Timetable} timetable
  * @param {{ kind: "division" | "teacher" | "room", id: number }} view
@@ -76,6 +77,7 @@ export function weekOf(school, timetable, view) {
       title: titleOf(school, course),
       group: view.kind === "division" && course.halves !== 3 ? `groupe ${course.halves}` : "",
       detail: detailOf(school, course, room, view.kind),
+      ...(course.fixed ? { locked: true } : {}),
     };
     spread(cells, course, slot, entry);
   }

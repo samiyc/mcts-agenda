@@ -26,8 +26,10 @@ const entryClass = (entry) => ["entry", "d-" + entry.discipline, entry.first ? "
 function entryNode(entry) {
   const title = entry.group ? `${entry.title}, ${entry.group}` : entry.title;
   const tag = entry.status ? [el("em", { class: "tag" }, [STATUS_NAMES[entry.status]])] : [];
-  return el("div", { class: entryClass(entry) }, [
+  const lock = entry.locked ? [el("em", { class: "tag lock", title: "verrouillé" }, ["verrou"])] : [];
+  return el("div", { class: entryClass(entry), "data-course": String(entry.course) }, [
     el("strong", {}, [entry.first ? title : `${title} (suite)`]),
+    ...lock,
     ...tag,
     el("small", {}, [entry.detail]),
   ]);

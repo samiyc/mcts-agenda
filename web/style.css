@@ -72,3 +72,19 @@ table.week td.today { background: color-mix(in srgb, var(--accent) 10%, var(--pa
 .absences li.unknown { color: var(--ink-2); font-style: italic; }
 .changes { padding-left: 22px; }
 .changes li { margin: 3px 0; }
+
+/* The sandbox's panel: the settings, a teacher's half-days, a locked course, a course to move. */
+.settings details { margin: 6px 0; }
+.settings summary { cursor: pointer; font-weight: 600; }
+.settings tr.changed td { font-weight: 600; }
+.settings input[type="number"] { width: 5em; }
+.note { color: #8e1515; font-weight: 600; min-height: 1.2em; }
+table.halves td { padding: 2px; }
+button.half { width: 100%; min-width: 7em; font-size: 0.8rem; }
+button.half.h-avoid { background: #efe3b9; color: var(--ink); }
+button.half.h-away { background: #b71c1c; color: #ffffff; }
+button.half.h-elsewhere { background: var(--line); color: var(--ink); }
+.entry[data-course] { cursor: pointer; }
+.entry .tag.lock { border-color: var(--accent); }
+.move { border: 1px solid var(--line); background: var(--panel); padding: 8px 12px; border-radius: 4px; }
+label.file input { margin-left: 6px; }

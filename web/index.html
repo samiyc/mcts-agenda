@@ -14,7 +14,7 @@
     <header class="masthead">
       <p class="links"><a href="remplacement.html">Les remplacements</a> · <a href="changelog.html">Journal des versions</a></p>
       <h1>Agenda</h1>
-      <p>L'emploi du temps d'un collège fictif, tiré par graine : ses divisions, ses professeurs, ses salles et la grille de chaque niveau. Une règle simple le construit ; la recherche viendra la battre.</p>
+      <p>L'emploi du temps d'un collège fictif, tiré par graine : ses divisions, ses professeurs, ses salles et la grille de chaque niveau. Une règle simple le construit, la recherche l'améliore ; les réglages le changent à la main.</p>
     </header>
     <main>
       <section class="controls">
@@ -50,9 +50,39 @@
         <button type="button" id="build">Construire</button>
       </section>
       <p class="summary" id="summary" aria-live="polite"></p>
+      <section class="settings" aria-labelledby="settings-title">
+        <h2 id="settings-title">Réglages</h2>
+        <p class="hint">Gardés dans ce navigateur, pour ce collège et cette graine. Les poids et les disponibilités comptent à la prochaine construction ; un verrou et un cours déplacé, tout de suite.</p>
+        <p class="note" id="settings-note" aria-live="polite"></p>
+        <details>
+          <summary>Poids des contraintes souples</summary>
+          <div id="weights"></div>
+        </details>
+        <details>
+          <summary>Disponibilités d'un professeur</summary>
+          <p class="hint">Un clic sur une demi-journée : libre, puis « préfère pas » (souple, compté en S3 par heure donnée), puis « indisponible » (dur). « Ailleurs (tiré) » : le collège tiré le met déjà dans un autre établissement.</p>
+          <label>Professeur<select id="teacher"></select></label>
+          <div id="teacher-week"></div>
+        </details>
+        <details>
+          <summary>Verrous</summary>
+          <p class="hint">Un cours verrouillé garde son créneau et sa salle : la règle le pose d'abord, aucune recherche ne le déplace, un remplacement peut lui donner un autre professeur mais pas un autre créneau. Un clic sur un cours de la semaine propose de le déplacer, et le verrouille là.</p>
+          <div id="locks"></div>
+        </details>
+        <details>
+          <summary>Fichier</summary>
+          <button type="button" id="export">Exporter les réglages</button>
+          <label class="file">Importer<input type="file" id="import" accept="application/json,.json" /></label>
+          <button type="button" id="reset">Tout effacer</button>
+        </details>
+      </section>
       <section class="controls">
         <label>Voir<select id="kind"></select></label>
         <label>Laquelle, lequel<select id="which"></select></label>
+      </section>
+      <section id="move-section" class="move" hidden>
+        <h2>Déplacer un cours</h2>
+        <div id="move"></div>
       </section>
       <div class="weeks">
         <section><h2>Semaine A</h2><div class="scroll" id="week-a"></div></section>
