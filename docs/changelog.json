@@ -4,6 +4,22 @@
   "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
   "versions": [
     {
+      "version": "0.5.0",
+      "title": "Le bac à sable",
+      "date": "15/11/2026",
+      "commits": [
+        "61ab5a6",
+        "09aac37"
+      ],
+      "items": [
+        "Un panneau « Réglages » sur la page de l'emploi du temps : le poids de chaque contrainte souple, et les demi-journées de chaque professeur, libres, « préfère pas » ou « indisponible ». Ils comptent à la prochaine construction.",
+        "Verrouiller la semaine d'une classe : ses cours gardent leur créneau et leur salle, la règle les pose d'abord et aucune recherche ne les déplace. Un verrou devenu impossible (un professeur rendu indisponible) est signalé, sans bouger.",
+        "Un clic sur un cours propose les créneaux où il peut aller sans casser de contrainte dure, avec ce que chacun coûte, et l'y verrouille : de quoi saisir un emploi du temps repris d'ailleurs.",
+        "Les réglages restent dans le navigateur, par collège et graine, et s'exportent ou s'importent en fichier.",
+        "Sur la page des remplacements, les absences peuvent être choisies à la main : le professeur, les jours, prévenue la veille ou le matin, la durée connue ou non, et les volontaires avec leurs heures. Un cours verrouillé peut être remplacé, jamais déplacé."
+      ]
+    },
+    {
       "version": "0.4.0",
       "title": "Les remplacements",
       "date": "10/11/2026",

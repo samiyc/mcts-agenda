@@ -343,6 +343,7 @@ le rattrape en heures au prix de séances déplacées d'avance ; l'ISMCTS n'est 
 | **J5** (fait le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) ; la page des remplacements | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; le coût souple compté |
 | **J6** (mesuré le 14/11) | les durées apprises jour après jour (`hidden`) ; trois croyances de la recherche ; les annonces comptées ; pas d'ISMCTS : il n'y a presque rien à gagner | contre J5 (la croyance known) et contre les durées connues, par paires : [`mesures-j6.md`](mesures-j6.md) |
 | **J7** (mesuré le 15/11) | le banc XHSTT-2014 : un solveur pour ses instances (`src/xhstt/`, § 13), la règle simple puis le recuit | contre la règle simple par paires, contre le meilleur connu et les moyennes publiées, au budget d'ITC 2011 : [`mesures-j7.md`](mesures-j7.md) |
+| **J8** (fait le 15/11) | le bac à sable (§ 14) : les poids, les disponibilités, les verrous, un cours déplacé à la main, les absences choisies ; gardés dans le navigateur et en fichier | pas de mesure : sans réglage rien ne change (les empreintes), et les tests tiennent chaque réglage |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.
 
@@ -376,6 +377,8 @@ montre se décide dans `src/view/`, testé ; R0 construit dans un worker.
   2 à 60 s, les coûts de la règle à côté (fait).
 - **Un remplacement** (J5, `web/remplacement.html`, fait) : la semaine avant et après, ce qui a changé en couleur, et
   le lecteur pour suivre la semaine d'absences, moment par moment.
+- **Le bac à sable** (J8, § 14, fait) : le panneau « Réglages » de la page principale, et les absences choisies à la
+  main sur celle des remplacements.
 
 ## 11. Ce qui est décidé, et ce qui reste à Sami
 
@@ -458,3 +461,31 @@ recuit, nulles par défaut :
 
 L'écrémage est fait ([`mesures-j7.md`](mesures-j7.md) § 1) : il écarte un poids requis trop bas (`hard=1`) et le
 retrait des chaînes de Kempe ou des coupes ; la mesure à 1 000 s compare le défaut (`hard=50`) à `hard=10`.
+
+## 14. Le bac à sable (J8)
+
+Pour que Sami prenne le système en main avant d'interroger des professeurs et un principal (15/11). On part du
+collège fictif, tiré par sa taille et sa graine, et on le change à la main ; les réglages sont un objet JSON
+(`src/sandbox/edits.js`), gardés dans le navigateur pour ce collège et cette graine, exportés ou importés en fichier.
+`applyEdits` les pose sur une copie du collège : sans réglage, rien ne change, les empreintes le tiennent.
+
+- **Les poids** S1 à S8 (`School.weights`, lus par `weightsOf`) : la règle, les recherches, l'évaluateur et les
+  remplacements comptent avec eux.
+- **Les demi-journées d'un professeur** : « indisponible » s'ajoute à ses créneaux ailleurs (D4, dur) ; « préfère
+  pas » (`Teacher.avoid`) compte en S3, une fois par heure donnée sur un créneau évité, au poids du vœu (H). Une
+  demi-journée que le tirage met déjà dans un autre établissement reste ainsi.
+- **Les verrous** (`Course.fixed`), par barrette entière : verrouiller la semaine d'une division fige aussi ses
+  barrettes partagées (la LV2 d'une paire). La règle les pose d'abord, à leur créneau et dans leurs salles
+  (`src/build/locked.js`) ; aucune recherche ne les déplace (`movable`). Un verrou devenu impossible reste non
+  placé, avec sa raison, plutôt que de bouger.
+- **Un cours déplacé à la main** (`src/sandbox/moves.js`) : les créneaux où sa barrette peut aller, le reste en place,
+  sous toutes les contraintes dures, chacun avec ce qu'il ajoute au coût souple ; le choix l'y verrouille. C'est
+  ainsi qu'on saisit un emploi du temps repris d'ailleurs.
+- **Les absences choisies** (`scenarioOf`, de la forme de `drawWeek`) : le professeur, les jours, prévenue la veille
+  ou le matin, la durée connue ou apprise jour après jour (chaque jour suivant la veille au soir, comme J6), la
+  semaine A ou B, les volontaires et leurs heures (par défaut ceux du collège, `ABSENCES.hours` chacun).
+- **Un verrou pendant les remplacements** : une séance verrouillée peut recevoir un remplaçant, jamais un autre
+  créneau ni une autre salle (`placeFor`). C'est un choix par défaut (H), à revoir si un principal dit autrement.
+
+À venir, avec Sami : de nouveaux types de contraintes, par exemple les créneaux interdits ou évités d'une division,
+une salle imposée, au plus N heures par jour pour un professeur, une matière pas après telle heure pour un niveau.

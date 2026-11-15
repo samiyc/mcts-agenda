@@ -22,14 +22,29 @@ connaître ne coûte que 0,03 à 0,05 h par semaine à cette recherche ([`docs/m
 J7 lance un solveur sur les 25 instances publiques d'XHSTT-2014, au budget d'ITC 2011 (1 000 s) : son recuit bat la
 règle simple sur chaque course et retrouve la faisabilité connue sur 13 instances, mais reste derrière les solveurs
 publiés sur 21 comparaisons sur 25 ([`docs/mesures-j7.md`](docs/mesures-j7.md)).
+J8 ouvre un bac à sable : sur la page, on règle les poids des contraintes, les disponibilités des professeurs, on
+verrouille la semaine d'une classe ou on déplace un cours à la main, et on choisit les absences de la semaine des
+remplacements ([`docs/modele.md`](docs/modele.md) § 14).
 La page (`npm run page`) montre la semaine d'une division, d'un professeur ou d'une salle, après la règle et la
 recherche ; `remplacement.html` rejoue une semaine d'absences, avant et après, moment par moment.
 
 - [`docs/modele.md`](docs/modele.md) : un collège fictif tiré par graine, ses contraintes dures et souples, les
   absences et le replanning, les règles à battre (le glouton R0, le remplacement P1), les mesures par paires, les bancs
-  publics (XHSTT-2014 d'ITC 2011 ; ITC 2019 si le lycée vient), ce qu'on prend de la lib, les jalons J1 à J7 ;
+  publics (XHSTT-2014 d'ITC 2011 ; ITC 2019 si le lycée vient), ce qu'on prend de la lib, les jalons J1 à J8 ;
 - [`docs/recherche/`](docs/recherche/README.md) : les sources et leur niveau de lecture, le glossaire, le prompt de
   recherche métier, les questions pour Sami et pour un principal adjoint ou un CPE.
+
+## Tester soi-même
+
+1. `npm run page`, puis http://127.0.0.1:4805/web/ : choisir un collège et une graine, « Construire ».
+2. **Réglages** (sous le résumé) : changer un poids, rendre un professeur indisponible ou « préfère pas » une
+   demi-journée, puis « Construire » à nouveau pour voir l'effet ; les coûts disent ce qui a bougé.
+3. **Verrous** : « Voir : une division », puis « Verrouiller la semaine » ; une nouvelle construction, même avec le
+   recuit, la laisse telle quelle. Un clic sur un cours propose de le déplacer, et l'y verrouille.
+4. **Les remplacements** (lien en haut de la page) : « Absences : choisies à la main », ajouter une absence, « Jouer
+   la semaine » ; l'emploi du temps en place garde les verrous et les disponibilités.
+5. **Fichier** : exporter les réglages pour les garder ou les envoyer, les importer ailleurs ; ils restent aussi
+   dans le navigateur, par collège et graine.
 
 ## Les commandes
 
@@ -47,7 +62,7 @@ recherche ; `remplacement.html` rejoue une semaine d'absences, avant et après, 
 | `npm run xhstt:bench -- --only KS-PR-11 --seeds 1,2 --tries 3000000 --configs "hard=50;hard=10"` | le banc XHSTT-2014 : la règle simple puis le recuit, chaque course vérifiée par l'évaluateur ; `--json F`, puis `node scripts/xhstt-report.js --prefix F` pour les rangs d'ITC 2011 (voir `docs/mesures-j7.md`) |
 | `npm run replan -- --sizes M --n 30 --weeks 30` | le replanning des absences : P0, P1 et la recherche, par paires ; `--place anneal`, `--hours H` pour les variantes |
 | `npm run tune -- --search anneal --variants "hot=3;swap=0.7"` | les réglages d'une recherche contre ses défauts, sur les graines 2001 et suivantes |
-| `npm run page` | la page sur http://127.0.0.1:4805/web/ : l'emploi du temps d'une division, d'un professeur ou d'une salle, les coûts |
+| `npm run page` | la page sur http://127.0.0.1:4805/web/ : l'emploi du temps d'une division, d'un professeur ou d'une salle, les coûts, les réglages du bac à sable ; `remplacement.html` les remplacements |
 | `npm run changelog` | réécrit `web/changelog.html` depuis `docs/changelog.json` |
 | `node scripts/refresh-fingerprints.js` | réécrit les empreintes, pour un changement voulu du modèle (le commit le dit, mesures avant et après) |
 
