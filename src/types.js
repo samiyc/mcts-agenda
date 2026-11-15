@@ -27,6 +27,7 @@
  * @property {number} load the weekly hours given by the TRS, one above the service at most
  * @property {Uint8Array} unavailable 1 on a slot of the week where the teacher is elsewhere (D4)
  * @property {Wish | null} wish
+ * @property {Uint8Array} [avoid] 1 on a slot the teacher would rather keep free (the sandbox, S3)
  */
 
 /**
@@ -49,6 +50,7 @@
  * @property {string} kind the room kind it needs
  * @property {number} link its barrette, an index of School.links: the courses of a link start together (D9)
  * @property {number} home the ordinary room it should keep (S7), or -1
+ * @property {{ slot: number, room: number }} [fixed] where a lock keeps it (the sandbox): the rule puts it there, no search moves it
  */
 
 /**
@@ -60,6 +62,7 @@
  * @property {Room[]} rooms
  * @property {Course[]} courses
  * @property {number[][]} links the courses of each barrette, a lone course its own; numbered in the order of the courses
+ * @property {Record<string, number>} [weights] the soft weights, when the sandbox changes them (src/rules/soft.js WEIGHTS otherwise)
  */
 
 /**
@@ -74,6 +77,19 @@
  * @property {number} cost the weighted soft violations, S1 to S8
  * @property {Record<string, number>} hard each hard constraint's count
  * @property {Record<string, number>} soft each soft constraint's count, before its weight
+ */
+
+/**
+ * @typedef {object} Edits the sandbox's settings on a drawn collège (src/sandbox/edits.js), as JSON
+ * @property {number} version
+ * @property {"S" | "M" | "L"} size
+ * @property {number} seed
+ * @property {Record<string, number>} weights the soft weights changed
+ * @property {Record<string, { away: number[], avoid: number[] }>} teachers by teacher: slots elsewhere (D4), slots avoided (S3)
+ * @property {Record<string, { slot: number, room: number }>} locks by course: where it stays
+ * @property {{ teacher: number, from: number, to: number, known: "veille" | "matin", told: "whole" | "daily" }[]} absences
+ * @property {number} week 0 for A, 1 for B
+ * @property {Record<string, number> | null} volunteers the hours each volunteer gives, or null for the collège's own
  */
 
 export {};
