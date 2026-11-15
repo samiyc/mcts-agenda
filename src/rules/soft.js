@@ -11,6 +11,8 @@ import { divisionDay } from "./division.js";
  * `linkDelta` is what the greedy reads: the cost a barrette adds, from the days it touches only.
  */
 export const WEIGHTS = Object.freeze({ S1: 10, S2: 3, S3: 5, S4: 4, S5: 10, S6: 1, S7: 1, S8: 3 });
+/** The weights a collège is judged by: the sandbox's when it changes them (src/sandbox/edits.js), else `WEIGHTS`. */
+export const weightsOf = (school) => school.weights ?? WEIGHTS;
 /** Free slots of a teacher's lunch that are not holes. */
 const LUNCH_ALLOWANCE = 2;
 const HOURS_APART = 24;
@@ -27,6 +29,18 @@ export function wishBroken(teacher, mask, day) {
   const half = teacher.wish.half === 0 ? MORNING_MASK : afternoonMask(day);
   return mask & half ? 1 : 0;
 }
+
+/** S3 too: the hours of the day the teacher gives on slots he would rather keep free (the sandbox's `avoid`). */
+export function avoidedHours(teacher, mask, day) {
+  if (!teacher.avoid) return 0;
+  const { first, count } = DAYS[day];
+  let hours = 0;
+  for (let i = 0; i < count; i += 1) if (teacher.avoid[first + i] && mask & (1 << i)) hours += 1;
+  return hours;
+}
+
+/** S3: the wish broken, and the avoided hours given. */
+export const wishCount = (teacher, mask, day) => wishBroken(teacher, mask, day) + avoidedHours(teacher, mask, day);
 
 const startHour = (slot) => dayOf(slot) * HOURS_APART + hourOf(slot);
 const onWeek = (board, id, week) => board.slot[id] >= 0 && weeksOf(board.school.courses[id].weeks).includes(week);
@@ -54,12 +68,14 @@ export const awayFromHome = (course, room) => (course.home >= 0 && room !== cour
 
 function divisionDayCost(board, division, week, day) {
   const counts = divisionDay(board, division, week, day);
-  return WEIGHTS.S1 * counts.holes + WEIGHTS.S4 * counts.repeats + WEIGHTS.S5 * counts.long;
+  const w = weightsOf(board.school);
+  return w.S1 * counts.holes + w.S4 * counts.repeats + w.S5 * counts.long;
 }
 
 function teacherDayCost(board, teacher, week, day) {
   const mask = dayMask(board.teacher, teacher, week, day);
-  return WEIGHTS.S2 * teacherHoles(mask, day) + WEIGHTS.S3 * wishBroken(board.school.teachers[teacher], mask, day);
+  const w = weightsOf(board.school);
+  return w.S2 * teacherHoles(mask, day) + w.S3 * wishCount(board.school.teachers[teacher], mask, day);
 }
 
 /** Marks a resource's week seen in this epoch; true the first time. */
@@ -77,7 +93,7 @@ function weekCost(board, course, week, day) {
     const division = course.divisions[d];
     if (!firstVisit(seen.division, division * WEEKS + week, seen.epoch)) continue;
     cost += divisionDayCost(board, division, week, day);
-    if (course.discipline === "eps") cost += WEIGHTS.S8 * epsTooClose(board, division, week);
+    if (course.discipline === "eps") cost += weightsOf(board.school).S8 * epsTooClose(board, division, week);
   }
   if (firstVisit(seen.teacher, course.teacher * WEEKS + week, seen.epoch)) cost += teacherDayCost(board, course.teacher, week, day);
   return cost;
@@ -97,8 +113,7 @@ function localCost(board, link, day) {
 }
 
 /** What a course costs on its own, wherever the others are: S6 and S7, on each of its weeks. */
-const ownCost = (course, slot, room) =>
-  (WEIGHTS.S6 * lateHeavy(course, slot) + WEIGHTS.S7 * awayFromHome(course, room)) * weeksOf(course.weeks).length;
+const ownCost = (course, slot, room, w) => (w.S6 * lateHeavy(course, slot) + w.S7 * awayFromHome(course, room)) * weeksOf(course.weeks).length;
 
 /** The soft cost that placing link `link` at `slot`, in the rooms of `board.rooms`, adds; the board is left as it was. */
 export function linkDelta(board, link, slot) {
@@ -108,7 +123,7 @@ export function linkDelta(board, link, slot) {
   let own = 0;
   for (let i = 0; i < ids.length; i += 1) {
     place(board, ids[i], slot, board.rooms[i]);
-    own += ownCost(board.school.courses[ids[i]], slot, board.rooms[i]);
+    own += ownCost(board.school.courses[ids[i]], slot, board.rooms[i], weightsOf(board.school));
   }
   const after = localCost(board, link, day);
   for (let i = 0; i < ids.length; i += 1) remove(board, ids[i]);

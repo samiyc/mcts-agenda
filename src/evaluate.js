@@ -1,7 +1,7 @@
 import { boardOf } from "./board.js";
 import { dayMask } from "./rules/day.js";
 import { divisionDay } from "./rules/division.js";
-import { WEIGHTS, awayFromHome, epsTooClose, lateHeavy, teacherHoles, wishBroken } from "./rules/soft.js";
+import { WEIGHTS, awayFromHome, epsTooClose, lateHeavy, teacherHoles, weightsOf, wishCount } from "./rules/soft.js";
 import { DAYS, WEEKS, fits, weeksOf } from "./time.js";
 
 /**
@@ -74,7 +74,7 @@ function countTeachers(board, soft) {
       DAYS.forEach((_, day) => {
         const mask = dayMask(board.teacher, teacher.id, week, day);
         soft.S2 += teacherHoles(mask, day);
-        soft.S3 += wishBroken(teacher, mask, day);
+        soft.S3 += wishCount(teacher, mask, day);
       });
     }
   }
@@ -95,6 +95,7 @@ export function evaluate(school, timetable) {
   countDivisions(board, hard, soft);
   countTeachers(board, soft);
   const infeasibility = Object.values(hard).reduce((sum, n) => sum + n, 0);
-  const cost = Object.entries(soft).reduce((sum, [key, n]) => sum + WEIGHTS[key] * n, 0);
+  const weights = weightsOf(school);
+  const cost = Object.entries(soft).reduce((sum, [key, n]) => sum + weights[key] * n, 0);
   return { infeasibility, cost, hard, soft };
 }

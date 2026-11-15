@@ -2,9 +2,15 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { runWeek } from "../src/absence/run.js";
 import { p1 } from "../src/absence/rules.js";
+import { planOf } from "../src/absence/plan.js";
+import { softOf } from "../src/absence/soft.js";
 import { buildGreedy } from "../src/build/greedy.js";
+import { evaluate } from "../src/evaluate.js";
 import { applyEdits, emptyEdits, readEdits, scenarioOf } from "../src/sandbox/edits.js";
 import { createSchool } from "../src/school/generate.js";
+import { anneal } from "../src/search/anneal.js";
+import { tabu } from "../src/search/tabu.js";
+import { weeksOf } from "../src/time.js";
 
 /** The sandbox (docs/modele.md § 14): settings by hand on a drawn collège, which leave the model alone when empty. */
 const school = createSchool({ size: "S", seed: 2 });
@@ -59,5 +65,32 @@ describe("the sandbox's settings", () => {
     const { plan } = runWeek(school, timetable, scenario, p1);
     assert.equal(plan.week, 1);
     assert.ok(scenarioOf(school, { ...edits, volunteers: null }).budget.some((h) => h > 0));
+  });
+});
+
+describe("the sandbox's weights and avoided slots", () => {
+  /** A teacher's first placed course: where to put an avoided slot. */
+  const course = school.courses.find((c) => timetable.slot[c.id] >= 0);
+  const avoided = { ...emptyEdits("S", 2), weights: { S2: 6 }, teachers: { [course.teacher]: { away: [], avoid: [timetable.slot[course.id]] } } };
+  const edited = applyEdits(school, avoided);
+
+  it("leave the costs as they were when empty", () => {
+    assert.deepEqual(evaluate(applyEdits(school, emptyEdits("S", 2)), timetable), evaluate(school, timetable));
+  });
+
+  it("weigh each soft constraint as set, and count an hour given on an avoided slot in S3", () => {
+    const [before, after] = [evaluate(school, timetable), evaluate(edited, timetable)];
+    assert.equal(after.soft.S3 - before.soft.S3, weeksOf(course.weeks).length);
+    const extra = 3 * after.soft.S2 + 5 * (after.soft.S3 - before.soft.S3);
+    assert.equal(after.cost - before.cost, extra);
+  });
+
+  it("are what the searches and the replanning count too", () => {
+    for (const search of [anneal, tabu]) {
+      const found = search(edited, timetable, { seed: 3, tries: 20000 });
+      assert.equal(found.cost, evaluate(edited, found.timetable).cost);
+    }
+    const weeks = [0, 1].map((week) => softOf(planOf(edited, timetable, week)));
+    assert.equal(weeks[0] + weeks[1], evaluate(edited, timetable).cost);
   });
 });

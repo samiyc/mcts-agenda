@@ -37,16 +37,19 @@ export const REASON_LABELS = Object.freeze({
   room: "aucune salle du bon type n'est libre",
 });
 
-/** @param {import("../types.js").Evaluation} evaluation */
-export function costRows(evaluation) {
+/**
+ * @param {import("../types.js").Evaluation} evaluation
+ * @param {Record<string, number>} [weights] the collège's (`weightsOf`), when the sandbox changes them
+ */
+export function costRows(evaluation, weights = WEIGHTS) {
   return {
     hard: Object.entries(evaluation.hard).map(([key, count]) => ({ key, label: HARD_LABELS[key], count })),
     soft: Object.entries(evaluation.soft).map(([key, count]) => ({
       key,
       label: SOFT_LABELS[key],
       count,
-      weight: WEIGHTS[key],
-      cost: WEIGHTS[key] * count,
+      weight: weights[key],
+      cost: weights[key] * count,
     })),
   };
 }

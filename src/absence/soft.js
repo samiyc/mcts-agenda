@@ -1,5 +1,5 @@
 import { divisionHoles, longDay } from "../rules/division.js";
-import { WEIGHTS, awayFromHome, lateHeavy, teacherHoles, wishBroken } from "../rules/soft.js";
+import { awayFromHome, lateHeavy, teacherHoles, weightsOf, wishCount } from "../rules/soft.js";
 import { DISCIPLINE_INDEX, DISCIPLINE_KEYS, PARTS, partOf } from "../school/index.js";
 import { DAYS, SLOTS, dayOf, hourOf } from "../time.js";
 import { absentOn } from "./plan.js";
@@ -55,14 +55,16 @@ function divisionCost(plan, division, day) {
     repeats = Math.max(repeats, repeatsOf(plan, part, day));
     long = Math.max(long, longDay(mask, level));
   }
-  return WEIGHTS.S1 * holes + WEIGHTS.S4 * repeats + WEIGHTS.S5 * long;
+  const w = weightsOf(plan.school);
+  return w.S1 * holes + w.S4 * repeats + w.S5 * long;
 }
 
 /** S2, S3 of a teacher's day; nothing on a day he is away. */
 function teacherCost(plan, teacher, day) {
   if (absentOn(plan, teacher, day)) return 0;
   const mask = maskOf(plan.busy.teacher, teacher, day);
-  return WEIGHTS.S2 * teacherHoles(mask, day) + WEIGHTS.S3 * wishBroken(plan.school.teachers[teacher], mask, day);
+  const w = weightsOf(plan.school);
+  return w.S2 * teacherHoles(mask, day) + w.S3 * wishCount(plan.school.teachers[teacher], mask, day);
 }
 
 /** The EPS sessions of each division, computed once a plan. */
@@ -86,13 +88,14 @@ function epsCost(plan, division) {
   for (let i = 0; i < eps.length; i += 1) {
     for (let j = i + 1; j < eps.length; j += 1) if (Math.abs(startOf(plan, eps[i]) - startOf(plan, eps[j])) < HOURS_APART) pairs += 1;
   }
-  return WEIGHTS.S8 * pairs;
+  return weightsOf(plan.school).S8 * pairs;
 }
 
 /** S6, S7: what a session costs on its own. */
 function ownCost(plan, s) {
   const course = plan.school.courses[plan.course[s]];
-  return WEIGHTS.S6 * lateHeavy(course, plan.slot[s]) + WEIGHTS.S7 * awayFromHome(course, plan.room[s]);
+  const w = weightsOf(plan.school);
+  return w.S6 * lateHeavy(course, plan.slot[s]) + w.S7 * awayFromHome(course, plan.room[s]);
 }
 
 /** @param {import("./plan.js").Plan} plan */
