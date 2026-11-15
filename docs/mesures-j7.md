@@ -80,7 +80,77 @@ mesure, et se rejoue de sa graine. Ces essais vont de 15 millions (DK-HG-12, DK-
 **Une copie figée** : les jobs tournent dans une copie du dépôt au commit 45f2391 (`git worktree`, hors du dossier des
 projets), pour que le travail sur les instances dures puisse continuer dans `src/` pendant la mesure.
 
-Les résultats viendront ici.
+**Les résultats** (15/11 ; 500 courses, moyennes sur les 10 graines ; six jobs tués par erreur pendant l'écrémage de
+§ 3 et relancés tels quels, code 143) :
+
+| Instance | Meilleur connu | Règle | Recuit hard=50 | Recuit hard=10 |
+|---|---|---|---|---|
+| AU-BG-98 | 0/128 | 364,8/1254 | 102,6/734 | 95,5/681 |
+| AU-SA-96 | 0/0 | 112,4/134 | 17,5/34 | 16,7/31 |
+| AU-TE-99 | 0/20 | 39,9/199 | 1,8/78 | 1,7/77 |
+| BR-SA-00 | 0/5 | 8,1/147 | 1/44 | **0**/79 |
+| BR-SM-00 | 0/51 | 45,5/108 | 4,2/129 | **0**/140 |
+| BR-SN-00 | 0/35 | 22,9/321 | 3,8/193 | **0**/215 |
+| DK-FG-12 | 0/1263 | 32,2/7943 | 0/2706 | 0/2718 |
+| DK-HG-12 | 12/2330 | 37,8/14245 | 12/6032 | 12/6071 |
+| DK-VG-09 | 2/2323 | 27,7/10335 | 2/3786 | 2/3753 |
+| ES-SS-08 | 0/335 | 22,9/7366 | 0/671 | 0/664 |
+| FI-MP-06 | 0/77 | 21,7/286 | 0/95 | 0/96 |
+| FI-PB-98 | 0/0 | 67,4/512 | 0/18 | 0/16 |
+| FI-WP-06 | 0/0 | 22,3/224 | 0/10 | 0/11 |
+| GR-H1-97 | 0/0 | 7,2/0 | 0/0 | 0/0 |
+| GR-P3-10 | 0/0 | 8,7/688 | 0/106 | 0/109 |
+| GR-PA-08 | 0/3 | 39,8/74 | 35/11 | 35/12 |
+| IT-I4-96 | 0/27 | 11,2/2957 | 0/331 | 0/328 |
+| KS-PR-11 | 0/0 | 323,2/2297 | 274/819 | 274/822 |
+| NL-KP-03 | 0/199 | 19,3/21341 | 0/5837 | 0/5936 |
+| NL-KP-05 | 0/425 | 76/8270 | 17,6/5528 | 19,1/5755 |
+| NL-KP-09 | 0/1620 | 74,1/110817 | 9,1/17753 | 9,1/16633 |
+| UK-SP-06 | 2/1410 | 92,9/1843 | 47,9/1337 | 48,7/1307 |
+| US-WS-09 | 0/101 | 7,6/970 | 0/743 | 0/744 |
+| ZA-LW-09 | 0/0 | 14,9/226 | 0/20 | 0/20 |
+| ZA-WD-09 | 0/0 | 155,5/233 | 2,9/65 | 3,6/60 |
+
+**Contre la règle simple** : le recuit (hard=50) fait mieux qu'elle sur chacune des 250 courses, donc sur les
+25 instances ; hard=10 sur 249 (l'exception plus bas).
+
+**hard=10 contre hard=50** : rang moyen 1,44 contre 1,56, soit −0,11 (−0,28 à +0,06) par paires sur les instances,
+mieux sur 12, égal sur 1, moins bien sur 12. L'intervalle contient zéro : **hard=10 n'est pas promu**, la référence
+reste hard=50. Il rend pourtant faisables les trois instances brésiliennes à chaque graine (141 courses sans
+infaisabilité sur 250, contre 110 ; 14 instances contre 11), au prix de l'objectif ailleurs.
+
+**Contre le meilleur connu** : la même infaisabilité moyenne sur 13 instances (16 avec hard=10), dont 12 sans
+infaisabilité et DK-HG-12, DK-VG-09 au plancher connu (12 et 2). L'objectif n'y égale le meilleur connu que sur GR-H1-97 ;
+ailleurs il vaut 1,2 fois (FI-MP-06) à 29 fois (NL-KP-03) le meilleur connu. Restent infaisables à chaque graine :
+AU-BG-98, AU-SA-96, AU-TE-99 (hard=50), GR-PA-08, KS-PR-11 (274 à chaque graine, le piège de § 3), NL-KP-05, NL-KP-09,
+UK-SP-06, ZA-WD-09.
+
+**Contre les moyennes publiées à 1 000 s** (la table 15 de Ceschia, Di Gaspero et Schaerf, arXiv 2201.07525, lue
+colonne par colonne par `pdftotext -table` ; `docs/recherche/sources.md`) : trois solveurs y donnent une moyenne à
+1 000 s, sur une partie des instances seulement, 25 comparaisons en tout :
+
+| Solveur | Instances | Recuit hard=50 mieux | à peu près égal | moins bien |
+|---|---|---|---|---|
+| Demirović et Musliu 2017 (LNS par MaxSAT) | BR-SA, BR-SM, BR-SN, FI-PB, FI-WP, FI-MP, GR-PA, IT-I4 | FI-PB (0/18 contre 54,6) | FI-WP (9,6 contre 9,8), FI-MP (95,3 contre 95,2) | 5 |
+| Demirović et Stuckey 2018 | BR-SA, BR-SM, BR-SN, FI-PB, FI-WP, FI-MP, GR-PA, ZA-LW | — | — | 8 |
+| Teixeira et al. 2018 | AU-BG, AU-SA, AU-TE, BR-SM, BR-SN, FI-WP, FI-MP, NL-KP-03, NL-KP-05 | AU-TE (1,8/78 contre 7/13) | — | 8 |
+
+Les écarts sont nets là où nous perdons : les instances brésiliennes et GR-PA-08 sont faisables chez eux (GR-PA à 5 et
+7 d'objectif, nous à 35 d'infaisabilité), IT-I4-96 à 35 contre 331, NL-KP-03 à 1 383 contre 5 837, AU-BG-98 à 3/514
+contre 103/734. Les machines diffèrent et le nombre de courses publiées n'est pas dit : la comparaison est
+indicative. **Où nous en sommes** : un recuit générique bat largement la règle simple et tient la faisabilité connue
+sur la moitié des instances, mais reste derrière les solveurs publiés sur 21 comparaisons sur 25, par l'objectif
+quand il est faisable, par la faisabilité sur les instances dures.
+
+**Un défaut trouvé** : la course NL-KP-05 graine 103 finit au plan de la règle (68/10640 avec hard=10, 56/1157 avec
+hard=50, pire que la règle d'abord par l'infaisabilité). L'échelle du recuit est la hausse moyenne de l'objectif sur
+400 mouvements tirés qui gardent l'infaisabilité ; partie de 68 violations, aucun des 400 ne la gardait, et l'échelle
+retombait à 1 : une violation ne pesait plus que 10 à 50 points d'objectif, contre plusieurs centaines aux autres
+graines, et le recuit échangeait l'une contre l'autre. Seule cette course en souffre (BR-SM-00 graine 106 et GR-H1-97
+retombent aussi à 1, mais leur échelle vraie est de 1 à 8). Sans elle, NL-KP-05 vaut 13,3/6014 (hard=50) et 13,7/5212
+(hard=10) au lieu de 17,6 et 19,1 ; les conclusions ne changent pas. Corrigé après la mesure (`scaleOf` prend alors la
+hausse moyenne sur tous les mouvements tirés : 204 sur cette graine). L'estimation reste bruitée sur NL-KP-05 (de 10 à
+1 300 selon la graine) : une piste.
 
 ## 3. Au peigne fin : KS-PR-11, AU-BG-98, UK-SP-06
 

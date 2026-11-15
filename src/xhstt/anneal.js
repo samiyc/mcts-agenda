@@ -24,16 +24,25 @@ export const XANNEAL = Object.freeze({
 /** The weight of an infeasibility point in the objective's points, in the first phase. */
 const HARD = 100;
 
-/** The mean rise of the objective over drawn moves that keep the infeasibility, taken back; at least 1. */
-function scaleOf(state, run) {
+/**
+ * The mean rise of the objective over drawn moves that keep the infeasibility, taken back; at least 1. When every
+ * drawn move changes the infeasibility (a start far from feasible), the mean rise over all of them: falling back to 1
+ * made an infeasibility point worth a few objective points, and the search traded one for the other (NL-KP-05 at
+ * seed 103, docs/mesures-j7.md § 2).
+ */
+export function scaleOf(state, run) {
   let sum = 0;
   let n = 0;
+  let any = 0;
+  let m = 0;
   for (let i = 0; i < 400; i += 1) {
     if (Number.isNaN(draw(state, run))) continue;
+    if (state.dObj > 0) [any, m] = [any + state.dObj, m + 1];
     if (state.dInf === 0 && state.dObj > 0) [sum, n] = [sum + state.dObj, n + 1];
     undo(state);
   }
-  return n ? Math.max(1, sum / n) : 1;
+  if (n) return Math.max(1, sum / n);
+  return m ? Math.max(1, any / m) : 1;
 }
 
 const better = (state, best) => state.infeasibility < best.infeasibility || (state.infeasibility === best.infeasibility && state.objective < best.objective);

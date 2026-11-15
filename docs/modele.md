@@ -342,7 +342,7 @@ le rattrape en heures au prix de séances déplacées d'avance ; l'ISMCTS n'est 
 | **J4** (fait le 9/11) | la lecture d'XHSTT (`src/xhstt/`), l'évaluateur rejoué contre HSEval sur des solutions publiées | 150 solutions sur 152 au coût publié : [`mesures-j4.md`](mesures-j4.md) |
 | **J5** (fait le 10/11) | les absences : P0, P1, puis la recherche locale (`src/absence/`) ; la page des remplacements | contre P1, par paires : [`mesures-j5.md`](mesures-j5.md) ; le coût souple compté |
 | **J6** (mesuré le 14/11) | les durées apprises jour après jour (`hidden`) ; trois croyances de la recherche ; les annonces comptées ; pas d'ISMCTS : il n'y a presque rien à gagner | contre J5 (la croyance known) et contre les durées connues, par paires : [`mesures-j6.md`](mesures-j6.md) |
-| **J7** (en cours, 14/11) | le banc XHSTT-2014 : un solveur pour ses instances (`src/xhstt/`, § 13), la règle simple puis le recuit | contre la règle simple par paires, et contre le meilleur connu de chaque instance, au budget d'ITC 2011 |
+| **J7** (mesuré le 15/11) | le banc XHSTT-2014 : un solveur pour ses instances (`src/xhstt/`, § 13), la règle simple puis le recuit | contre la règle simple par paires, contre le meilleur connu et les moyennes publiées, au budget d'ITC 2011 : [`mesures-j7.md`](mesures-j7.md) |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.
 
