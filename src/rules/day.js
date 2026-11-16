@@ -39,3 +39,12 @@ const [ELEVEN, NOON, ONE] = LUNCH.map((i) => 1 << i);
 export function breakKept(mask) {
   return !(mask & (ELEVEN | NOON)) || !(mask & (NOON | ONE));
 }
+
+/** The most hours an EPS teacher teaches in a day (D10). */
+export const EPS_TEACHER_DAY = 6;
+
+/** Whether `teacher` is held to D10: an EPS teacher. */
+export const dayCapped = (teacher) => teacher.discipline === "eps";
+
+/** D10: an EPS teacher's hours beyond six in a day; 0 for the others. */
+export const teacherExcess = (teacher, mask) => (dayCapped(teacher) ? Math.max(0, popcount(mask) - EPS_TEACHER_DAY) : 0);

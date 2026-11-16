@@ -1,5 +1,5 @@
 import { boardOf } from "./board.js";
-import { dayMask } from "./rules/day.js";
+import { dayMask, teacherExcess } from "./rules/day.js";
 import { divisionDay } from "./rules/division.js";
 import { WEIGHTS, awayFromHome, epsTooClose, lateHeavy, teacherHoles, weightsOf, wishCount } from "./rules/soft.js";
 import { DAYS, WEEKS, fits, weeksOf } from "./time.js";
@@ -9,7 +9,8 @@ import { DAYS, WEEKS, fits, weeksOf } from "./time.js";
  * page shows is judged here, and only here. Infeasibility first: D1 counts the cells of the courses left unplaced
  * (one per slot and week), D2 the clashes (a clash of whole divisions on each of their halves), D3 a room of the
  * wrong kind, D4 a teacher placed while away, D5 a lunch break lost, D6 a 6e day past six hours, D8 a block across a
- * half-day, D9 a course of a barrette away from the slot of its first placed course.
+ * half-day, D9 a course of a barrette away from the slot of its first placed course, D10 an
+ * EPS teacher's day past six hours.
  */
 const zeros = (keys) => Object.fromEntries(keys.map((key) => [key, 0]));
 const cellsOf = (course) => course.length * weeksOf(course.weeks).length;
@@ -67,12 +68,13 @@ function countDivisions(board, hard, soft) {
   }
 }
 
-/** S2, S3: a teacher's day. */
-function countTeachers(board, soft) {
+/** D10, S2, S3: a teacher's day. */
+function countTeachers(board, hard, soft) {
   for (const teacher of board.school.teachers) {
     for (let week = 0; week < WEEKS; week += 1) {
       DAYS.forEach((_, day) => {
         const mask = dayMask(board.teacher, teacher.id, week, day);
+        hard.D10 += teacherExcess(teacher, mask);
         soft.S2 += teacherHoles(mask, day);
         soft.S3 += wishCount(teacher, mask, day);
       });
@@ -87,13 +89,13 @@ function countTeachers(board, soft) {
  */
 export function evaluate(school, timetable) {
   const board = boardOf(school, timetable);
-  const hard = zeros(["D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9"]);
+  const hard = zeros(["D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9", "D10"]);
   const soft = zeros(Object.keys(WEIGHTS));
   hard.D2 = clashes(board.division) + clashes(board.teacher) + clashes(board.room);
   countCourses(board, hard, soft);
   countLinks(board, hard);
   countDivisions(board, hard, soft);
-  countTeachers(board, soft);
+  countTeachers(board, hard, soft);
   const infeasibility = Object.values(hard).reduce((sum, n) => sum + n, 0);
   const weights = weightsOf(school);
   const cost = Object.entries(soft).reduce((sum, [key, n]) => sum + weights[key] * n, 0);

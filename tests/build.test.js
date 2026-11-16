@@ -74,7 +74,7 @@ describe("R0-naïf", () => {
       .flatMap(({ courses }) => courses)
       .reduce((sum, id) => sum + school.courses[id].length * weeksOf(school.courses[id].weeks).length, 0);
     assert.ok(naive.unplaced.length > 0);
-    assert.deepEqual(hard, { D1: unplacedCells, D2: 0, D3: 0, D4: 0, D5: 0, D6: 0, D8: 0, D9: 0 });
+    assert.deepEqual(hard, { D1: unplacedCells, D2: 0, D3: 0, D4: 0, D5: 0, D6: 0, D8: 0, D9: 0, D10: 0 });
     for (const { reasons } of naive.unplaced) assert.equal(Object.values(reasons).reduce((a, b) => a + b, 0), SLOTS);
   });
 

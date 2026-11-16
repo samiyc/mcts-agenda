@@ -14,6 +14,7 @@ export const HARD_LABELS = Object.freeze({
   D6: "plus de 6 h dans une journée de 6e",
   D8: "un bloc à cheval sur deux demi-journées",
   D9: "un cours de barrette hors du créneau des autres",
+  D10: "plus de 6 h dans la journée d'un professeur d'EPS",
 });
 
 export const SOFT_LABELS = Object.freeze({
@@ -35,6 +36,7 @@ export const REASON_LABELS = Object.freeze({
   pause: "la pause méridienne serait perdue",
   "day-limit": "la journée de 6e dépasserait 6 h",
   room: "aucune salle du bon type n'est libre",
+  "teacher-day": "le professeur d'EPS dépasserait 6 h dans la journée",
 });
 
 /**

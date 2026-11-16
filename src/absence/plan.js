@@ -1,3 +1,4 @@
+import { EPS_TEACHER_DAY, dayCapped } from "../rules/day.js";
 import { PARTS, indexOf } from "../school/index.js";
 import { DAYS, SLOTS, dayOf, weeksOf } from "../time.js";
 
@@ -79,6 +80,15 @@ export const orphan = (plan, s) => absentOn(plan, plan.teacher[s], dayOf(plan.sl
 export function teacherFree(plan, teacher, slot, length) {
   for (let k = 0; k < length; k += 1) if (plan.busy.teacher[teacher * SLOTS + slot + k] > 0) return false;
   return true;
+}
+
+/** Whether `teacher`'s day stays within six hours with `length` more from `slot`: an EPS teacher's (D10). */
+export function dayRoomLeft(plan, teacher, slot, length) {
+  if (!dayCapped(plan.school.teachers[teacher])) return true;
+  const { first, count } = DAYS[dayOf(slot)];
+  let hours = length;
+  for (let i = 0; i < count; i += 1) if (plan.busy.teacher[teacher * SLOTS + first + i] > 0) hours += 1;
+  return hours <= EPS_TEACHER_DAY;
 }
 
 /** Whether `teacher` has a session on `day`: at the collège that day. */

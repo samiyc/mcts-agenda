@@ -5,7 +5,7 @@ les remplacements quand un professeur manque, la veille ou le matin même.
 
 Client de [`mcts-commun`](../mcts-commun/README.md). La recherche est choisie par la mesure, contre un remplissage glouton.
 
-**État** (15/11/2026) : le cadrage est écrit, et le jalon J1 est là : le collège tiré par graine (`src/school/`), l'évaluateur
+**État** (16/11/2026) : le cadrage est écrit, et le jalon J1 est là : le collège tiré par graine (`src/school/`), l'évaluateur
 (`src/evaluate.js`, les contraintes dures et souples de `src/rules/`), les deux règles simples R0-naïf et R0
 (`src/build/greedy.js`). La première mesure, [`docs/mesures-j1.md`](docs/mesures-j1.md) : R0
 place presque tout (un cours laissé sur 2 à 5 collèges sur 30), R0-naïf en laisse 12 à 22. J2 a ajouté les barrettes
@@ -25,6 +25,8 @@ publiés sur 21 comparaisons sur 25 ([`docs/mesures-j7.md`](docs/mesures-j7.md))
 J8 ouvre un bac à sable : sur la page, on règle les poids des contraintes, les disponibilités des professeurs, on
 verrouille la semaine d'une classe ou on déplace un cours à la main, et on choisit les absences de la semaine des
 remplacements ([`docs/modele.md`](docs/modele.md) § 14).
+J9 recale le modèle sur la recherche du 16/11 : un professeur d'EPS fait 6 h par jour au plus (D10), et les
+absences passent à 9 % des heures ; les remplacements sont rejoués ([`docs/mesures-j9.md`](docs/mesures-j9.md)).
 La page (`npm run page`) montre la semaine d'une division, d'un professeur ou d'une salle, après la règle et la
 recherche ; `remplacement.html` rejoue une semaine d'absences, avant et après, moment par moment.
 

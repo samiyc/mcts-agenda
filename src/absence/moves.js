@@ -2,12 +2,12 @@ import { breakKept, popcount } from "../rules/day.js";
 import { SIXIEME_DAY } from "../rules/division.js";
 import { roomsFor } from "../school/index.js";
 import { DAYS, SLOTS, dayOf, fits, hasLunch } from "../time.js";
-import { absentOn, lengthOf, mark, teacherFree } from "./plan.js";
+import { absentOn, dayRoomLeft, lengthOf, mark, teacherFree } from "./plan.js";
 
 /**
  * Where a session of the week may go (a « rattrapage » of a lost hour, or a session moved to make room for one),
  * under the hard constraints of the timetable (docs/modele.md § 3.1): its teacher there that day (not away, not
- * elsewhere: D4) and free, its pupils free, a room of its kind free, the lunch break kept (D5), a 6e day within six
+ * elsewhere: D4) and free, an EPS teacher's day within six hours (D10), its pupils free, a room of its kind free, the lunch break kept (D5), a 6e day within six
  * hours (D6), the block within a half-day (D8). Nothing allocates: a search asks this thousands of times.
  */
 
@@ -40,7 +40,7 @@ export function teacherThere(plan, teacher, slot, length) {
   if (absentOn(plan, teacher, dayOf(slot))) return false;
   const away = plan.school.teachers[teacher].unavailable;
   for (let k = 0; k < length; k += 1) if (away[slot + k]) return false;
-  return teacherFree(plan, teacher, slot, length);
+  return teacherFree(plan, teacher, slot, length) && dayRoomLeft(plan, teacher, slot, length);
 }
 
 function roomFree(plan, room, slot, length) {

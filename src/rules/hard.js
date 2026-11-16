@@ -1,7 +1,7 @@
 import { busy, place, remove } from "../board.js";
 import { roomsFor } from "../school/index.js";
 import { DAYS, dayOf, fits, hasLunch, weeksOf } from "../time.js";
-import { breakKept, dayMask, popcount } from "./day.js";
+import { EPS_TEACHER_DAY, breakKept, dayCapped, dayMask, popcount } from "./day.js";
 import { SIXIEME_DAY } from "./division.js";
 
 /**
@@ -10,7 +10,7 @@ import { SIXIEME_DAY } from "./division.js";
  * `reasonOf`. A barrette is asked as one (`tryLink`): its courses start together or not at all (D9). Nothing
  * allocates: the greedy asks this hundreds of thousands of times.
  */
-export const REASONS = Object.freeze(["half-day", "unavailable", "division", "teacher", "pause", "day-limit", "room"]);
+export const REASONS = Object.freeze(["half-day", "unavailable", "division", "teacher", "pause", "day-limit", "room", "teacher-day"]);
 const CODE = Object.freeze(Object.fromEntries(REASONS.map((reason, index) => [reason, -1 - index])));
 
 export const reasonOf = (code) => REASONS[-1 - code];
@@ -55,11 +55,18 @@ function weekHold(board, course, week, slot) {
   return 0;
 }
 
+/** Whether an EPS teacher's day would pass six hours with the course (D10). */
+function teacherDayFull(board, course, week, slot) {
+  if (!dayCapped(board.school.teachers[course.teacher])) return false;
+  return popcount(dayMask(board.teacher, course.teacher, week, dayOf(slot))) + course.length > EPS_TEACHER_DAY;
+}
+
 function dayHold(board, course, slot) {
   const weeks = weeksOf(course.weeks);
   for (let w = 0; w < weeks.length; w += 1) {
     const hold = weekHold(board, course, weeks[w], slot);
     if (hold) return hold;
+    if (teacherDayFull(board, course, weeks[w], slot)) return CODE["teacher-day"];
   }
   return 0;
 }

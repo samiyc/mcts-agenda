@@ -57,7 +57,7 @@ describe("the page's model", () => {
 
   it("lists the costs with their weights, and why a barrette was left", () => {
     const rows = costRows(evaluate(school, timetable));
-    assert.equal(rows.hard.length, 8);
+    assert.equal(rows.hard.length, 9);
     assert.ok(rows.soft.every((row) => row.cost === row.weight * row.count && row.label));
     const course = school.courses[0];
     const [row] = unplacedRows(school, [{ link: 0, courses: [0], reasons: { teacher: 30, division: 10 } }]);

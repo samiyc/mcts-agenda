@@ -1,5 +1,5 @@
 import { DAYS, dayOf } from "../time.js";
-import { absentOn, atSchool, lengthOf, orphan, replace, teacherFree } from "./plan.js";
+import { absentOn, atSchool, dayRoomLeft, lengthOf, orphan, replace, teacherFree } from "./plan.js";
 
 /**
  * The simple rules of the replanning (docs/modele.md § 5.2), each called at every moment of the week (`run.js`):
@@ -9,7 +9,7 @@ import { absentOn, atSchool, lengthOf, orphan, replace, teacherFree } from "./pl
  *   team (a teacher of one of its divisions); failing that, an étude. P1 touches only the day of the absence.
  *
  * Who may replace (H): a volunteer with hours left this week (`scenario.js`: 2 hours, one week in four; never more
- * than 5, Q-P15), not away that day, free at those slots and not elsewhere (D4); the morning, only one already at the
+ * than 5, Q-P15), not away that day, free at those slots and not elsewhere (D4), an EPS teacher within six hours that day (D10); the morning, only one already at the
  * collège that day (Q-P12).
  *
  * The cadrage gave P1 an exchange too, before the étude: bringing a later session of the division forward into the
@@ -44,7 +44,7 @@ export function canReplace(plan, s, teacher, ctx) {
   if (ctx.moment === "matin" && !atSchool(plan, teacher, day)) return false;
   const away = plan.school.teachers[teacher].unavailable;
   for (let k = 0; k < length; k += 1) if (away[slot + k]) return false;
-  return teacherFree(plan, teacher, slot, length);
+  return teacherFree(plan, teacher, slot, length) && dayRoomLeft(plan, teacher, slot, length);
 }
 
 /** The volunteer who has replaced least among those `fits` lets in, the first between equals; −1 if none. */

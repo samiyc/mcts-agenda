@@ -159,6 +159,7 @@ Un emploi du temps a deux coûts, comme dans XHSTT : **l'infaisabilité** (la so
 | D7 | rien le mercredi après-midi | **H** |
 | D8 | un bloc de 2 h est d'un seul tenant, dans une demi-journée | l'usage, l'EPS lue en résumé (`sources.md` § 2) |
 | D9 | les cours d'une barrette au même créneau (compté : ceux qui ne partent pas avec le premier placé) | l'usage, **H** |
+| D10 | un professeur d'EPS : 6 heures de cours au plus par jour (compté : les heures au-delà) ; depuis J9 | la fiche de l'IH2EF sur l'emploi du temps (`recherche/sources.md` § 9) |
 
 ### 3.2 Les souples
 
@@ -180,7 +181,9 @@ Les poids sont des hypothèses, à faire relire (Q-P1, Q-P2).
 Le jalon J5. Un emploi du temps est en place ; un **scénario d'absences** tiré par graine dit qui manque, quand, et
 quand on l'apprend.
 
-- **Les absences** (**H**, Q-P17) : chaque professeur manque en moyenne un jour par mois. Deux absences sur trois sont
+- **Les absences** (**H**, Q-P17) : chaque professeur manque en moyenne 9 % de ses heures depuis J9 (un jour par mois avant,
+  4,3 % des heures) : les collèges perdent 7,8 % de leurs heures en absences courtes non remplacées (DEPP, 2024-2025)
+  et en remplacent 13 à 19 %, notre calcul (Q-P17). Deux absences sur trois sont
   connues d'avance (une formation, une réunion, une sortie scolaire), une sur trois le matin même (une maladie). Elles
   durent 1 à 3 jours, et leur durée n'est pas toujours connue quand on décide. À J5, elle l'est dès que l'absence
   l'est. **À J6** (**H**, Q-P17) : une absence prévue vient avec sa durée (une formation a ses dates) ; une maladie
@@ -190,8 +193,9 @@ quand on l'apprend.
   `run.js`.
 - **Les volontaires** (**H**, Q-P14) : un professeur sur cinq. Le Pacte paie le remplacement court jusqu'à 18 heures
   par an, une demi-heure par semaine : chaque semaine, un volontaire sur quatre peut donner 2 heures, les autres
-  rien. P1 remplace alors 10 à 30 % des heures perdues, l'ordre des taux publiés : 13 % en 2024-2025, 13 à 19 % en
-  collège (`recherche/sources.md` § 4). Avec 5 heures par semaine pour chaque volontaire, P1 en remplaçait 85 %.
+  rien. À J5, avec un jour d'absence par mois, P1 remplaçait 10 à 12 % des heures perdues, l'ordre des taux publiés : 13 % en 2024-2025, 13 à 19 % en
+  collège (`recherche/sources.md` § 4). Avec 5 heures par semaine pour chaque volontaire, P1 en remplaçait 85 %. Avec les absences de J9, le calage est
+  à revoir : [`mesures-j9.md`](mesures-j9.md).
 - **La veille au soir** (vers 18 h, **H**) : on peut toucher toute la journée du lendemain, et prévenir un collègue.
 - **Le matin même** (vers 7 h 30, **H**) : seuls les cours qui n'ont pas commencé bougent, et seuls les professeurs
   déjà au collège ce jour-là peuvent remplacer, sauf un volontaire qui accepte de venir (**H**, Q-P12).
@@ -344,6 +348,7 @@ le rattrape en heures au prix de séances déplacées d'avance ; l'ISMCTS n'est 
 | **J6** (mesuré le 14/11) | les durées apprises jour après jour (`hidden`) ; trois croyances de la recherche ; les annonces comptées ; pas d'ISMCTS : il n'y a presque rien à gagner | contre J5 (la croyance known) et contre les durées connues, par paires : [`mesures-j6.md`](mesures-j6.md) |
 | **J7** (mesuré le 15/11) | le banc XHSTT-2014 : un solveur pour ses instances (`src/xhstt/`, § 13), la règle simple puis le recuit | contre la règle simple par paires, contre le meilleur connu et les moyennes publiées, au budget d'ITC 2011 : [`mesures-j7.md`](mesures-j7.md) |
 | **J8** (fait le 15/11) | le bac à sable (§ 14) : les poids, les disponibilités, les verrous, un cours déplacé à la main, les absences choisies ; gardés dans le navigateur et en fichier | pas de mesure : sans réglage rien ne change (les empreintes), et les tests tiennent chaque réglage |
+| **J9** (16/11) | le modèle recalé sur la recherche du 16/11 : les absences à 9 % des heures, le plafond de 6 h par jour des professeurs d'EPS (D10) | R0 avant et après le plafond ; J5 et J6 rejoués : [`mesures-j9.md`](mesures-j9.md) |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.
 

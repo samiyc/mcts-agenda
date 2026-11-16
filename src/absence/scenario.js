@@ -3,8 +3,10 @@ import { DAYS, WEEKS } from "../time.js";
 
 /**
  * A week of absences, drawn from a seed (docs/modele.md § 4). Every figure is a hypothesis (H, Q-P17):
- * - each teacher misses a day a month on average: an absence starts on a given day with probability 1/40 (twenty
- *   school days a month, two days an absence on average);
+ * - each teacher misses 9 % of his hours (J9, 16/11/2026): an absence starts on a given day with probability 1/18.
+ *   The collèges lose 7.8 % of their hours to short absences not replaced (DEPP, 2024-2025) and replace 13 to 19 % of
+ *   them: about 9 % of the hours are missed (our arithmetic, docs/recherche/questions.md, Q-P17). Before J9, 1/40, a
+ *   day a month, 4.3 % of the hours;
  * - it lasts 1, 2 or 3 days alike, cut at Friday;
  * - two in three are known the evening before their first day (« veille »), with their length (a training, an
  *   outing); one in three the same morning (« matin »), an illness: half of these come with their length (a sick note
@@ -18,7 +20,7 @@ import { DAYS, WEEKS } from "../time.js";
  * replacement rate this gives P1 matches the published ones: 13 % of the hours of short absences in 2024-2025, 13 to
  * 19 % in collèges (the ministry's yearly review, as relayed by the unions; docs/recherche/sources.md).
  */
-export const ABSENCES = Object.freeze({ startRate: 1 / 40, longest: 3, knownBefore: 2 / 3, toldWhole: 0.5, volunteers: 0.2, available: 0.25, hours: 2 });
+export const ABSENCES = Object.freeze({ startRate: 1 / 18, longest: 3, knownBefore: 2 / 3, toldWhole: 0.5, volunteers: 0.2, available: 0.25, hours: 2 });
 
 /**
  * @param {import("../types.js").School} school

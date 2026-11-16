@@ -77,9 +77,9 @@ Les sources sont dans [`sources.md`](sources.md) § 9. **Réglé** : la réponse
 | Q-P14 | réglé | 42 % des professeurs de collège dans le Pacte en 2024-2025, le RCD un tiers des parts, une demi-part de 9 h : **les 20 % de volontaires du modèle, à 9 à 18 h, tiennent** | — |
 | Q-P15 | en partie | désigné à défaut de volontaire, prévenu 24 h avant, 5 h par semaine et 60 par an au plus (textes syndicaux d'avant 2023, à vérifier) ; un professeur dont la classe est en sortie peut prendre d'autres classes dans son service | si la désignation se fait vraiment |
 | Q-P16 | ouvert | la recherche compte la perturbation en cours changés, comme le modèle ; rien sur la veille contre le matin | **la question à garder en premier** |
-| Q-P17 | en partie | au collège, 7,8 % des heures perdues par absence non remplacée (DEPP, 2024-2025), dont 40 % pour formation, examens et commissions ; les absences institutionnelles font 36 % des absences courtes. Notre calcul (H) : si 13 à 19 % des absences courtes sont remplacées, les professeurs manquent environ 9 % de leurs heures, **près du double** des 5 % du modèle (un jour par mois) | le nombre d'absences d'une semaine type, pour trancher |
+| Q-P17 | en partie | au collège, 7,8 % des heures perdues par absence non remplacée (DEPP, 2024-2025), dont 40 % pour formation, examens et commissions ; les absences institutionnelles font 36 % des absences courtes. Notre calcul (H) : si 13 à 19 % des absences courtes sont remplacées, les professeurs manquent environ 9 % de leurs heures, **près du double** des 5 % du modèle (un jour par mois, 4,3 % des heures en fait). **Décidé le 16/11** : le modèle passe à 9 % (J9) | le nombre d'absences d'une semaine type, pour trancher |
 | Q-P18 | ouvert | le ministère compte les heures remplacées sur les heures d'absence ; s'il compte une heure surveillée par un AED, rien ne le dit | inchangé |
 
-**Ce qui change dans le modèle, sans attendre** (à décider avec Sami) : le taux d'absence, à presque doubler, et le
+**Ce qui change dans le modèle, sans attendre** (décidé avec Sami le 16/11, J9) : le taux d'absence, à presque doubler, et le
 plafond de 6 h par jour des professeurs d'EPS. **Les questions à garder** pour les amis de Sami, dans l'ordre :
 Q-P16, Q-P1, Q-P2, Q-P12, Q-P13, Q-P17, puis Q-P3 à Q-P7 si le temps le permet.

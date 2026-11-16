@@ -4,6 +4,17 @@
   "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
   "versions": [
     {
+      "version": "0.6.0",
+      "title": "Le modèle recalé sur les sources",
+      "date": "16/11/2026",
+      "commits": [],
+      "items": [
+        "Un professeur d'EPS ne fait plus que 6 h de cours par jour au plus, comme le recommande l'IH2EF : la construction le respecte, les coûts le comptent (« plus de 6 h dans la journée d'un professeur d'EPS »), et un cours non placé pour cette raison le dit.",
+        "Les remplacements ne donnent plus une septième heure à un professeur d'EPS, et ne déplacent pas une de ses séances vers une journée déjà pleine.",
+        "La semaine des remplacements tire environ deux fois plus d'absences : chaque professeur manque 9 % de ses heures, au lieu d'un jour par mois, d'après les heures perdues publiées par le ministère."
+      ]
+    },
+    {
       "version": "0.5.0",
       "title": "Le bac à sable",
       "date": "15/11/2026",

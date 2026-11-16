@@ -33,12 +33,13 @@ function freeAt(plan, s, room) {
 const clashFree = (plan) => [plan.busy.division, plan.busy.teacher, plan.busy.room].every((layer) => layer.every((n) => n <= 1));
 
 describe("the absences", () => {
-  it("are drawn from their seed: a day a month, 1 to 3 days, known the evening before or the morning", () => {
+  it("are drawn from their seed: 9 % of the days, 1 to 3 days, known the evening before or the morning", () => {
     assert.deepEqual(drawWeek(school, 5), drawWeek(school, 5));
     const all = weeks.flatMap((w) => w.absences);
     assert.ok(all.every((a) => a.from <= a.to && a.to - a.from < 3 && a.to < DAYS.length));
     const days = all.reduce((sum, a) => sum + a.to - a.from + 1, 0) / weeks.length;
-    assert.ok(days > 1 && days < 8, `${days} days a week for ${school.teachers.length} teachers`);
+    const share = days / (5 * school.teachers.length);
+    assert.ok(share > 0.05 && share < 0.14, `${days} days a week for ${school.teachers.length} teachers`);
     assert.ok(all.some((a) => a.known === "veille") && all.some((a) => a.known === "matin"));
   });
 
