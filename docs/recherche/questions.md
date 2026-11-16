@@ -55,3 +55,31 @@ fait l'emploi du temps de personne.
 | **Q-P16** | Qu'est-ce qui dérange le plus : un cours déplacé, un professeur changé, une salle changée ? Pour les élèves, les professeurs, les familles ? Un changement annoncé la veille gêne-t-il moins qu'un changement du matin ? Combien de cours changés, ou de minutes de cours perdues, vaut une journée mieux faite (un trou de moins, une journée moins longue) ? | CPE, P | **Compter les cours changés** ; un changement de la veille compte moitié moins qu'un changement du matin ; cent points de coût souple valent un cours changé (`mesures-j5.md` : la recherche change environ une séance par heure sauvée, 11,5 par semaine pour 10 h sauvées dans un grand collège ; à dix points pour un cours changé, elle perd 0,15 à 0,4 h de plus par semaine). | Le dérangement (§ 4). |
 | **Q-P17** | Combien d'absences par semaine dans un collège de 16 divisions ? Quelle part est connue d'avance ? Combien de jours durent-elles ? Quand un professeur est malade le matin, quand sait-on jusqu'à quand : le jour même (l'arrêt), ou jour après jour ? | CPE, PA | **Un jour par mois par professeur**, deux sur trois connues d'avance, de 1 à 3 jours ; une maladie sur deux avec sa durée, l'autre apprise jour après jour, la veille au soir (J6). | Les scénarios d'absences (§ 4, § 6.1). |
 | **Q-P18** | Comment compte-t-on une heure perdue : une étude, un cours fait par un collègue d'une autre discipline ? | PA | **Perdue si personne ne fait cours** ; un collègue d'une autre discipline sauve l'heure, mais compte à part. | Le premier score du replanning. |
+
+## Ce que la recherche du 16/11 a réglé, et ce qui reste à demander
+
+Les sources sont dans [`sources.md`](sources.md) § 9. **Réglé** : la réponse publique suffit, la question tombe.
+**En partie** : le cadre est connu, l'usage d'un collège reste à dire. **Ouvert** : rien de public.
+
+| # | État | Ce qu'on sait maintenant | Ce qu'il reste à demander |
+|---|---|---|---|
+| Q-P1 | en partie | les trous des élèves passent avant ceux des professeurs (APMEP) ; les vœux sont souples, l'indisponibilité dure, dans les logiciels | le pire des souples aux yeux d'un principal adjoint |
+| Q-P2 | ouvert | aucun seuil public ; les logiciels offrent des plafonds par professeur (heures par jour, amplitude) | combien de trous pour un professeur |
+| Q-P3 | en partie | les logiciels traitent les vœux comme des préférences, et conseillent d'en limiter le nombre | quels vœux, combien tenus |
+| Q-P4 | en partie | 24 h entre deux séances d'EPS d'un élève ; **6 h par jour au plus pour un professeur d'EPS** (une contrainte que le modèle n'a pas) ; des installations souvent hors du collège | les blocs, les TP, les demi-groupes : l'usage du collège |
+| Q-P5 | en partie | la chronobiologie (Testu) décrit deux temps forts dans la journée, et une vigilance qui remonte l'après-midi : S6 (pas de matière lourde après 15 h) n'a pas d'appui clair | la règle tenue, s'il y en a une |
+| Q-P6 | en partie | la durée d'une heure n'a pas de règle nationale (55 min souvent, 45 ailleurs) ; la pause méridienne d'au moins 1 h 30 | les horaires du collège |
+| Q-P7, Q-P8, Q-P11 | ouvert | rien de public | inchangé |
+| Q-P9 | en partie | les groupes de besoins deviennent à la rentrée 2026 un « accompagnement pédagogique renforcé », avec une heure de soutien ou d'approfondissement en 6e : le modèle a déjà cette heure | comment le collège les aligne |
+| Q-P10 | ouvert | les transports et la demi-pension sont « à prendre en compte », sans règle | inchangé |
+| Q-P12 | en partie | **les délais de prévenance ne sont pas nationaux** : le plan RCD de chaque établissement les fixe ; les volontaires du Pacte déclarent leurs créneaux de remplacement (un semainier) | à quelle heure on apprend une absence, et les délais de leur plan |
+| Q-P13 | en partie | d'abord un enseignant, de la discipline ou de la classe ; puis échanges de service et permutations de cours ; puis les AED (devoirs surveillés, numérique) : l'ordre de P1, plus les permutations | si l'on libère des élèves, et quand |
+| Q-P14 | réglé | 42 % des professeurs de collège dans le Pacte en 2024-2025, le RCD un tiers des parts, une demi-part de 9 h : **les 20 % de volontaires du modèle, à 9 à 18 h, tiennent** | — |
+| Q-P15 | en partie | désigné à défaut de volontaire, prévenu 24 h avant, 5 h par semaine et 60 par an au plus (textes syndicaux d'avant 2023, à vérifier) ; un professeur dont la classe est en sortie peut prendre d'autres classes dans son service | si la désignation se fait vraiment |
+| Q-P16 | ouvert | la recherche compte la perturbation en cours changés, comme le modèle ; rien sur la veille contre le matin | **la question à garder en premier** |
+| Q-P17 | en partie | au collège, 7,8 % des heures perdues par absence non remplacée (DEPP, 2024-2025), dont 40 % pour formation, examens et commissions ; les absences institutionnelles font 36 % des absences courtes. Notre calcul (H) : si 13 à 19 % des absences courtes sont remplacées, les professeurs manquent environ 9 % de leurs heures, **près du double** des 5 % du modèle (un jour par mois) | le nombre d'absences d'une semaine type, pour trancher |
+| Q-P18 | ouvert | le ministère compte les heures remplacées sur les heures d'absence ; s'il compte une heure surveillée par un AED, rien ne le dit | inchangé |
+
+**Ce qui change dans le modèle, sans attendre** (à décider avec Sami) : le taux d'absence, à presque doubler, et le
+plafond de 6 h par jour des professeurs d'EPS. **Les questions à garder** pour les amis de Sami, dans l'ordre :
+Q-P16, Q-P1, Q-P2, Q-P12, Q-P13, Q-P17, puis Q-P3 à Q-P7 si le temps le permet.

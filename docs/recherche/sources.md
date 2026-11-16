@@ -117,3 +117,35 @@ Nos propres calculs, sur le collège M du modèle (§ 2) :
   créneau si toutes les divisions ont cours : 17 salles ordinaires laissent une marge d'une salle.
 - **La 6e** : 26 h sur 4 jours et demi, dont 4 h le mercredi matin, laissent 5,5 h par jour en moyenne les autres
   jours, sous le plafond de 6 h.
+
+## 9. La recherche du 16/11 : les questions en attente
+
+Avant d'interroger des professionnels, une seconde recherche (forums, textes, articles) sur les questions Q-P1 à
+Q-P18 ; ce qu'elle a trouvé, question par question, est dans [`questions.md`](questions.md). Les forums d'enseignants
+(Neoprofs) ne sortent pas dans les moteurs ; le guide ministériel du RCD (septembre 2024, 59 pages) et le rapport
+de la Cour des comptes sont refusés à l'outil, lus ici par ce qu'en citent un syndicat et la presse.
+
+| Chiffre | Valeur | Source | Lecture |
+|---|---|---|---|
+| Les heures non assurées au collège, 2024-2025 | 9,5 % des heures : 4,7 points d'absences non remplacées pour raisons individuelles (maladie, congés, grèves), 1,3 pour formation, 1,8 pour le « fonctionnement du système » (examens, commissions), 1,8 de fermeture totale | DEPP, Note d'information n° 26.14, avril 2026, figure 2 | texte (PDF extrait par `pdftotext`) |
+| Le remplacement court et long | moins de 15 jours : dans l'établissement, par un plan annuel ; 15 jours et plus : par le rectorat (TZR, contractuels) | idem, encadré | texte |
+| Les absences institutionnelles | « 36 % des absences de courte durée des enseignants » au collège ; les absences courtes viennent, dans l'ordre, de la maladie, de la formation, des voyages scolaires | Cour des comptes, rapport sur le temps d'enseignement perdu au collège (2025), cité par la presse | résumé |
+| Les congés de maladie | 45 % des enseignants du public absents pour santé en 2018-2019, pour un tiers d'entre eux 1 à 3 jours ; les congés de maladie ordinaires en hausse de 41,3 % de 2018-2019 à 2023-2024 | Cour des comptes (2021 ; 2025), cités par la presse | résumé |
+| Les délais de prévenance | « ne sont pas fixés au niveau national » : le plan RCD de l'établissement les fixe, avec le nombre de créneaux et un semainier des créneaux couverts | guide ministériel du RCD (septembre 2024), cité par le SNES-FSU de Bordeaux | texte (citation dans le PDF syndical) |
+| Les volontaires du Pacte | ils indiquent leurs créneaux de remplacement, et leur emploi du temps y est ajusté ; engagés par contrat, ils ne refusent pas sans motif | idem | texte (citation syndicale) |
+| L'ordre du remplacement | d'abord un enseignant ; des « échanges de service », des « permutations de cours » ; puis les AED (devoirs surveillés, numérique) | idem, p. 28 du guide | texte (citation syndicale) |
+| Le service modifié sur une semaine | le chef d'établissement peut faire faire à un professeur une partie de son service à d'autres classes la semaine où les siennes sont absentes (sortie), dans le maximum hebdomadaire ; au-delà, son accord et des HSE | idem, p. 34 du guide | texte (citation syndicale) |
+| Le taux d'efficacité | heures remplacées sur heures d'absence de moins de 15 jours déclarées | idem | texte (citation syndicale) |
+| La désignation sans volontaire | possible à défaut de volontaire ; prévenu 24 h avant ; 5 heures supplémentaires par semaine au plus, 60 par an ; jamais un stagiaire, un temps partiel seulement à sa demande | affiche du SNES-FSU de Lille (2018) ; modèle de protocole du SGEN-CFDT, « version avant pacte » | texte (antérieurs au décret de 2023 : à vérifier) |
+| L'ordre d'un protocole type | « en priorité par un enseignant de la même discipline » ou de la même classe | modèle de protocole du SGEN-CFDT | texte |
+| Le Pacte en 2024-2025 | 31 % des enseignants y adhèrent, 42 % au collège, 1,54 part en moyenne ; le RCD fait 34 % des parts du second degré, 2,5 millions d'heures ; une demi-part fait 9 heures ; 27 % des enseignants du second degré engagés à la rentrée 2025 | bilan ministériel au CSA (juillet 2025), cité par la presse ; SNES Bordeaux | résumé |
+| Dans une académie | au 5/05/2025, 4 904 pactes RCD sur 11 630 en collège (42 %) ; taux d'efficacité du RCD de 19,4 % en collège | bilan académique (SGEN-CFDT, juin 2025) | résumé |
+| Le remplacement dans EDT | les « plages privilégiées de remplacement » de chaque professeur, avec un niveau de priorité, ses matières et ses niveaux ; le choix filtré par disponibilité, préférences et missions ; les heures déjà faites dans l'année affichées | Index Éducation, « Les outils pour gérer les RCD » (EDT 2024) | texte (PDF extrait) |
+| Les vœux dans les logiciels | les vœux « pour influencer le placement dans la mesure du possible » ; limiter les indisponibilités ; ne pas saisir trop de vœux pour un même professeur ; des contraintes de plus : heures au plus par jour, nombre de demi-journées, amplitude du premier au dernier cours (EDT 2021) | méthodologie EDT 2021 ; manuel UnDeuxTEMPS | résumé |
+| Les trous | « éviter au maximum les trous pour les élèves », quitte à dégrader un peu ceux des professeurs ; éviter les trous qui envoient la moitié des élèves en permanence au même moment | article de l'APMEP sur l'emploi du temps (Publimath) | résumé |
+| L'EPS et ses professeurs | 6 h de cours par jour au plus pour un professeur d'EPS ; 24 h entre deux séances d'un élève ; des installations souvent hors de l'établissement, à coordonner | fiche de l'IH2EF sur l'emploi du temps (mise à jour le 31/03/2026) | texte (page) |
+| Les transports et la demi-pension | cités parmi les données à prendre en compte, sans règle | idem | texte (page) |
+| La durée d'une heure | aucune règle nationale : 55 minutes souvent, des séquences de 45 minutes ailleurs | Digischool ; une fiche de collège ; SE-UNSA | résumé |
+| Les rythmes de l'attention | deux alternances de temps forts et faibles dans la journée (Testu) ; une remontée de la vigilance l'après-midi | travaux de F. Testu, cités par des documents d'INSPE et de circonscription | résumé |
+| Les groupes de besoins | maintenus en 6e et 5e à la rentrée 2025 par un nouveau texte (avril 2025) ; à la rentrée 2026, un « accompagnement pédagogique renforcé » et une heure de soutien ou d'approfondissement en 6e (texte du 12/03/2026, arrêté ou décret à vérifier) | ministère ; Banque des territoires ; presse | résumé |
+| Le replanning dans la recherche | la perturbation minimale se compte en affectations changées, à côté de la qualité ; un article de Groningue sur l'emploi du temps scolaire note que le replanning après une absence se fait « principalement à la main » | arXiv 2008.12342 (2020) ; Université de Groningue (résumé) | résumé (l'article de Groningue refusé à l'outil) |
