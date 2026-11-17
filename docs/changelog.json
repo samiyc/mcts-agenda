@@ -7,7 +7,9 @@
       "version": "0.6.0",
       "title": "Le modèle recalé sur les sources",
       "date": "16/11/2026",
-      "commits": [],
+      "commits": [
+        "9ba1c6f"
+      ],
       "items": [
         "Un professeur d'EPS ne fait plus que 6 h de cours par jour au plus, comme le recommande l'IH2EF : la construction le respecte, les coûts le comptent (« plus de 6 h dans la journée d'un professeur d'EPS »), et un cours non placé pour cette raison le dit.",
         "Les remplacements ne donnent plus une septième heure à un professeur d'EPS, et ne déplacent pas une de ses séances vers une journée déjà pleine.",

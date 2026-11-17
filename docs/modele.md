@@ -194,8 +194,8 @@ quand on l'apprend.
 - **Les volontaires** (**H**, Q-P14) : un professeur sur cinq. Le Pacte paie le remplacement court jusqu'à 18 heures
   par an, une demi-heure par semaine : chaque semaine, un volontaire sur quatre peut donner 2 heures, les autres
   rien. À J5, avec un jour d'absence par mois, P1 remplaçait 10 à 12 % des heures perdues, l'ordre des taux publiés : 13 % en 2024-2025, 13 à 19 % en
-  collège (`recherche/sources.md` § 4). Avec 5 heures par semaine pour chaque volontaire, P1 en remplaçait 85 %. Avec les absences de J9, le calage est
-  à revoir : [`mesures-j9.md`](mesures-j9.md).
+  collège (`recherche/sources.md` § 4). Avec 5 heures par semaine pour chaque volontaire, P1 en remplaçait 85 %. Avec les absences de J9, P1 n'en
+  remplace plus que 6 à 7 % : les volontaires saturent, leur calage est à revoir ([`mesures-j9.md`](mesures-j9.md) § 2).
 - **La veille au soir** (vers 18 h, **H**) : on peut toucher toute la journée du lendemain, et prévenir un collègue.
 - **Le matin même** (vers 7 h 30, **H**) : seuls les cours qui n'ont pas commencé bougent, et seuls les professeurs
   déjà au collège ce jour-là peuvent remplacer, sauf un volontaire qui accepte de venir (**H**, Q-P12).
