@@ -7,7 +7,9 @@
       "version": "0.7.0",
       "title": "Trois contraintes de plus au bac à sable",
       "date": "17/11/2026",
-      "commits": [],
+      "commits": [
+        "deeeafa"
+      ],
       "items": [
         "Dans « Disponibilités d'un professeur », un nombre d'heures par jour au plus, de 1 à 8 : la construction le respecte, les remplacements aussi. Pour un professeur d'EPS, il remplace les 6 h habituelles.",
         "Un nouveau panneau « Créneaux sans cours d'une classe » : un clic sur une demi-journée la passe à « pas de cours », et aucun cours de la classe n'y est placé ni déplacé par un remplacement.",

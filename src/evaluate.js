@@ -1,4 +1,5 @@
 import { boardOf } from "./board.js";
+import { countCover } from "./rules/cover.js";
 import { dayMask, teacherExcess } from "./rules/day.js";
 import { divisionAway } from "./rules/hard.js";
 import { divisionDay } from "./rules/division.js";
@@ -107,6 +108,7 @@ export function evaluate(school, timetable) {
   countTeachers(board, hard, soft);
   const infeasibility = Object.values(hard).reduce((sum, n) => sum + n, 0);
   const weights = weightsOf(school);
+  soft.S9 = countCover(board);
   const cost = Object.entries(soft).reduce((sum, [key, n]) => sum + weights[key] * n, 0);
   return { infeasibility, cost, hard, soft };
 }

@@ -37,7 +37,7 @@ describe("the sandbox's settings", () => {
     const bad = (change) => assert.throws(() => readEdits({ ...emptyEdits("S", 2), ...change }, school), Error);
     bad({ seed: 3 });
     bad({ version: 9 });
-    bad({ weights: { S9: 1 } });
+    bad({ weights: { S10: 1 } });
     bad({ weights: { S1: -1 } });
     bad({ teachers: { 999: { away: [], avoid: [] } } });
     bad({ teachers: { 0: { away: [40], avoid: [] } } });

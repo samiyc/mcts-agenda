@@ -37,7 +37,11 @@ function build(school) {
     if (course.kind !== "ordinary") return roomsOfKind.get(course.kind) ?? [];
     return course.home < 0 ? spareFirst : [course.home, ...ordinary.filter((id) => id !== course.home)];
   });
-  return { parts: school.courses.map(partsOf), eps, roomsFor };
+  const disciplines = [...new Set(school.teachers.map((t) => t.discipline))];
+  /** Each teacher's discipline as an index, and the teachers of each: the cover (S9). */
+  const disciplineOf = Int16Array.from(school.teachers, (t) => disciplines.indexOf(t.discipline));
+  const teachersOf = disciplines.map((d) => Int16Array.from(school.teachers.filter((t) => t.discipline === d), (t) => t.id));
+  return { parts: school.courses.map(partsOf), eps, roomsFor, disciplineOf, teachersOf };
 }
 
 /** @param {import("../types.js").School} school */

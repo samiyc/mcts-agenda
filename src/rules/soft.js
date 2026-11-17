@@ -2,15 +2,17 @@ import { place, remove } from "../board.js";
 import { DISCIPLINES } from "../grid.js";
 import { indexOf } from "../school/index.js";
 import { DAYS, LATE, WEEKS, dayOf, hourOf, indexInDay, weeksOf } from "../time.js";
+import { coverCost } from "./cover.js";
 import { LUNCH_MASK, MORNING_MASK, afternoonMask, dayMask, innerFree, popcount } from "./day.js";
 import { divisionDay } from "./division.js";
 
 /**
- * The soft constraints S1 to S8 (docs/modele.md § 3.2), each counted where it lives: a division's day
- * (`division.js`), a teacher's day, a course, a division's week of EPS. The weights are hypotheses (Q-P1, Q-P2).
+ * The soft constraints S1 to S9 (docs/modele.md § 3.2), each counted where it lives: a division's day
+ * (`division.js`), a teacher's day, a course, a division's week of EPS, a discipline's slot (S9, `cover.js`). The
+ * weights are hypotheses (Q-P1, Q-P2); S9 weighs 0 unless set (J10), and is then skipped.
  * `linkDelta` is what the greedy reads: the cost a barrette adds, from the days it touches only.
  */
-export const WEIGHTS = Object.freeze({ S1: 10, S2: 3, S3: 5, S4: 4, S5: 10, S6: 1, S7: 1, S8: 3 });
+export const WEIGHTS = Object.freeze({ S1: 10, S2: 3, S3: 5, S4: 4, S5: 10, S6: 1, S7: 1, S8: 3, S9: 0 });
 /** The weights a collège is judged by: the sandbox's when it changes them (src/sandbox/edits.js), else `WEIGHTS`. */
 export const weightsOf = (school) => school.weights ?? WEIGHTS;
 /** Free slots of a teacher's lunch that are not holes. */
@@ -119,13 +121,14 @@ const ownCost = (course, slot, room, w) => (w.S6 * lateHeavy(course, slot) + w.S
 export function linkDelta(board, link, slot) {
   const ids = board.school.links[link];
   const day = dayOf(slot);
-  const before = localCost(board, link, day);
+  const { S9 } = weightsOf(board.school);
+  const before = localCost(board, link, day) + (S9 > 0 ? S9 * coverCost(board, link, slot) : 0);
   let own = 0;
   for (let i = 0; i < ids.length; i += 1) {
     place(board, ids[i], slot, board.rooms[i]);
     own += ownCost(board.school.courses[ids[i]], slot, board.rooms[i], weightsOf(board.school));
   }
-  const after = localCost(board, link, day);
+  const after = localCost(board, link, day) + (S9 > 0 ? S9 * coverCost(board, link, slot) : 0);
   for (let i = 0; i < ids.length; i += 1) remove(board, ids[i]);
   return after - before + own;
 }

@@ -27,7 +27,12 @@ export function createBoard(school) {
     roomOf: new Int16Array(school.courses.length).fill(-1),
     /** Scratch for the rules, so that they do not allocate: the rooms of a link, the days a link touches. */
     rooms: new Int16Array(widest),
-    seen: { division: new Int32Array(school.divisions.length * WEEKS), teacher: new Int32Array(school.teachers.length * WEEKS), epoch: 0 },
+    seen: {
+      division: new Int32Array(school.divisions.length * WEEKS),
+      teacher: new Int32Array(school.teachers.length * WEEKS),
+      cover: new Int32Array(indexOf(school).teachersOf.length * WEEKS * SLOTS),
+      epoch: 0,
+    },
   };
 }
 

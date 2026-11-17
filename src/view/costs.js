@@ -27,6 +27,7 @@ export const SOFT_LABELS = Object.freeze({
   S6: "français, maths ou LV1 après 15 h",
   S7: "un cours hors de la salle attitrée",
   S8: "deux séances d'EPS à moins de 24 h",
+  S9: "une heure sans collègue de la matière libre pour remplacer",
 });
 
 export const REASON_LABELS = Object.freeze({
