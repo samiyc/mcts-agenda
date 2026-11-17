@@ -112,6 +112,33 @@ double de la part du Pacte : P1 tient lieu de tous les remplacements courts, pas
 | M | 38,4 h | −2,32 (−2,66 à −1,98) | −4,67 (−5,37 à −3,97) | 6,0 → **12,2 %** |
 | L | 57,6 h | −3,96 (−4,48 à −3,44) | −7,78 (−8,77 à −6,79) | 6,9 → **13,5 %** |
 
-P1 revient dans les 13 à 19 % publiés (au bord bas en M), pour 2,5 à 4,7 séances changées par semaine. La recherche
-contre P1 est rejouée dans la file (les commandes de § 2 sans `--hidden`, `tmp/replan-j9v-*.json`) ; les chiffres
-viendront ici.
+P1 revient dans les 13 à 19 % publiés (au bord bas en M), pour 2,5 à 4,7 séances changées par semaine.
+
+**La recherche contre P1**, rejouée dans la file le 17/11 (la première commande de § 2, trois jobs `agenda-j9v-*`,
+depuis une copie figée au commit du recalage). Par semaine, heures perdues (entre parenthèses, avant le recalage,
+§ 2.1) :
+
+| Taille | P1 | R 20 000 | R 200 000 | R 2 000 000 (changées) |
+|---|---|---|---|---|
+| S | 25,1 h (27,1) | 19,0 h (20,6) | 15,9 h (17,4) | **13,8 h** (15,3) ; 13,6 |
+| M | 33,7 h (36,0) | 26,0 h (27,9) | 21,8 h (23,6) | **18,9 h** (20,8) ; 17,6 |
+| L | 49,8 h (53,6) | 39,7 h (43,0) | 33,2 h (36,2) | **28,3 h** (31,4) ; 27,9 |
+
+**Les écarts par paires** (heures perdues par semaine) :
+
+| Taille | R 20 000 − P1 | R 200 000 − P1 | R 2 000 000 − P1 | Témoin A/A (R 20 000, autre graine) |
+|---|---|---|---|---|
+| S | −6,11 (−6,45 à −5,77) | −9,18 (−9,59 à −8,77) | −11,22 (−11,71 à −10,74) | −0,05 (−0,18 à 0,08) |
+| M | −7,68 (−8,03 à −7,34) | −11,94 (−12,40 à −11,47) | −14,82 (−15,29 à −14,35) | −0,08 (−0,21 à 0,05) |
+| L | −10,10 (−10,52 à −9,68) | −16,64 (−17,17 à −16,11) | −21,51 (−22,13 à −20,89) | −0,05 (−0,18 à 0,09) |
+
+**Ce qu'on en tire** :
+
+1. **La recherche sauve une part un peu plus grande de ce que P1 perd** : 20 à 24 % à 20 000 essais, 33 à 37 % à
+   200 000, 43 à 45 % à 2 millions (avant le recalage : 20 à 24 %, 32 à 36 %, 41 à 43 %). On attendait l'inverse,
+   P1 remplaçant déjà davantage ; mais la recherche se sert aussi des heures des volontaires en plus, et finit 1,5 à
+   3,1 h plus bas qu'avant (écarts entre fichiers, non appariés : les sorties d'avant sont parties avec leur copie).
+2. **Le prix ne bouge pas** : une séance changée par heure sauvée (11,1, 14,7 et 23,2 séances pour 11,2, 14,8 et
+   21,5 h), et +86, +117 et +181 points de coût souple, comme avant le recalage.
+3. **Les conclusions de J6 ne sont pas rejouées** : les volontaires ne touchent pas à ce que coûte l'ignorance des
+   durées, et § 2.2 l'a mesuré sur le même ordre d'absences.
