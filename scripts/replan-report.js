@@ -4,15 +4,16 @@ import { pathToFileURL } from "node:url";
 import { paired } from "mcts-commun/measure.js";
 
 /**
- * The report of `replan-compare.js`: the means rule by rule, then the gaps by pairs. Run alone, it gathers the
+ * The report of `replan-compare.js`: the means rule by rule, then the gaps by pairs; the costs of the timetable in place
+ * when the records keep them (`--cover`). Run alone, it gathers the
  * `--json` files of several slices of one measure (the same sizes and rules, other collèges) and reports them as one:
  *
  *   node scripts/replan-report.js tmp/replan-S-1001.json tmp/replan-S-1006.json …
  */
 
-const mean = (xs) => xs.reduce((sum, x) => sum + x, 0) / xs.length;
-const fmt = (x) => (Math.abs(x) >= 100 ? x.toFixed(0) : x.toFixed(2));
-const gap = ({ mean: m, low, high }) => `${fmt(m)} (${fmt(low)} à ${fmt(high)})`;
+export const mean = (xs) => xs.reduce((sum, x) => sum + x, 0) / xs.length;
+export const fmt = (x) => (Math.abs(x) >= 100 ? x.toFixed(0) : x.toFixed(2));
+export const gap = ({ mean: m, low, high }) => `${fmt(m)} (${fmt(low)} à ${fmt(high)})`;
 export const SIZES = ["S", "M", "L"];
 
 /** The pairs to report: P1 against P0, each search against P1, each belief against J5's search, the witness. */
@@ -31,8 +32,9 @@ function pairsOf(names) {
 export function reportOf(size, records, { weeks, variant }) {
   const rows = records.map(({ seed: _, ...rules }) => rules);
   const of = (name, key) => rows.map((row) => row[name][key]);
-  const names = Object.keys(rows[0]);
+  const names = Object.keys(rows[0]).filter((name) => name !== "timetable");
   const lines = [`## ${size} : ${rows.length} collèges, ${weeks} semaines chacun (moyennes par semaine) ; ${variant}`];
+  if (rows[0].timetable) lines.push(`- l'emploi du temps en place : coût ${fmt(mean(of("timetable", "cost")))} (S1 à S8), ${fmt(mean(of("timetable", "S9")))} h sans collègue libre (S9)`);
   for (const name of names) lines.push(`- ${name} : perdues ${fmt(mean(of(name, "lost")))} h, changées ${fmt(mean(of(name, "changes")))}, annonces ${fmt(mean(of(name, "notices")))}, souple ${fmt(mean(of(name, "soft")))}, remplacées ${fmt(mean(of(name, "replaced")))} h (au plus ${fmt(mean(of(name, "mostReplaced")))}), études en trop ${fmt(mean(of(name, "over")))}, ${fmt(mean(of(name, "ms")))} ms`);
   const gapOf = (a, b, key) => gap(paired(of(a, key), of(b, key)));
   for (const [a, b] of pairsOf(names)) lines.push(`- ${a} − ${b} : perdues ${gapOf(a, b, "lost")} ; changées ${gapOf(a, b, "changes")} ; annonces ${gapOf(a, b, "notices")} ; souple ${gapOf(a, b, "soft")}`);

@@ -7,6 +7,8 @@ import { runWeek } from "../src/absence/run.js";
 import { drawWeek, volunteersOf } from "../src/absence/scenario.js";
 import { anneal } from "../src/search/anneal.js";
 import { replanSearch } from "../src/absence/search.js";
+import { evaluate } from "../src/evaluate.js";
+import { WEIGHTS } from "../src/rules/soft.js";
 import { createSchool } from "../src/school/generate.js";
 import { reportOf } from "./replan-report.js";
 
@@ -28,6 +30,9 @@ import { reportOf } from "./replan-report.js";
  * plays the search under each belief (`belief.js`) at each budget, `R 200000 odds` beside `R 200000` (known, J5's),
  * and pairs each belief with J5's search at the same budget.
  *
+ * J10: `--cover W` builds the timetable in place with S9, the cover, weighed W (`src/rules/cover.js`); each collège's
+ * record then keeps that timetable's own costs (`timetable`: S1 to S8, and S9's hours), for `replan-pair.js`.
+ *
  * In the queue (mcts-commun's docs/backlog.md): it says where it is (`progress`, a week at a time) and writes `--json`
  * after each collège. A long measure is cut into slices of 30 min at most (`--n 5 --from 1001`, `--from 1006`…, one
  * job each), then `replan-report.js` reports the slices' files as one.
@@ -46,6 +51,7 @@ const { values } = parseArgs({
     hidden: { type: "string" },
     "told-whole": { type: "string" },
     beliefs: { type: "string", default: "known" },
+    cover: { type: "string" },
   },
 });
 const PLACE_TRIES = 2800000;
@@ -83,8 +89,20 @@ function scenarioOf(school, volunteers, seed) {
 }
 
 /** A collège's means over its weeks, rule by rule. */
+/** The collège drawn, with S9 weighed as `--cover` says. */
+function schoolOf(size, seed) {
+  const drawn = createSchool({ size, seed });
+  return values.cover === undefined ? drawn : { ...drawn, weights: { ...WEIGHTS, S9: Number(values.cover) } };
+}
+
+/** The costs of the timetable in place, at the default weights (S9 not in `cost`), and S9's hours. */
+function judged(school, timetable) {
+  const { infeasibility, cost, soft } = evaluate({ ...school, weights: WEIGHTS }, timetable);
+  return { infeasibility, cost, S9: soft.S9 };
+}
+
 function runSchool(size, seed, tick) {
-  const school = createSchool({ size, seed });
+  const school = schoolOf(size, seed);
   const timetable = inPlace(school, seed);
   const volunteers = volunteersOf(school);
   const sums = {};
@@ -98,14 +116,16 @@ function runSchool(size, seed, tick) {
     }
     tick();
   }
-  return Object.fromEntries(Object.entries(sums).map(([name, sum]) => [name, Object.fromEntries(KEYS.map((key) => [key, sum[key] / Number(values.weeks)]))]));
+  const means = Object.fromEntries(Object.entries(sums).map(([name, sum]) => [name, Object.fromEntries(KEYS.map((key) => [key, sum[key] / Number(values.weeks)]))]));
+  return { ...means, timetable: judged(school, timetable) };
 }
 
 const hours = values.hours === undefined ? "" : ", " + values.hours + " h par volontaire chaque semaine";
 const soft = values.soft === undefined ? "" : ", poids souple " + values.soft;
 const told = values["told-whole"] === undefined ? "" : ", dites " + values["told-whole"];
 const hidden = values.hidden ? `, durées apprises jour après jour (${values.hidden}${told})` : "";
-const meta = { weeks: Number(values.weeks), variant: `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${hours}${soft}${hidden}` };
+const cover = values.cover === undefined ? "" : `, S9 au poids ${values.cover}`;
+const meta = { weeks: Number(values.weeks), variant: `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${cover}${hours}${soft}${hidden}` };
 const sizes = /** @type {("S" | "M" | "L")[]} */ (values.sizes.split(","));
 const seeds = Array.from({ length: Number(values.n) }, (_, i) => Number(values.from) + i);
 const total = sizes.length * seeds.length * meta.weeks;
