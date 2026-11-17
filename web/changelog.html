@@ -19,6 +19,15 @@
         <h2>Les versions</h2>
 
       <article class="version">
+        <h3><span class="tag">0.8.0</span> Un collègue libre pour remplacer <span class="date">17/11/2026</span></h3>
+        <ul>
+          <li>Une contrainte souple de plus, S9 : une heure de cours où aucun autre professeur de la matière n'est libre pour remplacer. Elle est comptée dans les coûts, avec un poids 0 par défaut : rien ne change tant qu'on ne la règle pas.</li>
+          <li>Dans « Poids des contraintes souples », lui donner un poids puis « Construire » : la règle et la recherche laissent alors plus souvent un collègue libre à chaque heure (sur un collège moyen, de 280 heures sans collègue libre à 124 avec le poids 3).</li>
+        </ul>
+        <p class="commits"><code>b9e9e53</code></p>
+      </article>
+
+      <article class="version">
         <h3><span class="tag">0.7.0</span> Trois contraintes de plus au bac à sable <span class="date">17/11/2026</span></h3>
         <ul>
           <li>Dans « Disponibilités d'un professeur », un nombre d'heures par jour au plus, de 1 à 8 : la construction le respecte, les remplacements aussi. Pour un professeur d'EPS, il remplace les 6 h habituelles.</li>

@@ -4,6 +4,18 @@
   "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
   "versions": [
     {
+      "version": "0.8.0",
+      "title": "Un collègue libre pour remplacer",
+      "date": "17/11/2026",
+      "commits": [
+        "b9e9e53"
+      ],
+      "items": [
+        "Une contrainte souple de plus, S9 : une heure de cours où aucun autre professeur de la matière n'est libre pour remplacer. Elle est comptée dans les coûts, avec un poids 0 par défaut : rien ne change tant qu'on ne la règle pas.",
+        "Dans « Poids des contraintes souples », lui donner un poids puis « Construire » : la règle et la recherche laissent alors plus souvent un collègue libre à chaque heure (sur un collège moyen, de 280 heures sans collègue libre à 124 avec le poids 3)."
+      ]
+    },
+    {
       "version": "0.7.0",
       "title": "Trois contraintes de plus au bac à sable",
       "date": "17/11/2026",
