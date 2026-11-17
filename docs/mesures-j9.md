@@ -97,3 +97,21 @@ partout. Le témoin (known, une autre graine) contient 0 sur les heures dans les
    **worst reste à écarter.**
 4. **Les conclusions de J6 tiennent** : le défaut reste known, et l'ISMCTS n'a toujours presque rien à gagner (au plus
    0,1 à 0,6 h par semaine). Le cas d'odds se renforce un peu au pire cas ; il dépend toujours de Q-P16 et Q-P17.
+
+## 3. Les volontaires recalés (17/11)
+
+Décidé avec Sami le 17/11, après § 2 : chaque semaine, **un volontaire sur deux** peut donner 2 heures, au lieu d'un
+sur quatre (`ABSENCES.available`, 0,25 → 0,5, **H**). Un volontaire donne alors une heure par semaine en moyenne, le
+double de la part du Pacte : P1 tient lieu de tous les remplacements courts, pas du seul Pacte.
+
+**Le crible** (P1 seul, les mêmes graines, un créneau hors file) :
+
+| Taille | P0 : perdues | P1 − P0 avant | P1 − P0 après | Part remplacée, avant → après |
+|---|---|---|---|---|
+| S | 29,1 h | −2,07 (−2,39 à −1,75) | −4,07 (−4,69 à −3,44) | 7,1 → **14,0 %** |
+| M | 38,4 h | −2,32 (−2,66 à −1,98) | −4,67 (−5,37 à −3,97) | 6,0 → **12,2 %** |
+| L | 57,6 h | −3,96 (−4,48 à −3,44) | −7,78 (−8,77 à −6,79) | 6,9 → **13,5 %** |
+
+P1 revient dans les 13 à 19 % publiés (au bord bas en M), pour 2,5 à 4,7 séances changées par semaine. La recherche
+contre P1 est rejouée dans la file (les commandes de § 2 sans `--hidden`, `tmp/replan-j9v-*.json`) ; les chiffres
+viendront ici.

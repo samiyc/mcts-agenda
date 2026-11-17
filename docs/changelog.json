@@ -4,6 +4,15 @@
   "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
   "versions": [
     {
+      "version": "0.6.1",
+      "title": "Plus de volontaires pour remplacer",
+      "date": "17/11/2026",
+      "commits": [],
+      "items": [
+        "Sur la page des remplacements, une semaine tirée au hasard donne des heures à deux fois plus de volontaires : avec les absences plus nombreuses de la 0.6.0, le remplacement simple n'en remplaçait plus que 6 à 7 %, il revient vers 13 %, comme les taux publiés."
+      ]
+    },
+    {
       "version": "0.6.0",
       "title": "Le modèle recalé sur les sources",
       "date": "16/11/2026",

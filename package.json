@@ -1,6 +1,6 @@
 {
   "name": "mcts-agenda",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": true,
   "description": "Les emplois du temps d'un établissement scolaire : les contraintes, la recherche locale, et le replanning qui dérange le moins possible.",
   "type": "module",

@@ -16,11 +16,13 @@ import { DAYS, WEEKS } from "../time.js";
  * `toldWhole` changes the share of morning absences that come with their length (a variant, J6).
  * Which week of the timetable it is, A or B, is drawn too. The volunteers for replacements are drawn once a collège
  * (Q-P14: one teacher in five). A volunteer gives 18 hours a year (the Pacte's replacement share), half an hour a
- * week over 36 weeks: here, each week, one volunteer in four can give up to 2 hours, the others none (H). The
- * replacement rate this gives P1 matches the published ones: 13 % of the hours of short absences in 2024-2025, 13 to
- * 19 % in collèges (the ministry's yearly review, as relayed by the unions; docs/recherche/sources.md).
+ * week over 36 weeks: here, each week, one volunteer in two can give up to 2 hours, the others none (H; one in four
+ * until 17/11, when P1 fell to 6-7 % with J9's absences: an hour a week on average, twice the Pacte's share, as P1
+ * stands for every short replacement). The replacement rate this gives P1 is meant to match the
+ * published ones: 13 % of the hours of short absences in 2024-2025, 13 to 19 % in collèges (the ministry's yearly
+ * review, as relayed by the unions; docs/recherche/sources.md).
  */
-export const ABSENCES = Object.freeze({ startRate: 1 / 18, longest: 3, knownBefore: 2 / 3, toldWhole: 0.5, volunteers: 0.2, available: 0.25, hours: 2 });
+export const ABSENCES = Object.freeze({ startRate: 1 / 18, longest: 3, knownBefore: 2 / 3, toldWhole: 0.5, volunteers: 0.2, available: 0.5, hours: 2 });
 
 /**
  * @param {import("../types.js").School} school
