@@ -1,7 +1,7 @@
 import { busy, place, remove } from "../board.js";
 import { roomsFor } from "../school/index.js";
 import { DAYS, dayOf, fits, hasLunch, weeksOf } from "../time.js";
-import { EPS_TEACHER_DAY, breakKept, dayCapped, dayMask, popcount } from "./day.js";
+import { breakKept, dayCapOf, dayCapped, dayMask, popcount } from "./day.js";
 import { SIXIEME_DAY } from "./division.js";
 
 /**
@@ -10,7 +10,7 @@ import { SIXIEME_DAY } from "./division.js";
  * `reasonOf`. A barrette is asked as one (`tryLink`): its courses start together or not at all (D9). Nothing
  * allocates: the greedy asks this hundreds of thousands of times.
  */
-export const REASONS = Object.freeze(["half-day", "unavailable", "division", "teacher", "pause", "day-limit", "room", "teacher-day"]);
+export const REASONS = Object.freeze(["half-day", "unavailable", "division", "teacher", "pause", "day-limit", "room", "teacher-day", "division-away"]);
 const CODE = Object.freeze(Object.fromEntries(REASONS.map((reason, index) => [reason, -1 - index])));
 
 export const reasonOf = (code) => REASONS[-1 - code];
@@ -55,10 +55,21 @@ function weekHold(board, course, week, slot) {
   return 0;
 }
 
-/** Whether an EPS teacher's day would pass six hours with the course (D10). */
+/** Whether a teacher's day would pass his cap with the course: six hours in EPS, or the sandbox's (D10). */
 function teacherDayFull(board, course, week, slot) {
-  if (!dayCapped(board.school.teachers[course.teacher])) return false;
-  return popcount(dayMask(board.teacher, course.teacher, week, dayOf(slot))) + course.length > EPS_TEACHER_DAY;
+  const teacher = board.school.teachers[course.teacher];
+  if (!dayCapped(teacher)) return false;
+  return popcount(dayMask(board.teacher, course.teacher, week, dayOf(slot))) + course.length > dayCapOf(teacher);
+}
+
+/** Whether one of the course's divisions is to have no lesson at one of `length` slots from `slot` (the sandbox, D11). */
+export function divisionAway(school, course, slot, length) {
+  for (let i = 0; i < course.divisions.length; i += 1) {
+    const away = school.divisions[course.divisions[i]].away;
+    if (away === undefined) continue;
+    for (let k = 0; k < length; k += 1) if (away[slot + k]) return true;
+  }
+  return false;
 }
 
 function dayHold(board, course, slot) {
@@ -91,6 +102,7 @@ export function tryCourse(board, id, slot) {
   const course = board.school.courses[id];
   if (!fits(slot, course.length)) return CODE["half-day"];
   if (unavailable(board.school.teachers[course.teacher], slot, course.length)) return CODE.unavailable;
+  if (divisionAway(board.school, course, slot, course.length)) return CODE["division-away"];
   const hold = peopleHold(board, course, slot) || dayHold(board, course, slot);
   if (hold) return hold;
   const room = roomAt(board, course, slot);

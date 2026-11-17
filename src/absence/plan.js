@@ -1,4 +1,4 @@
-import { EPS_TEACHER_DAY, dayCapped } from "../rules/day.js";
+import { dayCapOf, dayCapped } from "../rules/day.js";
 import { PARTS, indexOf } from "../school/index.js";
 import { DAYS, SLOTS, dayOf, weeksOf } from "../time.js";
 
@@ -82,13 +82,14 @@ export function teacherFree(plan, teacher, slot, length) {
   return true;
 }
 
-/** Whether `teacher`'s day stays within six hours with `length` more from `slot`: an EPS teacher's (D10). */
+/** Whether `teacher`'s day stays within his cap with `length` more from `slot`: six hours in EPS, or the sandbox's (D10). */
 export function dayRoomLeft(plan, teacher, slot, length) {
-  if (!dayCapped(plan.school.teachers[teacher])) return true;
+  const capped = plan.school.teachers[teacher];
+  if (!dayCapped(capped)) return true;
   const { first, count } = DAYS[dayOf(slot)];
   let hours = length;
   for (let i = 0; i < count; i += 1) if (plan.busy.teacher[teacher * SLOTS + first + i] > 0) hours += 1;
-  return hours <= EPS_TEACHER_DAY;
+  return hours <= dayCapOf(capped);
 }
 
 /** Whether `teacher` has a session on `day`: at the collège that day. */

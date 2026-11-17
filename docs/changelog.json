@@ -4,6 +4,18 @@
   "intro": "Les emplois du temps d'un collège fictif : les construire sous leurs contraintes, puis remplacer un professeur absent en dérangeant le moins possible.",
   "versions": [
     {
+      "version": "0.7.0",
+      "title": "Trois contraintes de plus au bac à sable",
+      "date": "17/11/2026",
+      "commits": [],
+      "items": [
+        "Dans « Disponibilités d'un professeur », un nombre d'heures par jour au plus, de 1 à 8 : la construction le respecte, les remplacements aussi. Pour un professeur d'EPS, il remplace les 6 h habituelles.",
+        "Un nouveau panneau « Créneaux sans cours d'une classe » : un clic sur une demi-journée la passe à « pas de cours », et aucun cours de la classe n'y est placé ni déplacé par un remplacement.",
+        "Un clic sur un cours propose aussi de lui imposer une salle de son type ; un cours verrouillé est alors libéré, pour être placé à nouveau.",
+        "Les coûts ont une ligne de plus (D11, un cours sur un créneau interdit à sa classe), et la ligne des heures de la journée vaut pour tout professeur plafonné."
+      ]
+    },
+    {
       "version": "0.6.1",
       "title": "Plus de volontaires pour remplacer",
       "date": "17/11/2026",

@@ -62,11 +62,19 @@
           <summary>Disponibilités d'un professeur</summary>
           <p class="hint">Un clic sur une demi-journée : libre, puis « préfère pas » (souple, compté en S3 par heure donnée), puis « indisponible » (dur). « Ailleurs (tiré) » : le collège tiré le met déjà dans un autre établissement.</p>
           <label>Professeur<select id="teacher"></select></label>
+          <label>Heures par jour au plus<input type="number" id="day-max" min="1" max="8" step="1" /></label>
+          <span class="hint" id="day-max-base"></span>
           <div id="teacher-week"></div>
         </details>
         <details>
+          <summary>Créneaux sans cours d'une classe</summary>
+          <p class="hint">Un clic sur une demi-journée : libre, puis « pas de cours » (dur) : aucun cours de la classe n'y sera placé, ni déplacé par un remplacement.</p>
+          <label>Classe<select id="division"></select></label>
+          <div id="division-week"></div>
+        </details>
+        <details>
           <summary>Verrous</summary>
-          <p class="hint">Un cours verrouillé garde son créneau et sa salle : la règle le pose d'abord, aucune recherche ne le déplace, un remplacement peut lui donner un autre professeur mais pas un autre créneau. Un clic sur un cours de la semaine propose de le déplacer, et le verrouille là.</p>
+          <p class="hint">Un cours verrouillé garde son créneau et sa salle : la règle le pose d'abord, aucune recherche ne le déplace, un remplacement peut lui donner un autre professeur mais pas un autre créneau. Un clic sur un cours de la semaine propose de le déplacer, et le verrouille là, ou de lui imposer une salle.</p>
           <div id="locks"></div>
         </details>
         <details>

@@ -33,6 +33,7 @@ function build(school) {
   /** A group without a home room takes the spare room first, rather than the home room of a division out at the time. */
   const spareFirst = ordinary.toReversed();
   const roomsFor = school.courses.map((course) => {
+    if (course.onlyRoom !== undefined) return [course.onlyRoom];
     if (course.kind !== "ordinary") return roomsOfKind.get(course.kind) ?? [];
     return course.home < 0 ? spareFirst : [course.home, ...ordinary.filter((id) => id !== course.home)];
   });
@@ -49,5 +50,5 @@ export function indexOf(school) {
   return index;
 }
 
-/** The rooms a course may take, in the order to try them: its home room first. */
+/** The rooms a course may take, in the order to try them: its home room first; only its room when the sandbox imposes one. */
 export const roomsFor = (school, course) => indexOf(school).roomsFor[course.id];

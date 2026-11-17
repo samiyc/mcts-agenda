@@ -11,6 +11,7 @@
  * @property {string} name
  * @property {number} size the pupils, drawn from 24 to 30
  * @property {number} homeRoom the ordinary room it keeps (S7)
+ * @property {Uint8Array} [away] 1 on a slot where it is to have no lesson (the sandbox, D11)
  */
 
 /**
@@ -28,6 +29,7 @@
  * @property {Uint8Array} unavailable 1 on a slot of the week where the teacher is elsewhere (D4)
  * @property {Wish | null} wish
  * @property {Uint8Array} [avoid] 1 on a slot the teacher would rather keep free (the sandbox, S3)
+ * @property {number} [dayMax] the most hours he teaches in a day (the sandbox, D10; six in EPS otherwise)
  */
 
 /**
@@ -51,6 +53,7 @@
  * @property {number} link its barrette, an index of School.links: the courses of a link start together (D9)
  * @property {number} home the ordinary room it should keep (S7), or -1
  * @property {{ slot: number, room: number }} [fixed] where a lock keeps it (the sandbox): the rule puts it there, no search moves it
+ * @property {number} [onlyRoom] the room the sandbox imposes on it (D3 otherwise)
  */
 
 /**
@@ -73,7 +76,7 @@
 
 /**
  * @typedef {object} Evaluation the two costs of a timetable, as XHSTT counts them: infeasibility first
- * @property {number} infeasibility the hard violations, D1 to D9
+ * @property {number} infeasibility the hard violations, D1 to D11
  * @property {number} cost the weighted soft violations, S1 to S8
  * @property {Record<string, number>} hard each hard constraint's count
  * @property {Record<string, number>} soft each soft constraint's count, before its weight
@@ -85,7 +88,9 @@
  * @property {"S" | "M" | "L"} size
  * @property {number} seed
  * @property {Record<string, number>} weights the soft weights changed
- * @property {Record<string, { away: number[], avoid: number[] }>} teachers by teacher: slots elsewhere (D4), slots avoided (S3)
+ * @property {Record<string, { away: number[], avoid: number[], dayMax?: number }>} teachers by teacher: slots elsewhere (D4), slots avoided (S3), the most hours a day (D10)
+ * @property {Record<string, { away: number[] }>} divisions by division: slots kept from lessons (D11)
+ * @property {Record<string, number>} rooms by course: the room imposed on it
  * @property {Record<string, { slot: number, room: number }>} locks by course: where it stays
  * @property {{ teacher: number, from: number, to: number, known: "veille" | "matin", told: "whole" | "daily" }[]} absences
  * @property {number} week 0 for A, 1 for B

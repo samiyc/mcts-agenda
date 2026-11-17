@@ -1,5 +1,5 @@
 import { lockDivision, lockedCount, unlockDivision } from "../src/sandbox/locks.js";
-import { cycleHalf, setWeight, teacherWeek, weightRows } from "../src/view/settings.js";
+import { cycleDivisionHalf, cycleHalf, dayMaxOf, divisionWeek, setDayMax, setWeight, teacherWeek, weightRows } from "../src/view/settings.js";
 import { choicesOf, namesOf } from "../src/view/week.js";
 import { el } from "./draw.js";
 
@@ -28,14 +28,33 @@ function halfButton(ctx, teacher, day, half) {
   return button;
 }
 
+/** A week of half-days as a table, each cell the button `button(day, half)` draws. */
+function halvesTable(week, button) {
+  const rows = ["matin", "après-midi"].map((name, half) => el("tr", {}, [el("th", {}, [name]), ...week.map((day) => el("td", {}, [button(day, day.halves[half])]))]));
+  const head = el("thead", {}, [el("tr", {}, [el("th", {}, [""]), ...week.map((day) => el("th", {}, [day.name]))])]);
+  return el("table", { class: "halves" }, [head, el("tbody", {}, rows)]);
+}
+
 function drawTeacher(ctx) {
   const teacher = Number($("teacher").value);
-  const week = teacherWeek(ctx.drawn, ctx.edits, teacher);
-  const rows = ["matin", "après-midi"].map((name, half) =>
-    el("tr", {}, [el("th", {}, [name]), ...week.map((day) => el("td", {}, [halfButton(ctx, teacher, day, day.halves[half])]))]),
-  );
-  const head = el("thead", {}, [el("tr", {}, [el("th", {}, [""]), ...week.map((day) => el("th", {}, [day.name]))])]);
-  $("teacher-week").replaceChildren(el("table", { class: "halves" }, [head, el("tbody", {}, rows)]));
+  $("teacher-week").replaceChildren(halvesTable(teacherWeek(ctx.drawn, ctx.edits, teacher), (day, half) => halfButton(ctx, teacher, day, half)));
+  const { value, base } = dayMaxOf(ctx.drawn, ctx.edits, teacher);
+  $("day-max").value = value === null ? "" : String(value);
+  $("day-max").placeholder = base === null ? "aucun" : String(base);
+  $("day-max-base").textContent = base === null ? "sans réglage : pas de plafond" : `sans réglage : ${base} h (EPS)`;
+  $("day-max").onchange = () => ctx.change(setDayMax(ctx.edits, teacher, $("day-max").value === "" ? null : Number($("day-max").value)), true);
+}
+
+function divisionButton(ctx, division, day, half) {
+  const button = el("button", { type: "button", class: `half h-${half.state === "kept" ? "away" : half.state}`, title: half.title }, [half.label || "—"]);
+  if (half.state === "closed") button.setAttribute("disabled", "");
+  button.addEventListener("click", () => ctx.change(cycleDivisionHalf(ctx.edits, division, { day: day.day, half: half.half }), true));
+  return button;
+}
+
+function drawDivision(ctx) {
+  const division = Number($("division").value);
+  $("division-week").replaceChildren(halvesTable(divisionWeek(ctx.edits, division), (day, half) => divisionButton(ctx, division, day, half)));
 }
 
 function lockButton(name, action) {
@@ -64,11 +83,16 @@ function drawLocks(ctx) {
   );
 }
 
-/** Fills the teachers' list once a collège is drawn. */
+function fillList(select, choices) {
+  const keep = select.value;
+  select.replaceChildren(...choices.map(({ id, name }) => el("option", { value: String(id) }, [name])));
+  if (keep && Number(keep) < choices.length) select.value = keep;
+}
+
+/** Fills the teachers' and the divisions' lists once a collège is drawn. */
 export function fillTeachers(drawn) {
-  const keep = $("teacher").value;
-  $("teacher").replaceChildren(...choicesOf(drawn, "teacher").map(({ id, name }) => el("option", { value: String(id) }, [name])));
-  if (keep && Number(keep) < drawn.teachers.length) $("teacher").value = keep;
+  fillList($("teacher"), choicesOf(drawn, "teacher"));
+  fillList($("division"), choicesOf(drawn, "division"));
 }
 
 /**
@@ -78,5 +102,6 @@ export function fillTeachers(drawn) {
 export function drawSettings(ctx) {
   drawWeights(ctx);
   drawTeacher(ctx);
+  drawDivision(ctx);
   drawLocks(ctx);
 }

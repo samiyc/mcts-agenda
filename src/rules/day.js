@@ -43,8 +43,17 @@ export function breakKept(mask) {
 /** The most hours an EPS teacher teaches in a day (D10). */
 export const EPS_TEACHER_DAY = 6;
 
-/** Whether `teacher` is held to D10: an EPS teacher. */
-export const dayCapped = (teacher) => teacher.discipline === "eps";
+/** No cap: more hours than a day has. */
+const NO_CAP = 99;
 
-/** D10: an EPS teacher's hours beyond six in a day; 0 for the others. */
-export const teacherExcess = (teacher, mask) => (dayCapped(teacher) ? Math.max(0, popcount(mask) - EPS_TEACHER_DAY) : 0);
+/**
+ * The most hours `teacher` teaches in a day (D10): the sandbox's `dayMax` when set, else six for an EPS teacher,
+ * else no cap.
+ */
+export const dayCapOf = (teacher) => teacher.dayMax ?? (teacher.discipline === "eps" ? EPS_TEACHER_DAY : NO_CAP);
+
+/** Whether `teacher` is held to D10. */
+export const dayCapped = (teacher) => dayCapOf(teacher) < NO_CAP;
+
+/** D10: a teacher's hours beyond his cap in a day; 0 for a teacher without one. */
+export const teacherExcess = (teacher, mask) => Math.max(0, popcount(mask) - dayCapOf(teacher));

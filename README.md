@@ -40,9 +40,11 @@ recherche ; `remplacement.html` rejoue une semaine d'absences, avant et après, 
 
 1. `npm run page`, puis http://127.0.0.1:4805/web/ : choisir un collège et une graine, « Construire ».
 2. **Réglages** (sous le résumé) : changer un poids, rendre un professeur indisponible ou « préfère pas » une
-   demi-journée, puis « Construire » à nouveau pour voir l'effet ; les coûts disent ce qui a bougé.
+   demi-journée, lui fixer un nombre d'heures par jour au plus, interdire des demi-journées à une classe, puis
+   « Construire » à nouveau pour voir l'effet ; les coûts disent ce qui a bougé.
 3. **Verrous** : « Voir : une division », puis « Verrouiller la semaine » ; une nouvelle construction, même avec le
-   recuit, la laisse telle quelle. Un clic sur un cours propose de le déplacer, et l'y verrouille.
+   recuit, la laisse telle quelle. Un clic sur un cours propose de le déplacer, et l'y verrouille, ou de lui imposer
+   une salle.
 4. **Les remplacements** (lien en haut de la page) : « Absences : choisies à la main », ajouter une absence, « Jouer
    la semaine » ; l'emploi du temps en place garde les verrous et les disponibilités.
 5. **Fichier** : exporter les réglages pour les garder ou les envoyer, les importer ailleurs ; ils restent aussi

@@ -131,7 +131,7 @@ function moved({ edits, timetable }) {
 
 function clickWeek(event) {
   const entry = event.target.closest("[data-course]");
-  if (entry && state.timetable) openMove({ school: state.school, edits: state.edits, timetable: state.timetable, move: moved }, Number(entry.dataset.course));
+  if (entry && state.timetable) openMove({ school: state.school, drawn: state.drawn, edits: state.edits, timetable: state.timetable, move: moved, change }, Number(entry.dataset.course));
 }
 
 async function importFile() {

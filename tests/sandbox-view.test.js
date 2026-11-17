@@ -7,7 +7,8 @@ import { applyEdits, emptyEdits } from "../src/sandbox/edits.js";
 import { moveLink, optionsFor } from "../src/sandbox/moves.js";
 import { createSchool } from "../src/school/generate.js";
 import { absenceLines, addAbsence, removeAbsence, setVolunteer, volunteerRows, withDrawn } from "../src/view/absences.js";
-import { cycleHalf, halfSlots, setWeight, teacherWeek, weightRows } from "../src/view/settings.js";
+import { cycleDivisionHalf, cycleHalf, dayMaxOf, divisionWeek, halfSlots, roomChoices, setDayMax, setRoom, setWeight, teacherWeek, weightRows } from "../src/view/settings.js";
+import { lockDivision } from "../src/sandbox/locks.js";
 
 /** What the sandbox's panel shows and does (docs/modele.md § 14): the weights, a teacher's half-days, a course moved. */
 const drawn = createSchool({ size: "S", seed: 2 });
@@ -37,6 +38,39 @@ describe("the sandbox's panel", () => {
     const away = drawn.teachers.findIndex((t) => t.unavailable.some((x) => x === 1));
     const day = teacherWeek(drawn, empty, away).find((d) => d.halves[0].state === "elsewhere");
     assert.equal(cycleHalf(drawn, empty, away, { day: day.day, half: 0 }), empty);
+  });
+
+  it("caps a teacher's day, keeps the cap through his half-days, and drops it when emptied", () => {
+    const fr = drawn.teachers.find((t) => t.discipline === "fr").id;
+    const eps = drawn.teachers.find((t) => t.discipline === "eps").id;
+    assert.deepEqual([dayMaxOf(drawn, empty, fr), dayMaxOf(drawn, empty, eps)], [{ value: null, base: null }, { value: null, base: 6 }]);
+    const four = setDayMax(empty, fr, 4);
+    assert.deepEqual(four.teachers[fr], { away: [], avoid: [], dayMax: 4 });
+    const both = cycleHalf(drawn, four, fr, { day: 0, half: 0 });
+    assert.equal(both.teachers[fr].dayMax, 4);
+    assert.deepEqual(setDayMax(four, fr, null).teachers, {});
+    assert.deepEqual(setDayMax(four, fr, 9).teachers, {}, "out of 1 to 8: dropped");
+  });
+
+  it("keeps a division from lessons by half-days, and back", () => {
+    const kept = cycleDivisionHalf(empty, 0, { day: 1, half: 0 });
+    assert.deepEqual(kept.divisions, { 0: { away: [9, 10, 11, 12] } });
+    assert.equal(divisionWeek(kept, 0)[1].halves[0].state, "kept");
+    assert.equal(divisionWeek(kept, 0)[2].halves[1].state, "closed");
+    assert.deepEqual(cycleDivisionHalf(kept, 0, { day: 1, half: 0 }).divisions, {});
+    assert.equal(cycleDivisionHalf(empty, 0, { day: 2, half: 1 }), empty);
+  });
+
+  it("offers the rooms of a course's kind, and lets its barrette go when it imposes one", () => {
+    const id = drawn.courses.find((c) => c.divisions.includes(0) && c.kind === "ordinary").id;
+    const rooms = roomChoices(drawn, empty, id);
+    assert.ok(rooms.length > 1 && rooms.every((r) => drawn.rooms[r.id].kind === "ordinary"));
+    const locked = lockDivision(empty, drawn, timetable, 0);
+    const imposed = setRoom(locked, drawn, id, rooms[1].id);
+    assert.equal(imposed.rooms[id], rooms[1].id);
+    assert.equal(imposed.locks[id], undefined);
+    assert.ok(roomChoices(drawn, imposed, id).find((r) => r.id === rooms[1].id).chosen);
+    assert.deepEqual(setRoom(imposed, drawn, id, null).rooms, {});
   });
 
   it("moves a course only where the hard constraints let it, priced as the evaluator prices it, and locks it there", () => {

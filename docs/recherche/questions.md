@@ -18,7 +18,10 @@ modèle fera. Une réponse quitte cette liste et va, avec sa date, dans [`source
 services donnée, pas optimisée ; des créneaux d'une heure et deux semaines A et B ; R0 au degré de saturation ; P1 qui
 ne touche qu'au jour de l'absence ; `schedule` de la lib pris pour sa forme seulement. Il ajoute : « le sport est sur
 2 h une fois par semaine, à vérifier ». Vérifié (`sources.md` § 2) : c'est le cas au cycle 4 (un bloc de 2 h et une
-heure, un autre jour) ; en 6e, les 4 h se font en deux blocs de 2 h. Q-S1 à Q-S7 attendent encore.
+heure, un autre jour) ; en 6e, les 4 h se font en deux blocs de 2 h.
+
+**Répondu le 17/11/2026** (Sami) : Q-S1, un collège pour le moment ; « à long terme, ce serait super de pouvoir faire
+les deux ». Le lycée est noté comme objectif de long terme (`../modele.md`, § 11). Q-S2 à Q-S7 attendent encore.
 
 ## Pour un professionnel
 

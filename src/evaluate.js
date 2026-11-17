@@ -1,5 +1,6 @@
 import { boardOf } from "./board.js";
 import { dayMask, teacherExcess } from "./rules/day.js";
+import { divisionAway } from "./rules/hard.js";
 import { divisionDay } from "./rules/division.js";
 import { WEIGHTS, awayFromHome, epsTooClose, lateHeavy, teacherHoles, weightsOf, wishCount } from "./rules/soft.js";
 import { DAYS, WEEKS, fits, weeksOf } from "./time.js";
@@ -9,13 +10,20 @@ import { DAYS, WEEKS, fits, weeksOf } from "./time.js";
  * page shows is judged here, and only here. Infeasibility first: D1 counts the cells of the courses left unplaced
  * (one per slot and week), D2 the clashes (a clash of whole divisions on each of their halves), D3 a room of the
  * wrong kind, D4 a teacher placed while away, D5 a lunch break lost, D6 a 6e day past six hours, D8 a block across a
- * half-day, D9 a course of a barrette away from the slot of its first placed course, D10 an
- * EPS teacher's day past six hours.
+ * half-day, D9 a course of a barrette away from the slot of its first placed course, D10 a
+ * teacher's day past his cap (six hours in EPS, or the sandbox's), D11 a course at a slot its division is kept from
+ * (the sandbox). D3 also counts a course out of the room the sandbox imposes on it.
  */
 const zeros = (keys) => Object.fromEntries(keys.map((key) => [key, 0]));
 const cellsOf = (course) => course.length * weeksOf(course.weeks).length;
 
 const clashes = (layer) => layer.count.reduce((sum, n) => sum + Math.max(0, n - 1), 0);
+
+/** A room the course may not take: of the wrong kind, or not the one the sandbox imposes. */
+const wrongRoom = (school, course, room) => school.rooms[room].kind !== course.kind || (course.onlyRoom ?? room) !== room;
+
+/** D11: the cells of a course at a slot one of its divisions is kept from. */
+const keptCells = (school, course, slot) => (divisionAway(school, course, slot, course.length) ? cellsOf(course) : 0);
 
 function awayCells(school, course, slot) {
   const away = school.teachers[course.teacher].unavailable;
@@ -35,7 +43,8 @@ function countCourses(board, hard, soft) {
     }
     const room = board.roomOf[course.id];
     const weeks = weeksOf(course.weeks).length;
-    if (school.rooms[room].kind !== course.kind) hard.D3 += cellsOf(course);
+    if (wrongRoom(school, course, room)) hard.D3 += cellsOf(course);
+    hard.D11 += keptCells(school, course, slot);
     hard.D4 += awayCells(school, course, slot);
     if (!fits(slot, course.length)) hard.D8 += weeks;
     soft.S6 += lateHeavy(course, slot) * weeks;
@@ -89,7 +98,7 @@ function countTeachers(board, hard, soft) {
  */
 export function evaluate(school, timetable) {
   const board = boardOf(school, timetable);
-  const hard = zeros(["D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9", "D10"]);
+  const hard = zeros(["D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9", "D10", "D11"]);
   const soft = zeros(Object.keys(WEIGHTS));
   hard.D2 = clashes(board.division) + clashes(board.teacher) + clashes(board.room);
   countCourses(board, hard, soft);

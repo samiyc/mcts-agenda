@@ -14,8 +14,9 @@ const EXPECTED = {
   // 6/11/2026, J2: the barrettes of LV2 and soutien by pairs, the half-groups of sciences on weeks A and B.
   schools: "8f6f3a78439500a5",
   // 6/11/2026, J2: R0 and R0-naïf by barrettes, the evaluation with D9, a group without a home in the spare room;
-  // 16/11/2026, J9: an EPS teacher's day of six hours at most (D10).
-  builds: "31b603ef2c13031c",
+  // 16/11/2026, J9: an EPS teacher's day of six hours at most (D10);
+  // 17/11/2026: the evaluation's D11 key, always 0 without the sandbox (the placements are J9's, 31b603ef2c13031c without it).
+  builds: "6022b4007ff04bec",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);

@@ -152,14 +152,15 @@ Un emploi du temps a deux coûts, comme dans XHSTT : **l'infaisabilité** (la so
 |---|---|---|
 | D1 | chaque cours est placé, toutes ses heures | la grille (§ 2.2) |
 | D2 | ni un professeur, ni une division, ni une salle à deux endroits à la fois, semaine par semaine | évident |
-| D3 | la salle a le bon type et assez de places | **H** |
+| D3 | la salle a le bon type et assez de places ; celle que le bac à sable impose, s'il en impose une (§ 14) | **H** |
 | D4 | les indisponibilités : le complément de service ailleurs, le gymnase pris par la commune | **H**, Q-P4 |
 | D5 | la pause méridienne de chaque division (§ 2.1) | le décret de 2016, lu en résumé |
 | D6 | en 6e, 6 heures de cours au plus par jour | le ministère, lu en résumé |
 | D7 | rien le mercredi après-midi | **H** |
 | D8 | un bloc de 2 h est d'un seul tenant, dans une demi-journée | l'usage, l'EPS lue en résumé (`sources.md` § 2) |
 | D9 | les cours d'une barrette au même créneau (compté : ceux qui ne partent pas avec le premier placé) | l'usage, **H** |
-| D10 | un professeur d'EPS : 6 heures de cours au plus par jour (compté : les heures au-delà) ; depuis J9 | la fiche de l'IH2EF sur l'emploi du temps (`recherche/sources.md` § 9) |
+| D10 | un professeur d'EPS : 6 heures de cours au plus par jour (compté : les heures au-delà) ; depuis J9. Le bac à sable peut fixer ce plafond pour n'importe quel professeur (§ 14) | la fiche de l'IH2EF sur l'emploi du temps (`recherche/sources.md` § 9) |
+| D11 | une classe n'a pas cours sur les demi-journées que le bac à sable lui interdit (compté : les heures placées dessus) ; aucune sans réglage | Sami, au bac à sable (§ 14) |
 
 ### 3.2 Les souples
 
@@ -400,8 +401,9 @@ Il y ajoute l'EPS en deux blocs de 2 h, « à ajuster plus tard si besoin » (§
 **Validé par Sami le 13/11** (relayé par la session de mcts-commun) : XHSTT-2014 comme banc public, à la place
 d'ITC 2019, qui est universitaire (Q-S2).
 
-Encore proposé, en attendant sa réponse : un **collège** public fictif, pas un lycée (Q-S1 ; les choix d'options du
-lycée en font un autre problème, celui d'ITC 2019).
+**Validé par Sami le 17/11** : un **collège** public fictif, pas un lycée, pour le moment (Q-S1). Le lycée reste un
+objectif de long terme : les choix d'options de ses élèves en font un autre problème, celui d'ITC 2019 (§ 12), à
+ajouter à côté du collège, sans le casser.
 
 Les questions, chacune avec sa recommandation : [`recherche/questions.md`](recherche/questions.md).
 
@@ -494,5 +496,16 @@ collège fictif, tiré par sa taille et sa graine, et on le change à la main ; 
 - **Un verrou pendant les remplacements** : une séance verrouillée peut recevoir un remplaçant, jamais un autre
   créneau ni une autre salle (`placeFor`). C'est un choix par défaut (H), à revoir si un principal dit autrement.
 
-À venir, avec Sami : de nouveaux types de contraintes, par exemple les créneaux interdits ou évités d'une division,
-une salle imposée, au plus N heures par jour pour un professeur, une matière pas après telle heure pour un niveau.
+**Trois contraintes de plus** (17/11, validées par Sami), dures, qui suivent toutes le même chemin : les réglages
+(`readEdits`, `applyEdits`), la règle (`tryCourse`), donc les recherches, l'évaluateur, et les remplacements
+(`placeFor`, `dayRoomLeft`). Sans réglage, rien ne change : seule la clé D11, toujours à 0, entre dans l'empreinte.
+
+- **Au plus N heures par jour pour un professeur** (`Teacher.dayMax`, de 1 à 8) : D10 pour lui, à la place des 6 h
+  d'un professeur d'EPS. Un réglage peut donc aussi desserrer le plafond de l'EPS, pour voir ce qu'il coûte.
+- **Les demi-journées sans cours d'une classe** (`Division.away`, D11) : aucun cours de la classe n'y est placé, ni
+  déplacé par un remplacement. Une barrette partagée (la LV2 d'une paire) suit l'interdit de chacune de ses classes.
+- **Une salle imposée à un cours** (`Course.onlyRoom`), de son type : la règle ne lui en essaie pas d'autre, et un
+  remplacement garde la salle. Imposer une salle à un cours verrouillé libère sa barrette, qui sera placée à nouveau.
+
+À venir, avec les réponses des professionnels : les créneaux **évités** (souples) d'une classe, une matière pas après
+telle heure pour un niveau (Q-P5).
