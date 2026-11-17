@@ -176,6 +176,7 @@ Les poids sont des hypothèses, à faire relire (Q-P1, Q-P2).
 | S6 | une discipline lourde (français, maths, LV1) après 15 h | 1 | par cours |
 | S7 | une division hors de sa salle attitrée, quand le cours ne demande pas de salle spécialisée | 1 | par cours |
 | S8 | deux séances d'EPS d'une division à moins de 24 h l'une de l'autre (le même jour, ou le lendemain plus tôt) | 3 | par paire |
+| S9 | une heure de cours où tous les professeurs de la matière présents à ce créneau ont cours : aucun collègue libre pour remplacer (depuis J10) | 0 | par heure, semaines A et B ; pesé, il ne sauve aucune heure perdue ([`mesures-j10.md`](mesures-j10.md)) |
 
 ## 4. Les absences et le replanning
 
@@ -352,6 +353,7 @@ le rattrape en heures au prix de séances déplacées d'avance ; l'ISMCTS n'est 
 | **J7** (mesuré le 15/11) | le banc XHSTT-2014 : un solveur pour ses instances (`src/xhstt/`, § 13), la règle simple puis le recuit | contre la règle simple par paires, contre le meilleur connu et les moyennes publiées, au budget d'ITC 2011 : [`mesures-j7.md`](mesures-j7.md) |
 | **J8** (fait le 15/11) | le bac à sable (§ 14) : les poids, les disponibilités, les verrous, un cours déplacé à la main, les absences choisies ; gardés dans le navigateur et en fichier | pas de mesure : sans réglage rien ne change (les empreintes), et les tests tiennent chaque réglage |
 | **J9** (16/11) | le modèle recalé sur la recherche du 16/11 : les absences à 9 % des heures, le plafond de 6 h par jour des professeurs d'EPS (D10) | R0 avant et après le plafond ; J5 et J6 rejoués : [`mesures-j9.md`](mesures-j9.md) |
+| **J10** (mesuré le 17/11) | S9, une heure sans collègue de la matière libre pour remplacer (`src/rules/cover.js`), au poids 0 par défaut ; `replan-pair.js` | S9 au poids 1 et 3 contre 0, par paires, les mêmes absences : aucune heure sauvée, non retenu : [`mesures-j10.md`](mesures-j10.md) |
 
 Les questions au professionnel ont du sens à partir de J2, la page montrée.
 
@@ -478,7 +480,7 @@ collège fictif, tiré par sa taille et sa graine, et on le change à la main ; 
 (`src/sandbox/edits.js`), gardés dans le navigateur pour ce collège et cette graine, exportés ou importés en fichier.
 `applyEdits` les pose sur une copie du collège : sans réglage, rien ne change, les empreintes le tiennent.
 
-- **Les poids** S1 à S8 (`School.weights`, lus par `weightsOf`) : la règle, les recherches, l'évaluateur et les
+- **Les poids** S1 à S9 (`School.weights`, lus par `weightsOf`) : la règle, les recherches, l'évaluateur et les
   remplacements comptent avec eux.
 - **Les demi-journées d'un professeur** : « indisponible » s'ajoute à ses créneaux ailleurs (D4, dur) ; « préfère
   pas » (`Teacher.avoid`) compte en S3, une fois par heure donnée sur un créneau évité, au poids du vœu (H). Une
