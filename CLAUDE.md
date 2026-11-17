@@ -49,6 +49,9 @@ Its line in the roadmap: `mcts-commun/docs/feuille-de-route.md`, § 2.C. Start t
 
 - **Long measures go through the queue** (`mcts-backlog`), never beside it; tests beside it through
   `mcts-backlog --slot N -- cmd`, 4 threads and 15 min at most. Follow a job with `--wait`, instead of polling it.
+- **A job says where it is and lasts 30 min at most** (mcts-commun's `docs/backlog.md`, relayed on 17/11): the
+  scripts call `progress` of `mcts-commun/trace.js`; a long measure is cut into slices (`replan-compare.js --n 5 --from
+  …`, one job each), then `replan-report.js` reports the slices' files as one. Estimate generously.
 - **Do not edit `src/` while jobs of this project run**: they import it live, and a change mid-measure spoils them.
   A long measure can run from a frozen copy instead (`git worktree add --detach E:/Dev/agenda-<name> <commit>`,
   outside the projects' folder, `node_modules` and `data` linked by junction; J7's), and `src/` stays free.

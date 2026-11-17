@@ -1,6 +1,6 @@
 import { writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { paired } from "mcts-commun/measure.js";
+import { progress } from "mcts-commun/trace.js";
 import { buildGreedy } from "../src/build/greedy.js";
 import { p0, p1 } from "../src/absence/rules.js";
 import { runWeek } from "../src/absence/run.js";
@@ -8,6 +8,7 @@ import { drawWeek, volunteersOf } from "../src/absence/scenario.js";
 import { anneal } from "../src/search/anneal.js";
 import { replanSearch } from "../src/absence/search.js";
 import { createSchool } from "../src/school/generate.js";
+import { reportOf } from "./replan-report.js";
 
 /**
  * The replanning rules by pairs (docs/modele.md § 6.3): on each collège, the timetable R0 builds (the same for every
@@ -26,6 +27,10 @@ import { createSchool } from "../src/school/generate.js";
  * `run.js`, `scenario.js`); `--beliefs known,odds`
  * plays the search under each belief (`belief.js`) at each budget, `R 200000 odds` beside `R 200000` (known, J5's),
  * and pairs each belief with J5's search at the same budget.
+ *
+ * In the queue (mcts-commun's docs/backlog.md): it says where it is (`progress`, a week at a time) and writes `--json`
+ * after each collège. A long measure is cut into slices of 30 min at most (`--n 5 --from 1001`, `--from 1006`…, one
+ * job each), then `replan-report.js` reports the slices' files as one.
  */
 const { values } = parseArgs({
   options: {
@@ -78,7 +83,7 @@ function scenarioOf(school, volunteers, seed) {
 }
 
 /** A collège's means over its weeks, rule by rule. */
-function runSchool(size, seed) {
+function runSchool(size, seed, tick) {
   const school = createSchool({ size, seed });
   const timetable = inPlace(school, seed);
   const volunteers = volunteersOf(school);
@@ -91,36 +96,31 @@ function runSchool(size, seed) {
       const sum = (sums[name] ??= Object.fromEntries(KEYS.map((key) => [key, 0])));
       for (const key of KEYS) sum[key] += key === "ms" ? performance.now() - start : score[key];
     }
+    tick();
   }
   return Object.fromEntries(Object.entries(sums).map(([name, sum]) => [name, Object.fromEntries(KEYS.map((key) => [key, sum[key] / Number(values.weeks)]))]));
 }
 
-const mean = (xs) => xs.reduce((sum, x) => sum + x, 0) / xs.length;
-const fmt = (x) => (Math.abs(x) >= 100 ? x.toFixed(0) : x.toFixed(2));
-const gap = ({ mean: m, low, high }) => `${fmt(m)} (${fmt(low)} à ${fmt(high)})`;
-
-function report(size, rows) {
-  const of = (name, key) => rows.map((row) => row[name][key]);
-  const names = Object.keys(rows[0]);
-  const hours = values.hours === undefined ? "" : ", " + values.hours + " h par volontaire chaque semaine";
-  const soft = values.soft === undefined ? "" : ", poids souple " + values.soft;
-  const told = values["told-whole"] === undefined ? "" : ", dites " + values["told-whole"];
-  const hidden = values.hidden ? `, durées apprises jour après jour (${values.hidden}${told})` : "";
-  const variant = `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${hours}${soft}${hidden}`;
-  const lines = [`## ${size} : ${rows.length} collèges, ${values.weeks} semaines chacun (moyennes par semaine) ; ${variant}`];
-  for (const name of names) lines.push(`- ${name} : perdues ${fmt(mean(of(name, "lost")))} h, changées ${fmt(mean(of(name, "changes")))}, annonces ${fmt(mean(of(name, "notices")))}, souple ${fmt(mean(of(name, "soft")))}, remplacées ${fmt(mean(of(name, "replaced")))} h (au plus ${fmt(mean(of(name, "mostReplaced")))}), études en trop ${fmt(mean(of(name, "over")))}, ${fmt(mean(of(name, "ms")))} ms`);
-  const searches = names.filter((name) => name.startsWith("R "));
-  const beliefs = searches.filter((name) => name.split(" ").length > 2).map((name) => [name, name.split(" ").slice(0, 2).join(" ")]);
-  const pairs = [["P1", "P0"], ...searches.map((name) => [name, "P1"]), ...beliefs.filter(([, b]) => names.includes(b)), [searches[0], "témoin"]];
-  const gapOf = (a, b, key) => gap(paired(of(a, key), of(b, key)));
-  for (const [a, b] of pairs) lines.push(`- ${a} − ${b} : perdues ${gapOf(a, b, "lost")} ; changées ${gapOf(a, b, "changes")} ; annonces ${gapOf(a, b, "notices")} ; souple ${gapOf(a, b, "soft")}`);
-  console.log(`${lines.join("\n")}\n`);
+const hours = values.hours === undefined ? "" : ", " + values.hours + " h par volontaire chaque semaine";
+const soft = values.soft === undefined ? "" : ", poids souple " + values.soft;
+const told = values["told-whole"] === undefined ? "" : ", dites " + values["told-whole"];
+const hidden = values.hidden ? `, durées apprises jour après jour (${values.hidden}${told})` : "";
+const meta = { weeks: Number(values.weeks), variant: `emploi du temps de ${values.place === "anneal" ? "R0 puis le recuit" : "R0"}${hours}${soft}${hidden}` };
+const sizes = /** @type {("S" | "M" | "L")[]} */ (values.sizes.split(","));
+const seeds = Array.from({ length: Number(values.n) }, (_, i) => Number(values.from) + i);
+const total = sizes.length * seeds.length * meta.weeks;
+let done = 0;
+function tick() {
+  done += 1;
+  progress("replan", done, total, { unit: "semaine" });
 }
-
-const results = {};
-for (const size of /** @type {("S" | "M" | "L")[]} */ (values.sizes.split(","))) {
-  const seeds = Array.from({ length: Number(values.n) }, (_, i) => Number(values.from) + i);
-  results[size] = seeds.map((seed) => ({ seed, ...runSchool(size, seed) }));
-  report(size, results[size].map(({ seed: _, ...rules }) => rules));
+/** @type {Record<string, any>} */
+const results = { ...meta };
+for (const size of sizes) {
+  results[size] = [];
+  for (const seed of seeds) {
+    results[size].push({ seed, ...runSchool(size, seed, tick) });
+    if (values.json) writeFileSync(values.json, JSON.stringify(results));
+  }
+  console.log(reportOf(size, results[size], meta));
 }
-if (values.json) writeFileSync(values.json, JSON.stringify(results));

@@ -1,6 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { createRng } from "mcts-commun/random.js";
+import { progress } from "mcts-commun/trace.js";
 import { anneal } from "../src/xhstt/anneal.js";
 import { evaluateSolution } from "../src/xhstt/evaluate.js";
 import { greedy } from "../src/xhstt/greedy.js";
@@ -19,6 +20,8 @@ import { loadBench } from "./xhstt-bench-data.js";
  * A configuration overrides the annealing's settings (`XANNEAL`): `key=value` pairs joined by commas, configurations
  * by semicolons; "" is the defaults. `--tries` can be a number, or `rate:F` for F seconds at each instance's speed
  * measured by a first short run (the budget then differs by instance, but not by seed or configuration).
+ *
+ * In the queue: `progress` says which run it is at (`bench`) and how far the annealing is (`recuit`, every 2^20 moves).
  */
 const { values } = parseArgs({
   options: {
@@ -47,7 +50,8 @@ function runOnce(instance, seed, { options, tries }) {
   const state = createState(instance, layoutOf(instance));
   const greedyTries = greedy(state, createRng(seed));
   const ruled = { infeasibility: state.infeasibility, objective: state.objective, tries: greedyTries, ms: performance.now() - started };
-  const result = anneal(state, { ...options, seed, tries });
+  const tick = (done, of) => progress("recuit", done, of, { unit: "essai" });
+  const result = anneal(state, { ...options, seed, tries, tick });
   check(instance, result.state);
   const ms = performance.now() - started - ruled.ms;
   return { greedy: ruled, anneal: { infeasibility: result.state.infeasibility, objective: result.state.objective, tries, ms, scale: result.scale } };
@@ -72,7 +76,16 @@ function runConfig({ id, instance, best }, seed, { config, tries }) {
   if (values.json) writeFileSync(values.json, JSON.stringify(records, null, 1));
 }
 
-for (const entry of loadBench({ only: values.only.split(",").filter(Boolean) })) {
+const entries = loadBench({ only: values.only.split(",").filter(Boolean) });
+const total = entries.length * seeds.length * CONFIGS.length;
+let runs = 0;
+for (const entry of entries) {
   const tries = budgetOf(entry.instance);
-  for (const seed of seeds) for (const config of CONFIGS) runConfig(entry, seed, { config, tries });
+  for (const seed of seeds) {
+    for (const config of CONFIGS) {
+      runConfig(entry, seed, { config, tries });
+      runs += 1;
+      progress("bench", runs, total, { unit: "course" });
+    }
+  }
 }

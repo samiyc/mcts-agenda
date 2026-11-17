@@ -57,22 +57,35 @@ function snapshot(state, best) {
 
 /**
  * The annealing itself, from `hot` to `cold` over `tries` moves, keeping the best plan seen in `best`; it stops
- * early once the best has no more infeasibility than `floor`. Returns the moves tried.
+ * early once the best has no more infeasibility than `floor`. Returns the moves tried. Every 2^20 moves it calls
+ * `tick` with the moves tried since the annealing began (`from` before this walk) and its budget `of`: a long run
+ * says where it is.
  */
-function walk(state, run, { best, tries, hot, cold, floor }) {
+function walk(state, run, { best, tries, hot, cold, floor, tick, from, of }) {
   const cooling = Math.pow(cold / hot, 1 / tries);
-  let temperature = hot;
-  for (let done = 0; done < tries; done += 1, temperature *= cooling) {
-    const delta = draw(state, run);
-    if (Number.isNaN(delta)) continue;
-    if (delta > 0 && run.rng.next() >= Math.exp(-delta / temperature)) undo(state);
-    else if (better(state, best)) {
-      snapshot(state, best);
-      if (best.infeasibility <= floor) return done + 1;
-    }
+  const pace = { temperature: hot, floor };
+  for (let done = 0; done < tries; done += 1, pace.temperature *= cooling) {
+    if ((done & TICK_MASK) === 0) tick(from + done, of);
+    if (step(state, run, best, pace)) return done + 1;
   }
   return tries;
 }
+
+/** One move of the walk at `pace.temperature`: drawn, then kept or undone; whether the best now reaches `pace.floor`. */
+function step(state, run, best, pace) {
+  const delta = draw(state, run);
+  if (Number.isNaN(delta)) return false;
+  if (delta > 0 && run.rng.next() >= Math.exp(-delta / pace.temperature)) {
+    undo(state);
+    return false;
+  }
+  if (!better(state, best)) return false;
+  snapshot(state, best);
+  return best.infeasibility <= pace.floor;
+}
+
+const TICK_MASK = (1 << 20) - 1;
+const NOOP = () => {};
 
 /** Can some unit be cut differently? */
 const reshapes = (layout) => layout.units.some((unit) => unit.slots.length > 1);
@@ -91,12 +104,13 @@ export function runOf(state, o) {
 
 /**
  * @param {import("./state.js").XState} state
- * @param {Partial<typeof XANNEAL> & { seed?: number }} [options]
+ * @param {Partial<typeof XANNEAL> & { seed?: number, tick?: (done: number, of: number) => void }} [options]
  * @returns {{ state: import("./state.js").XState, plan: ReturnType<typeof planNow>, tries: number, scale: number }}
  */
 export function anneal(state, options = {}) {
   const o = { ...XANNEAL, seed: 1, ...options };
   const run = runOf(state, o);
+  const ticks = { tick: o.tick ?? NOOP, of: o.tries };
   const scale = scaleOf(state, run);
   const best = { infeasibility: 0, objective: 0, plan: planNow(state) };
   snapshot(state, best);
@@ -104,11 +118,11 @@ export function anneal(state, options = {}) {
   let now = state;
   if (first > 0) {
     now.hard = HARD;
-    first = walk(now, run, { best, tries: first, hot: o.fhot * HARD, cold: o.fcold * HARD, floor: 0 });
+    first = walk(now, run, { best, tries: first, hot: o.fhot * HARD, cold: o.fcold * HARD, floor: 0, ...ticks, from: 0 });
     now = createState(state.instance, state.layout, { plan: best.plan });
   }
   now.hard = o.hard * scale;
-  walk(now, run, { best, tries: o.tries - first, hot: o.hot * scale, cold: o.cold * scale, floor: -1 });
+  walk(now, run, { best, tries: o.tries - first, hot: o.hot * scale, cold: o.cold * scale, floor: -1, ...ticks, from: first });
   const final = createState(state.instance, state.layout, { plan: best.plan, hard: now.hard });
   return { state: final, plan: best.plan, tries: o.tries, scale };
 }
